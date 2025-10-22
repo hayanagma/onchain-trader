@@ -1,0 +1,51 @@
+# Build artifacts
+target/
+*/target/
+
+# Maven local repository (we use cache mounts instead)
+.m2/
+
+# Maven wrapper cache but keep wrapper files
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment and local configs
+.env
+application.yml
+application.yaml
+application-*.yml
+application-*.yaml
+application.properties
+application-*.properties
+
+# Docker compose and local dev files
+docker-compose.yml
+docker-compose*.yaml
+Dockerfile
+*/Dockerfile
+
+# Node / frontend artifacts (if any)
+node_modules/
+dist/
+build/
+
+# Test data or local-only folders
+tmp/
+test-output/

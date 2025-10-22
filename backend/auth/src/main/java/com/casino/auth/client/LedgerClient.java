@@ -1,0 +1,75 @@
+package com.casino.auth.client;
+
+import java.util.Optional;
+
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.casino.auth.dto.wallet.WalletEnsureRequest;
+import com.casino.auth.dto.wallet.WalletResponse;
+import com.casino.auth.dto.wallet.WalletSignatureValidationRequest;
+import com.casino.auth.dto.wallet.WalletValidationRequest;
+import com.casino.auth.dto.wallet.WalletValidationResponse;
+import com.casino.auth.util.RestTemplateUtil;
+
+@Service
+public class LedgerClient {
+
+    private final RestTemplate restTemplate;
+
+    public LedgerClient(RestTemplateBuilder builder) {
+        this.restTemplate = builder
+                .rootUri("http://ledger:8082/api/internal/ledger")
+                .build();
+    }
+
+    public Optional<WalletResponse> findByAddressAndNetwork(String address, String network) {
+        try {
+            WalletResponse body = RestTemplateUtil.get(
+                    restTemplate,
+                    "/wallets?address={address}&network={network}",
+                    WalletResponse.class,
+                    address,
+                    network);
+            return Optional.ofNullable(body);
+        } catch (ResponseStatusException ex) {
+            if (ex.getStatusCode().value() == 404) {
+                return Optional.empty();
+            }
+            throw ex;
+        }
+    }
+
+    public WalletValidationResponse validateWallet(String address, String network) {
+        WalletValidationRequest req = new WalletValidationRequest(address, network);
+        return RestTemplateUtil.post(
+                restTemplate,
+                "/wallets/validate",
+                req,
+                WalletValidationResponse.class);
+    }
+
+    public WalletValidationResponse validateWalletSignature(
+            String address,
+            String network,
+            String nonce,
+            String signature) {
+        WalletSignatureValidationRequest req = new WalletSignatureValidationRequest(address, network, nonce, signature);
+
+        return RestTemplateUtil.post(
+                restTemplate,
+                "/wallets/validate-signature",
+                req,
+                WalletValidationResponse.class);
+    }
+
+    public void ensureWallet(Long playerId, String address, String network) {
+        RestTemplateUtil.postEntity(
+                restTemplate,
+                "/wallets/ensure",
+                new WalletEnsureRequest(playerId, address, network),
+                Void.class);
+    }
+}

@@ -1,0 +1,26 @@
+# Build artifacts
+target/
+
+# Maven wrapper cache but keep wrapper files
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Local configs (handled via env vars / compose)
+application-*.yml
+application-*.properties
+
+# Root-level Docker files (compose handles them)
+docker-compose.yml

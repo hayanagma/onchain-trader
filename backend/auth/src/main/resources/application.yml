@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.default_schema: auth
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    createSchemas: true
+    schemas: auth
+    table: flyway_auth_history
+
+jwt:
+  private-key-path: /app/private.pem
+  public-key-path: /app/public.pem
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.authentication: TRACE
+    org.springframework.security.web.authentication: TRACE
+    org.springframework.web: TRACE

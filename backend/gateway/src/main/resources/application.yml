@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: casino-gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth:8081/.well-known/jwks.json
+
+  cloud:
+    gateway:
+      routes:
+        # Auth service (login, refresh, logout)
+        - id: auth
+          uri: http://auth:8081
+          predicates:
+            - Path=/api/auth/**
+
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.web.reactive: DEBUG
+    org.springframework.cloud.gateway.handler.predicate: TRACE
