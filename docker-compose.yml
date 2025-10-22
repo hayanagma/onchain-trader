@@ -10,55 +10,63 @@ services:
       - auth
       - redis
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   auth:
     build:
-      context: ./backend/auth
+      context: ./backend
+      dockerfile: auth/Dockerfile
     env_file:
       - .env
     expose:
       - "8081"
     volumes:
+      - ~/.m2:/root/.m2
       - ./backend/keys/private.pem:/app/private.pem:ro
       - ./backend/keys/public.pem:/app/public.pem:ro
     depends_on:
       - db
       - redis
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   ledger:
     build:
-      context: ./backend/ledger
+      context: ./backend
+      dockerfile: ledger/Dockerfile
     env_file:
       - .env
     expose:
       - "8082"
+    volumes:
+      - ~/.m2:/root/.m2
     depends_on:
       - db
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   identity:
     build:
-      context: ./backend/identity
+      context: ./backend
+      dockerfile: identity/Dockerfile
     env_file:
       - .env
     expose:
       - "8083"
+    volumes:
+      - ~/.m2:/root/.m2
     depends_on:
       - db
       - redis
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   db:
-    image: postgres:15
+    image: postgres:16
     env_file:
       - .env
     ports:
@@ -71,7 +79,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   redis:
@@ -84,11 +92,11 @@ services:
       timeout: 3s
       retries: 20
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
 volumes:
   db_data:
 
 networks:
-  casino-net:
+  trader-net:
