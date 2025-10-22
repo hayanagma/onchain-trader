@@ -11,12 +11,9 @@ import com.casino.ledger.repository.WalletRepository;
 public class WalletService {
 
     private final WalletRepository walletRepository;
-    private final BalanceService balanceService;
 
-    public WalletService(WalletRepository walletRepository, BalanceService balanceService) {
+    public WalletService(WalletRepository walletRepository) {
         this.walletRepository = walletRepository;
-        this.balanceService = balanceService;
-
     }
 
     public Optional<WalletResponse> findByAddressAndNetwork(String address, String network) {
@@ -40,8 +37,6 @@ public class WalletService {
         wallet.setNetwork(network);
 
         Wallet saved = walletRepository.save(wallet);
-        balanceService.createBalancesForWallet(saved, network);
-
         return saved;
     }
 
