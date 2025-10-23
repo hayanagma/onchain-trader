@@ -4,7 +4,8 @@ CREATE TABLE currencies (
     decimals INT NOT NULL,
     enabled BOOLEAN NOT NULL,
     kind VARCHAR(16) NOT NULL,
-    contract_address VARCHAR(128)
+    contract_address VARCHAR(128),
+    player_id BIGINT
 );
 
 CREATE TABLE wallets (

@@ -19,7 +19,13 @@ spring:
           uri: http://auth:8081
           predicates:
             - Path=/api/auth/**
-
+          
+        # API service (player, public, admin)
+        - id: api
+          uri: http://api:8084
+          predicates:
+            - Path=/api/player/**, /api/public/**, /api/admin/**
+    
       globalcors:
         corsConfigurations:
           "[/**]":

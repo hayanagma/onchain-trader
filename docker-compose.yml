@@ -65,6 +65,23 @@ services:
       - trader-net
     restart: unless-stopped
 
+  api:
+    build:
+      context: ./backend
+      dockerfile: api/Dockerfile
+    env_file:
+      - .env
+    expose:
+      - "8084"
+    volumes:
+      - ~/.m2:/root/.m2
+    depends_on:
+      - ledger
+      - identity
+    networks:
+      - casino-net
+    restart: unless-stopped
+
   db:
     image: postgres:16
     env_file:

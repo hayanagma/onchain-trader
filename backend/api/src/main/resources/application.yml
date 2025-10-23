@@ -1,0 +1,12 @@
+server:
+  port: 8084
+  error:
+    include-message: always   
+
+spring:
+  application:
+    name: api
+
+logging:
+  level:
+    org.springframework.web: DEBUG

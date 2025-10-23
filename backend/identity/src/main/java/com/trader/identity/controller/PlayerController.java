@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.identity.service.PlayerService;
+import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.PlayerResponse;
 
 @RestController
@@ -28,6 +29,11 @@ public class PlayerController {
     @GetMapping("/{id}")
     public ResponseEntity<PlayerResponse> getPlayer(@PathVariable Long id) {
         return ResponseEntity.ok(playerService.getPlayerById(id));
+    }
+
+        @GetMapping("/{id}/profile")
+    public ResponseEntity<PlayerProfileInternalResponse> getPlayerProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(playerService.getPlayerProfile(id));
     }
 
 }

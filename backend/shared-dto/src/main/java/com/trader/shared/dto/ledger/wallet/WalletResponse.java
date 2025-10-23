@@ -1,7 +1,6 @@
 package com.trader.shared.dto.ledger.wallet;
 
 public class WalletResponse {
-
     private Long id;
     private Long playerId;
     private String address;
