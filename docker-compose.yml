@@ -79,7 +79,7 @@ services:
       - ledger
       - identity
     networks:
-      - casino-net
+      - trader-net
     restart: unless-stopped
 
   db:
