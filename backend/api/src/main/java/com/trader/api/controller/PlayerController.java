@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.service.PlayerService;
+import com.trader.shared.dto.identity.player.DeleteAccountRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileResponse;
 import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.player.UsernameResponse;
@@ -49,12 +50,10 @@ public class PlayerController {
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 
-    /*
-     * @PostMapping("/account/delete")
-     * public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody
-     * DeleteAccountRequest request) {
-     * return playerService.deleteAccount(request)
-     * .then(Mono.just(ResponseEntity.ok().build()));
-     * }
-     */
+    @PostMapping("/account/delete")
+    public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody DeleteAccountRequest request) {
+        return playerService.deleteAccount(request)
+                .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
 }

@@ -26,7 +26,9 @@ public class SecurityConfig {
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/auth/**", "/.well-known/jwks.json").permitAll()
+                                                .requestMatchers("/api/auth/**", "/.well-known/jwks.json",
+                                                                "/api/internal/**")
+                                                .permitAll()
                                                 .requestMatchers("/actuator/health").permitAll()
                                                 .anyRequest().authenticated())
                                 .authenticationProvider(adminAuthProvider)

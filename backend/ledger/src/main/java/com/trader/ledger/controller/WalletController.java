@@ -2,6 +2,7 @@ package com.trader.ledger.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +63,12 @@ public class WalletController {
     @GetMapping("/resolve-player")
     public ResponseEntity<Long> getPlayerIdByWalletAddress(@RequestParam String address) {
         return ResponseEntity.ok(walletService.findPlayerIdByWalletAddress(address));
+    }
+
+    @PostMapping("/{playerId}/cleanup")
+    public ResponseEntity<Void> cleanupPlayerWallet(@PathVariable Long playerId) {
+        walletService.cleanupPlayerWallet(playerId);
+        return ResponseEntity.ok().build();
     }
 
 }

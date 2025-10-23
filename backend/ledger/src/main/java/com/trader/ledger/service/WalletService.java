@@ -44,11 +44,8 @@ public class WalletService {
         return saved;
     }
 
-        public WalletPlayerResponse getWalletWithBalancesByPlayerId(Long playerId) {
-        Wallet wallet = walletRepository.findByPlayerId(playerId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Wallet not found for playerId " + playerId));
+    public WalletPlayerResponse getWalletWithBalancesByPlayerId(Long playerId) {
+        Wallet wallet = getWalletForPlayerEntity(playerId);
         return new WalletPlayerResponse(wallet.getAddress(), wallet.getNetwork());
     }
 
@@ -58,6 +55,18 @@ public class WalletService {
                         HttpStatus.NOT_FOUND,
                         "Wallet not found for address " + address));
         return wallet.getPlayerId();
+    }
+
+    public void cleanupPlayerWallet(Long playerId) {
+        Wallet wallet = getWalletForPlayerEntity(playerId);
+        wallet.setAddress("unlinked-" + wallet.getId());
+        walletRepository.save(wallet);
+    }
+    
+    public Wallet getWalletForPlayerEntity(Long playerId) {
+        return walletRepository.findByPlayerId(playerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Wallet not found for playerId " + playerId));
     }
 
 }

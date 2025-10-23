@@ -41,13 +41,13 @@ public class WalletClient {
                                                 .retrieve(),
                                 WalletPlayerResponse.class);
         }
-/* 
-        public Mono<WalletCleanupResponse> cleanupPlayerWallet(Long playerId) {
+ 
+        public Mono<Void> cleanupPlayerWallet(Long playerId) {
                 return webClient.post()
                                 .uri("/{playerId}/cleanup", playerId)
                                 .retrieve()
-                                .bodyToMono(WalletCleanupResponse.class);
+                                .bodyToMono(Void.class);
         }
- */
+ 
 }
  

@@ -90,21 +90,13 @@ public class PlayerService {
         return identityClient.updateUsername(playerId, request);
     }
   
-/* 
+
     public Mono<Void> deleteAccount(DeleteAccountRequest request) {
         Long playerId = playerContext.getCurrentPlayerId();
 
         return authClient.clearPlayerCookies()
                 .then(walletClient.cleanupPlayerWallet(playerId))
-                .flatMap(response -> {
-                    BigDecimal balance = response.getTotalBalance();
-                    Mono<Void> deleteCall = identityClient.deletePlayerAccount(playerId, request);
-                    if (balance.compareTo(BigDecimal.ZERO) > 0) {
-                        MailForfeitedFundsRequest mailRequest = new MailForfeitedFundsRequest(
-                                playerId, balance, response.getWalletAddress());
-                    }
-                    return deleteCall;
-                });
+                .then(identityClient.deletePlayerAccount(playerId, request));
     }
- */
+ 
 }

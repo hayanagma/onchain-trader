@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.trader.api.util.WebClientUtil;
 import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
+import com.trader.shared.dto.identity.player.DeleteAccountRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.player.UsernameResponse;
@@ -84,7 +85,7 @@ public class IdentityClient {
                                                 .retrieve());
         }
 
-/* 
+
         public Mono<Void> deletePlayerAccount(Long playerId, DeleteAccountRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.post()
@@ -92,6 +93,6 @@ public class IdentityClient {
                                                 .bodyValue(request)
                                                 .retrieve());
         }
-        */
+        
 }
  

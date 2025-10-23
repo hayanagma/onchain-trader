@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.identity.service.PlayerService;
+import com.trader.shared.dto.identity.player.DeleteAccountRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.PlayerResponse;
 import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
@@ -55,6 +56,14 @@ public class PlayerController {
             @RequestBody UpdateUsernameRequest request) {
         playerService.updateUsername(id, request);
         return ResponseEntity.ok().build();
+    }
+
+        @PostMapping("/{id}/delete")
+    public ResponseEntity<Void> deletePlayerAccount(
+            @PathVariable Long id,
+            @RequestBody DeleteAccountRequest request) {
+        playerService.deletePlayerAccount(id, request);
+        return ResponseEntity.noContent().build();
     }
 
 }

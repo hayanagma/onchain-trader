@@ -12,6 +12,7 @@ import com.trader.identity.repository.PlayerRepository;
 import com.trader.identity.validation.PlayerValidator;
 import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
+import com.trader.shared.dto.identity.player.DeleteAccountRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.PlayerResponse;
 import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
@@ -134,5 +135,17 @@ public class PlayerService {
         Player player = getPlayerEntity(playerId);
 
         return new UsernameResponse(player.getUsername());
+    }
+
+        public void deletePlayerAccount(Long playerId, DeleteAccountRequest request) {
+        if (!"I agree".equals(request.getConfirmation())) {
+            throw new IllegalArgumentException("Invalid confirmation text");
+        }
+
+        Player player = getPlayerEntity(playerId);
+        player.setActive(false);
+        playerRepository.save(player);
+
+        bumpTokenVersion(playerId);
     }
 }
