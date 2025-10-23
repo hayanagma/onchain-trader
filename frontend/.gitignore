@@ -23,3 +23,11 @@ dist/
 .idea/
 .vscode/
 *.swp
+
+node_modules
+.nuxt
+.output
+dist
+.cache
+.DS_Store
+.git

@@ -1,4 +1,19 @@
 services:
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    networks:
+      - trader-net
+    restart: unless-stopped
+    
   gateway:
     build:
       context: ./backend/gateway
