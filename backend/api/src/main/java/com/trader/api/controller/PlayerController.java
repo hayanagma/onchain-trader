@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.service.PlayerService;
 import com.trader.shared.dto.identity.player.PlayerProfileResponse;
+import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
+import com.trader.shared.dto.identity.player.UsernameResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -28,8 +30,7 @@ public class PlayerController {
         return playerService.getPlayerProfile()
                 .map(ResponseEntity::ok);
     }
-    
-/* 
+
     @GetMapping("/profile/random-username")
     public Mono<ResponseEntity<UsernameResponse>> randomizeUsername() {
         return playerService.randomizeUsername()
@@ -47,13 +48,13 @@ public class PlayerController {
         return playerService.updateUsername(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
-  */
-/* 
-    @PostMapping("/account/delete")
-    public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody DeleteAccountRequest request) {
-        return playerService.deleteAccount(request)
-                .then(Mono.just(ResponseEntity.ok().build()));
-    }
- */
+
+    /*
+     * @PostMapping("/account/delete")
+     * public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody
+     * DeleteAccountRequest request) {
+     * return playerService.deleteAccount(request)
+     * .then(Mono.just(ResponseEntity.ok().build()));
+     * }
+     */
 }
- 

@@ -1,5 +1,6 @@
 package com.trader.identity.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,9 @@ import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.PlayerResponse;
+import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.player.UsernameChangeStatus;
+import com.trader.shared.dto.identity.player.UsernameResponse;
 
 @Service
 public class PlayerService {
@@ -87,7 +90,7 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
-        public List<AdminPlayerInternalResponse> getPlayers() {
+    public List<AdminPlayerInternalResponse> getPlayers() {
         return playerRepository.findAll()
                 .stream()
                 .map(this::toAdminPlayerResponse)
@@ -106,5 +109,30 @@ public class PlayerService {
                 player.isBanned(),
                 player.getBannedReason(),
                 player.isActive());
+    }
+
+    public UsernameResponse randomizeUsername(Long playerId) {
+        String username = randomNameGenerator.generate();
+        return new UsernameResponse(username);
+    }
+
+    public void updateUsername(Long playerId, UpdateUsernameRequest request) {
+        Player player = getPlayerEntity(playerId);
+
+        UsernameChangeStatus status = playerValidator.getUsernameChangeStatus(player);
+        if (!status.isCanChange()) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                    "You can only change your username once every 7 days");
+        }
+
+        player.setUsername(request.getUsername());
+        player.setLastUsernameChangeAt(Instant.now());
+        playerRepository.save(player);
+    }
+
+    public UsernameResponse getUsername(Long playerId) {
+        Player player = getPlayerEntity(playerId);
+
+        return new UsernameResponse(player.getUsername());
     }
 }

@@ -9,6 +9,8 @@ import com.trader.api.security.PlayerContext;
 import com.trader.shared.dto.identity.admin.AdminPlayerResponse;
 import com.trader.shared.dto.identity.player.DeleteAccountRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileResponse;
+import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
+import com.trader.shared.dto.identity.player.UsernameResponse;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -72,7 +74,7 @@ public class PlayerService {
         }
     }
 
-/* 
+
     public Mono<UsernameResponse> randomizeUsername() {
         Long playerId = playerContext.getCurrentPlayerId();
         return identityClient.randomizeUsername(playerId);
@@ -87,39 +89,8 @@ public class PlayerService {
         Long playerId = playerContext.getCurrentPlayerId();
         return identityClient.updateUsername(playerId, request);
     }
-
-    public Flux<AdminPlayerResponse> getPlayers(String walletAddress) {
-        if (walletAddress != null && !walletAddress.isBlank()) {
-            return walletClient.getPlayerIdByWalletAddress(walletAddress)
-                    .flatMapMany(playerId -> {
-                        if (playerId == null) {
-                            return Flux.empty();
-                        }
-                        return identityClient.getPlayer(playerId)
-                                .flatMap(player -> walletClient.getWalletForPlayer(player.getId())
-                                        .map(wallet -> new AdminPlayerResponse(
-                                                player.getId(),
-                                                player.getUsername(),
-                                                player.isBanned(),
-                                                player.getBannedReason(),
-                                                player.isActive(),
-                                                wallet)))
-                                .flux();
-                    });
-        } else {
-            return identityClient.getPlayers()
-                    .flatMap(player -> walletClient.getWalletForPlayer(player.getId())
-                            .map(wallet -> new AdminPlayerResponse(
-                                    player.getId(),
-                                    player.getUsername(),
-                                    player.isBanned(),
-                                    player.getBannedReason(),
-                                    player.isActive(),
-                                    wallet)));
-        }
-    }
   
-
+/* 
     public Mono<Void> deleteAccount(DeleteAccountRequest request) {
         Long playerId = playerContext.getCurrentPlayerId();
 

@@ -8,6 +8,8 @@ import com.trader.api.util.WebClientUtil;
 import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
+import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
+import com.trader.shared.dto.identity.player.UsernameResponse;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -57,7 +59,7 @@ public class IdentityClient {
                                                 .retrieve());
         }
         
-/* 
+
         public Mono<UsernameResponse> randomizeUsername(Long playerId) {
                 return WebClientUtil.handle(
                                 webClient.post()
@@ -82,7 +84,7 @@ public class IdentityClient {
                                                 .retrieve());
         }
 
-
+/* 
         public Mono<Void> deletePlayerAccount(Long playerId, DeleteAccountRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.post()
