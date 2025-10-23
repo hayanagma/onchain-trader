@@ -5,6 +5,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 
 import com.trader.api.util.WebClientUtil;
+import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
+import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 
 import reactor.core.publisher.Flux;
@@ -28,7 +30,7 @@ public class IdentityClient {
                                                 .retrieve(),
                                 PlayerProfileInternalResponse.class);
         }
-/* 
+
         public Mono<AdminPlayerInternalResponse> getPlayer(Long playerId) {
                 return WebClientUtil.handle(
                                 webClient.get()
@@ -46,7 +48,16 @@ public class IdentityClient {
                                                 .retrieve(),
                                 AdminPlayerInternalResponse.class);
         }
-
+        
+        public Mono<Void> updateBanStatus(BanRequest request) {
+                return WebClientUtil.handleVoid(
+                                webClient.put()
+                                                .uri("/admin/players/ban-status")
+                                                .bodyValue(request)
+                                                .retrieve());
+        }
+        
+/* 
         public Mono<UsernameResponse> randomizeUsername(Long playerId) {
                 return WebClientUtil.handle(
                                 webClient.post()
@@ -71,13 +82,6 @@ public class IdentityClient {
                                                 .retrieve());
         }
 
-        public Mono<Void> updateBanStatus(BanRequest request) {
-                return WebClientUtil.handleVoid(
-                                webClient.put()
-                                                .uri("/admin/players/ban-status")
-                                                .bodyValue(request)
-                                                .retrieve());
-        }
 
         public Mono<Void> deletePlayerAccount(Long playerId, DeleteAccountRequest request) {
                 return WebClientUtil.handleVoid(
@@ -86,6 +90,6 @@ public class IdentityClient {
                                                 .bodyValue(request)
                                                 .retrieve());
         }
-          */
+        */
 }
  

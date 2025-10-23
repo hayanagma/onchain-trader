@@ -1,10 +1,14 @@
 package com.trader.ledger.service;
 
 import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.ledger.model.Wallet;
 import com.trader.ledger.repository.WalletRepository;
+import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 
 @Service
@@ -38,6 +42,22 @@ public class WalletService {
 
         Wallet saved = walletRepository.save(wallet);
         return saved;
+    }
+
+        public WalletPlayerResponse getWalletWithBalancesByPlayerId(Long playerId) {
+        Wallet wallet = walletRepository.findByPlayerId(playerId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Wallet not found for playerId " + playerId));
+        return new WalletPlayerResponse(wallet.getAddress(), wallet.getNetwork());
+    }
+
+    public Long findPlayerIdByWalletAddress(String address) {
+        Wallet wallet = walletRepository.findByAddress(address)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Wallet not found for address " + address));
+        return wallet.getPlayerId();
     }
 
 }

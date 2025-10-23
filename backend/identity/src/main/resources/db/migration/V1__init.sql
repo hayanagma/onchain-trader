@@ -4,7 +4,8 @@ CREATE TABLE players (
     isbanned BOOLEAN NOT NULL DEFAULT FALSE,
     banned_reason VARCHAR(255),
     token_version INT NOT NULL DEFAULT 1,
-    last_username_change_at TIMESTAMP
+    last_username_change_at TIMESTAMP,
+    active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE admins (

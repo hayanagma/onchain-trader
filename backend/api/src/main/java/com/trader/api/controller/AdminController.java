@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trader.api.client.IdentityClient;
 import com.trader.api.client.ledger.CurrencyClient;
 import com.trader.api.service.PlayerService;
+import com.trader.shared.dto.identity.admin.AdminPlayerResponse;
+import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 
 import reactor.core.publisher.Mono;
@@ -31,7 +33,7 @@ public class AdminController {
         this.identityClient = identityClient;
         this.currencyClient = currencyClient;
     }
-/* 
+ 
     @GetMapping("/players")
     public Mono<ResponseEntity<List<AdminPlayerResponse>>> getPlayers(
             @RequestParam(required = false) String walletAddress) {
@@ -45,7 +47,7 @@ public class AdminController {
         return identityClient.updateBanStatus(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
- */
+ 
     @GetMapping("/currencies")
     public Mono<ResponseEntity<List<CurrencyResponse>>> getAllCurrencies() {
         return currencyClient.getAllCurrencies()

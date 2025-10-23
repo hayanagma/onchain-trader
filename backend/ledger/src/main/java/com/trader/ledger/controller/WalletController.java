@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trader.ledger.service.WalletService;
 import com.trader.ledger.validation.WalletValidator;
 import com.trader.shared.dto.ledger.wallet.WalletEnsureRequest;
+import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletSignatureValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationRequest;
@@ -51,6 +52,16 @@ public class WalletController {
         return walletService.findByAddressAndNetwork(address, network)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/wallet-by-player")
+    public ResponseEntity<WalletPlayerResponse> getWalletForPlayer(@RequestParam Long playerId) {
+        return ResponseEntity.ok(walletService.getWalletWithBalancesByPlayerId(playerId));
+    }
+
+    @GetMapping("/resolve-player")
+    public ResponseEntity<Long> getPlayerIdByWalletAddress(@RequestParam String address) {
+        return ResponseEntity.ok(walletService.findPlayerIdByWalletAddress(address));
     }
 
 }

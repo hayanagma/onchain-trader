@@ -19,7 +19,7 @@ public class WalletClient {
                                 .baseUrl("http://ledger:8082/api/internal/ledger/wallets")
                                 .build();
         }
-/* 
+
         public Mono<Long> getPlayerIdByWalletAddress(String walletAddress) {
                 return WebClientUtil.handle(
                                 webClient.get()
@@ -30,7 +30,7 @@ public class WalletClient {
                                                 .retrieve(),
                                 Long.class);
         }
- */
+ 
         public Mono<WalletPlayerResponse> getWalletForPlayer(Long playerId) {
                 return WebClientUtil.handle(
                                 webClient.get()

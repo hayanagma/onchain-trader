@@ -1,5 +1,7 @@
 package com.trader.identity.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -7,6 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trader.identity.model.Player;
 import com.trader.identity.repository.PlayerRepository;
 import com.trader.identity.validation.PlayerValidator;
+import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
+import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
 import com.trader.shared.dto.identity.player.PlayerResponse;
 import com.trader.shared.dto.identity.player.UsernameChangeStatus;
@@ -18,7 +22,8 @@ public class PlayerService {
     private final RandomNameGenerator randomNameGenerator;
     private final PlayerValidator playerValidator;
 
-    public PlayerService(PlayerRepository playerRepository, RandomNameGenerator randomNameGenerator, PlayerValidator playerValidator) {
+    public PlayerService(PlayerRepository playerRepository, RandomNameGenerator randomNameGenerator,
+            PlayerValidator playerValidator) {
         this.playerRepository = playerRepository;
         this.randomNameGenerator = randomNameGenerator;
         this.playerValidator = playerValidator;
@@ -71,4 +76,35 @@ public class PlayerService {
                         "Player not found: " + playerId));
     }
 
+    public void setBanStatus(BanRequest request) {
+        Player player = getPlayerEntity(request.getPlayerId());
+
+        player.setBanned(request.isBanned());
+        player.setBannedReason(request.isBanned() ? request.getReason() : null);
+
+        player.setTokenVersion(player.getTokenVersion() + 1);
+
+        playerRepository.save(player);
+    }
+
+        public List<AdminPlayerInternalResponse> getPlayers() {
+        return playerRepository.findAll()
+                .stream()
+                .map(this::toAdminPlayerResponse)
+                .toList();
+    }
+
+    public AdminPlayerInternalResponse getAdminPlayerById(Long playerId) {
+        Player player = getPlayerEntity(playerId);
+        return toAdminPlayerResponse(player);
+    }
+
+    private AdminPlayerInternalResponse toAdminPlayerResponse(Player player) {
+        return new AdminPlayerInternalResponse(
+                player.getId(),
+                player.getUsername(),
+                player.isBanned(),
+                player.getBannedReason(),
+                player.isActive());
+    }
 }

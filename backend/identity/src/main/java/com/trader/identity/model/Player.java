@@ -30,6 +30,9 @@ public class Player {
     @Column
     private Instant lastUsernameChangeAt;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     public Player() {
     }
 
@@ -38,6 +41,7 @@ public class Player {
         this.isBanned = false;
         this.bannedReason = null;
         this.tokenVersion = 1;
+        this.active = true;
     }
 
     public Long getId() {
@@ -88,4 +92,11 @@ public class Player {
         this.lastUsernameChangeAt = lastUsernameChangeAt;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }
