@@ -6,6 +6,7 @@ import com.trader.shared.enums.NetworkType;
 public class CurrencyResponse {
 
     private String code;
+    private String name;
     private NetworkType network;
     private int decimals;
     private CurrencyKind kind;
@@ -15,11 +16,13 @@ public class CurrencyResponse {
     }
 
     public CurrencyResponse(String code,
+            String name,
             NetworkType network,
             int decimals,
             CurrencyKind kind,
             String contractAddress) {
         this.code = code;
+        this.name = name;
         this.network = network;
         this.decimals = decimals;
         this.kind = kind;
@@ -32,6 +35,14 @@ public class CurrencyResponse {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public NetworkType getNetwork() {

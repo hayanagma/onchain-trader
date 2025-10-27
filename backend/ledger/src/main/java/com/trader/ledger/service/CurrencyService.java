@@ -6,8 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.trader.ledger.dto.TokenMetadata;
 import com.trader.ledger.model.Currency;
+import com.trader.ledger.model.PlayerCurrency;
 import com.trader.ledger.repository.CurrencyRepository;
+import com.trader.ledger.repository.PlayerCurrencyRepository;
+import com.trader.ledger.verifier.BlockchainVerifierFactory;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.enums.CurrencyKind;
@@ -17,68 +21,53 @@ import com.trader.shared.enums.NetworkType;
 public class CurrencyService {
 
     private final CurrencyRepository currencyRepository;
+    private final BlockchainVerifierFactory blockchainVerifierFactory;
+    private final PlayerCurrencyRepository playerCurrencyRepository;
 
-    public CurrencyService(CurrencyRepository currencyRepository) {
+    public CurrencyService(CurrencyRepository currencyRepository, BlockchainVerifierFactory blockchainVerifierFactory,
+            PlayerCurrencyRepository playerCurrencyRepository) {
         this.currencyRepository = currencyRepository;
+        this.blockchainVerifierFactory = blockchainVerifierFactory;
+        this.playerCurrencyRepository = playerCurrencyRepository;
     }
 
     public void createDefaultCurrencies() {
-        if (currencyRepository.findByCode("TRX").isEmpty()) {
-            Currency trx = new Currency();
-            trx.setCode("TRX");
-            trx.setNetwork(NetworkType.TRON);
-            trx.setDecimals(6);
-            trx.setKind(CurrencyKind.NATIVE);
-            trx.setContractAddress(null);
-            trx.setPlayerId(null);
-            currencyRepository.save(trx);
-        }
-
-        if (currencyRepository.findByCode("ETH").isEmpty()) {
-            Currency eth = new Currency();
-            eth.setCode("ETH");
-            eth.setNetwork(NetworkType.ETHEREUM);
-            eth.setDecimals(18);
-            eth.setKind(CurrencyKind.NATIVE);
-            eth.setContractAddress(null);
-            eth.setPlayerId(null);
-            currencyRepository.save(eth);
-        }
-
-        if (currencyRepository.findByCode("SOL").isEmpty()) {
-            Currency sol = new Currency();
-            sol.setCode("SOL");
-            sol.setNetwork(NetworkType.SOLANA);
-            sol.setDecimals(9);
-            sol.setKind(CurrencyKind.NATIVE);
-            sol.setContractAddress(null);
-            sol.setPlayerId(null);
-            currencyRepository.save(sol);
-        }
-
-        if (currencyRepository.findByCode("BTC").isEmpty()) {
-            Currency btc = new Currency();
-            btc.setCode("BTC");
-            btc.setNetwork(NetworkType.BITCOIN);
-            btc.setDecimals(8);
-            btc.setKind(CurrencyKind.NATIVE);
-            btc.setContractAddress(null);
-            btc.setPlayerId(null);
-            currencyRepository.save(btc);
-        }
+        upsertNative("TRX", "TRON", NetworkType.TRON, 6);
+        upsertNative("ETH", "Ether", NetworkType.ETHEREUM, 18);
+        upsertNative("SOL", "Solana", NetworkType.SOLANA, 9);
+        upsertNative("BTC", "Bitcoin", NetworkType.BITCOIN, 8);
     }
 
-    public Currency findCurrencyByCode(String currencyCode) {
-        return currencyRepository.findByCode(currencyCode)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Currency not found: " + currencyCode));
+    private void upsertNative(String code, String name, NetworkType network, int decimals) {
+        if (currencyRepository.findByCodeAndNetwork(code, network).isEmpty()) {
+            Currency currency = new Currency();
+            currency.setCode(code);
+            currency.setName(name);
+            currency.setNetwork(network);
+            currency.setDecimals(decimals);
+            currency.setKind(CurrencyKind.NATIVE);
+            currency.setContractAddress(null);
+            currencyRepository.save(currency);
+        }
     }
 
     public List<CurrencyResponse> getAllCurrencies() {
         return currencyRepository.findAll().stream()
                 .map(currency -> new CurrencyResponse(
                         currency.getCode(),
+                        currency.getName(),
+                        currency.getNetwork(),
+                        currency.getDecimals(),
+                        currency.getKind(),
+                        currency.getContractAddress()))
+                .toList();
+    }
+
+    public List<CurrencyResponse> getVisibleCurrencies(Long playerId, NetworkType network) {
+        return currencyRepository.findVisibleByPlayerAndNetwork(playerId, network).stream()
+                .map(currency -> new CurrencyResponse(
+                        currency.getCode(),
+                        currency.getName(),
                         currency.getNetwork(),
                         currency.getDecimals(),
                         currency.getKind(),
@@ -87,43 +76,31 @@ public class CurrencyService {
     }
 
     public void createCurrency(Long playerId, CurrencyAddRequest request) {
-        String code = request.getCode();
         NetworkType network = request.getNetwork();
         String contractAddress = request.getContractAddress();
 
-        currencyRepository.findByCodeAndNetworkAndPlayerId(code, network, null)
-                .ifPresent(c -> {
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                            "Currency already exists as system currency");
+        Currency currency = currencyRepository
+                .findByContractAddressAndNetwork(contractAddress, network)
+                .orElseGet(() -> {
+                    TokenMetadata m = blockchainVerifierFactory.getVerifier(network).verify(contractAddress);
+                    Currency c = new Currency();
+                    c.setCode(m.getSymbol());
+                    c.setName(m.getName() != null && !m.getName().isBlank() ? m.getName() : m.getSymbol());
+                    c.setNetwork(network);
+                    c.setDecimals(m.getDecimals());
+                    c.setKind(CurrencyKind.TOKEN);
+                    c.setContractAddress(contractAddress);
+                    return currencyRepository.save(c);
                 });
 
-        currencyRepository.findByCodeAndNetworkAndPlayerId(code, network, playerId)
-                .ifPresent(c -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT,
-                            "Currency already exists for player");
-                });
-        
-        //validate contractaddress
+        if (playerCurrencyRepository.existsByPlayerIdAndCurrency_Id(playerId, currency.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Player already added this token");
+        }
 
-        Currency currency = new Currency();
-        currency.setCode(code);
-        currency.setNetwork(network);
-        currency.setDecimals(6); // placeholder until blockchain check
-        currency.setKind(CurrencyKind.TOKEN);
-        currency.setContractAddress(contractAddress);
-        currency.setPlayerId(playerId);
-
-        currencyRepository.save(currency);
+        PlayerCurrency playerCurrency = new PlayerCurrency();
+        playerCurrency.setPlayerId(playerId);
+        playerCurrency.setCurrency(currency);
+        playerCurrencyRepository.save(playerCurrency);
     }
 
-    public List<CurrencyResponse> getCurrenciesByNetwork(NetworkType network) {
-        return currencyRepository.findByNetwork(network).stream()
-                .map(currency -> new CurrencyResponse(
-                        currency.getCode(),
-                        currency.getNetwork(),
-                        currency.getDecimals(),
-                        currency.getKind(),
-                        currency.getContractAddress()))
-                .toList();
-    }
 }

@@ -16,7 +16,6 @@ import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.enums.NetworkType;
 
-
 @RestController
 @RequestMapping("/api/internal/ledger/currencies")
 public class CurrencyController {
@@ -38,8 +37,11 @@ public class CurrencyController {
         currencyService.createCurrency(playerId, request);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/network/{network}")
-    public ResponseEntity<List<CurrencyResponse>> getCurrenciesByNetwork(@PathVariable NetworkType network) {
-        return ResponseEntity.ok(currencyService.getCurrenciesByNetwork(network));
+    public ResponseEntity<List<CurrencyResponse>> getCurrenciesByNetwork(
+            @PathVariable NetworkType network,
+            @RequestParam Long playerId) {
+        return ResponseEntity.ok(currencyService.getVisibleCurrencies(playerId, network));
     }
 }

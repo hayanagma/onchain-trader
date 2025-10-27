@@ -40,10 +40,13 @@ public class CurrencyClient {
                                                 .retrieve());
         }
 
-        public Flux<CurrencyResponse> getCurrenciesByNetwork(NetworkType network) {
+        public Flux<CurrencyResponse> getCurrenciesByNetwork(Long playerId, NetworkType network) {
                 return WebClientUtil.handleFlux(
                                 webClient.get()
-                                                .uri("/network/{network}", network)
+                                                .uri(uriBuilder -> uriBuilder
+                                                                .path("/network/{network}")
+                                                                .queryParam("playerId", playerId)
+                                                                .build(network))
                                                 .retrieve(),
                                 CurrencyResponse.class);
         }

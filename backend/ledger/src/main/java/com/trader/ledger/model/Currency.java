@@ -16,6 +16,9 @@ public class Currency {
     @Column(nullable = false, length = 32)
     private String code;
 
+    @Column(nullable = false, length = 64)
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
     private NetworkType network;
@@ -29,12 +32,6 @@ public class Currency {
 
     @Column(length = 128)
     private String contractAddress;
-
-    @Column(name = "player_id")
-    private Long playerId;
-
-    public Currency() {
-    }
 
     public Long getId() {
         return id;
@@ -50,6 +47,14 @@ public class Currency {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public NetworkType getNetwork() {
@@ -82,13 +87,5 @@ public class Currency {
 
     public void setContractAddress(String contractAddress) {
         this.contractAddress = contractAddress;
-    }
-
-    public Long getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
     }
 }

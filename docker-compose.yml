@@ -57,6 +57,7 @@ services:
       - "8082"
     volumes:
       - ~/.m2:/root/.m2
+      - ./backend/keys/private.pem:/app/private.pem:ro
     depends_on:
       - db
     networks:

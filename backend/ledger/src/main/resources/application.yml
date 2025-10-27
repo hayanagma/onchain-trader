@@ -20,6 +20,18 @@ spring:
     schemas: ledger
     table: flyway_ledger_history
 
+tron:
+  grid:
+    api:
+      key: ${TRONGRID_API_KEY}
+      url: ${TRONGRID_API_URL}
+  scan:
+    api:
+      key: ${TRONSCAN_API_KEY}
+      url: ${TRONSCAN_API_URL}
+
+    
+
 logging:
   level:
     org.springframework.security: DEBUG
