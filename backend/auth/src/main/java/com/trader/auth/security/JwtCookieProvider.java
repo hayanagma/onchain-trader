@@ -21,9 +21,9 @@ public class JwtCookieProvider {
     public ResponseCookie createRefreshCookie(String token, RefreshTokenCookie type) {
         return ResponseCookie.from(type.getName(), token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(secure)
                 .path("/")
-                .sameSite("Lax")
+                .sameSite(sameSite)
                 .maxAge(maxAge)
                 .build();
     }
@@ -31,9 +31,9 @@ public class JwtCookieProvider {
     public ResponseCookie clearRefreshCookie(RefreshTokenCookie type) {
         return ResponseCookie.from(type.getName(), "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(secure)
                 .path("/")
-                .sameSite("Lax")
+                .sameSite(sameSite)
                 .maxAge(0)
                 .build();
     }

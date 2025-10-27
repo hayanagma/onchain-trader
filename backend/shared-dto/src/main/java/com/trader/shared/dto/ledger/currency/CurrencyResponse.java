@@ -1,13 +1,13 @@
 package com.trader.shared.dto.ledger.currency;
 
 import com.trader.shared.enums.CurrencyKind;
+import com.trader.shared.enums.NetworkType;
 
 public class CurrencyResponse {
 
     private String code;
-    private String network;
+    private NetworkType network;
     private int decimals;
-    private boolean enabled;
     private CurrencyKind kind;
     private String contractAddress;
 
@@ -15,15 +15,13 @@ public class CurrencyResponse {
     }
 
     public CurrencyResponse(String code,
-            String network,
+            NetworkType network,
             int decimals,
-            boolean enabled,
             CurrencyKind kind,
             String contractAddress) {
         this.code = code;
         this.network = network;
         this.decimals = decimals;
-        this.enabled = enabled;
         this.kind = kind;
         this.contractAddress = contractAddress;
     }
@@ -36,11 +34,11 @@ public class CurrencyResponse {
         this.code = code;
     }
 
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 
-    public void setNetwork(String network) {
+    public void setNetwork(NetworkType network) {
         this.network = network;
     }
 
@@ -50,14 +48,6 @@ public class CurrencyResponse {
 
     public void setDecimals(int decimals) {
         this.decimals = decimals;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public CurrencyKind getKind() {

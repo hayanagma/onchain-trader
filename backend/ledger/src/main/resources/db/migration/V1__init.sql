@@ -1,8 +1,8 @@
 CREATE TABLE currencies (
-    code VARCHAR(32) PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(32) UNIQUE NOT NULL,
     network VARCHAR(16) NOT NULL,
     decimals INT NOT NULL,
-    enabled BOOLEAN NOT NULL,
     kind VARCHAR(16) NOT NULL,
     contract_address VARCHAR(128),
     player_id BIGINT
