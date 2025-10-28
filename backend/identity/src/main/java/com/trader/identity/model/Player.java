@@ -18,30 +18,29 @@ public class Player {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(name = "isbanned", nullable = false)
-    private boolean isBanned = false;
+    @Column(name = "is_banned", nullable = false)
+    private boolean banned = false;
 
-    @Column
+    @Column(name = "banned_reason")
     private String bannedReason;
 
     @Column(nullable = false)
-    private Integer tokenVersion = 1;
+    private int tokenVersion = 1;
 
-    @Column
+    @Column(name = "last_username_change_at")
     private Instant lastUsernameChangeAt;
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @Column(nullable = false)
+    private boolean subscribed = false;
 
     public Player() {
     }
 
     public Player(String username) {
         this.username = username;
-        this.isBanned = false;
-        this.bannedReason = null;
-        this.tokenVersion = 1;
-        this.active = true;
     }
 
     public Long getId() {
@@ -61,11 +60,11 @@ public class Player {
     }
 
     public boolean isBanned() {
-        return isBanned;
+        return banned;
     }
 
-    public void setBanned(boolean isBanned) {
-        this.isBanned = isBanned;
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 
     public String getBannedReason() {
@@ -76,11 +75,11 @@ public class Player {
         this.bannedReason = bannedReason;
     }
 
-    public Integer getTokenVersion() {
+    public int getTokenVersion() {
         return tokenVersion;
     }
 
-    public void setTokenVersion(Integer tokenVersion) {
+    public void setTokenVersion(int tokenVersion) {
         this.tokenVersion = tokenVersion;
     }
 
@@ -98,5 +97,13 @@ public class Player {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
     }
 }

@@ -44,6 +44,7 @@ public class PlayerService {
         player.setUsername(randomNameGenerator.generate());
         player.setBanned(false);
         player.setTokenVersion(1);
+        player.setSubscribed(false);
         Player saved = playerRepository.save(player);
         return toResponse(saved);
     }
@@ -54,7 +55,8 @@ public class PlayerService {
                 player.getUsername(),
                 player.isBanned(),
                 player.getBannedReason(),
-                player.getTokenVersion());
+                player.getTokenVersion(),
+                player.isSubscribed());
     }
 
     public int getTokenVersion(Long playerId) {
@@ -70,7 +72,7 @@ public class PlayerService {
 
         UsernameChangeStatus status = playerValidator.getUsernameChangeStatus(player);
 
-        return new PlayerProfileInternalResponse(player.getId(), player.getUsername(), status);
+        return new PlayerProfileInternalResponse(player.getId(), player.getUsername(), status, player.isSubscribed());
     }
 
     public Player getPlayerEntity(Long playerId) {
