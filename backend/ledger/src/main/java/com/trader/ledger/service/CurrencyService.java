@@ -11,11 +11,14 @@ import com.trader.ledger.model.Currency;
 import com.trader.ledger.model.PlayerCurrency;
 import com.trader.ledger.repository.CurrencyRepository;
 import com.trader.ledger.repository.PlayerCurrencyRepository;
+import com.trader.ledger.validation.CurrencyValidator;
 import com.trader.ledger.verifier.BlockchainVerifierFactory;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.enums.CurrencyKind;
 import com.trader.shared.enums.NetworkType;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CurrencyService {
@@ -23,12 +26,14 @@ public class CurrencyService {
     private final CurrencyRepository currencyRepository;
     private final BlockchainVerifierFactory blockchainVerifierFactory;
     private final PlayerCurrencyRepository playerCurrencyRepository;
+    private final CurrencyValidator currencyValidator;
 
     public CurrencyService(CurrencyRepository currencyRepository, BlockchainVerifierFactory blockchainVerifierFactory,
-            PlayerCurrencyRepository playerCurrencyRepository) {
+            PlayerCurrencyRepository playerCurrencyRepository, CurrencyValidator currencyValidator) {
         this.currencyRepository = currencyRepository;
         this.blockchainVerifierFactory = blockchainVerifierFactory;
         this.playerCurrencyRepository = playerCurrencyRepository;
+        this.currencyValidator = currencyValidator;
     }
 
     public void createDefaultCurrencies() {
@@ -75,9 +80,12 @@ public class CurrencyService {
                 .toList();
     }
 
+    @Transactional
     public void createCurrency(Long playerId, CurrencyAddRequest request) {
         NetworkType network = request.getNetwork();
         String contractAddress = request.getContractAddress();
+
+        currencyValidator.validateAddress(contractAddress, network);
 
         Currency currency = currencyRepository
                 .findByContractAddressAndNetwork(contractAddress, network)

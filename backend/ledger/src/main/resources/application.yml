@@ -30,7 +30,12 @@ tron:
       key: ${TRONSCAN_API_KEY}
       url: ${TRONSCAN_API_URL}
 
-    
+solana:
+  helius:
+    api:
+      url: ${SOLANA_HELIUS_API_URL}
+  tokenlist:
+    url: ${SOLANA_TOKENLIST_URL}  
 
 logging:
   level:

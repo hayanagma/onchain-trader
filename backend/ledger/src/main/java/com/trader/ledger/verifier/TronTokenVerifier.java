@@ -11,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TronTokenVerifier implements BlockchainVerifier {
@@ -95,18 +96,20 @@ public class TronTokenVerifier implements BlockchainVerifier {
                     Object first = tokenList.get(0);
                     if (first instanceof Map<?, ?> token) {
                         String symbol = token.get("symbol") != null ? token.get("symbol").toString() : symbolFallback;
-                        String name = token.get("name") != null ? token.get("name").toString() : symbol;
+                        String name = token.get("name") != null ? token.get("name").toString() : symbolFallback;
                         int decimals = token.get("decimals") instanceof Number
                                 ? ((Number) token.get("decimals")).intValue()
                                 : 6;
-                        return new TokenMetadata(symbol, name, decimals);
+                        return new TokenMetadata(name, symbol, decimals);
                     }
                 }
             }
         } catch (HttpClientErrorException ignored) {
         }
 
-        throw new IllegalStateException("Unknown or unsupported TRON token: " + contractAddress);
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Unknown or unsupported TRON token: " + contractAddress);
     }
 
     private static byte[] hexToBytes(String hex) {
