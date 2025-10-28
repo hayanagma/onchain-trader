@@ -43,7 +43,7 @@ public class WalletService {
         return walletRepository.save(wallet);
     }
 
-    public WalletTraderResponse getWalletWithBalancesByTraderId(Long traderId) {
+    public WalletTraderResponse getWalletByTraderId(Long traderId) {
         Wallet wallet = getWalletForTraderEntity(traderId);
         return new WalletTraderResponse(wallet.getAddress(), wallet.getNetwork());
     }

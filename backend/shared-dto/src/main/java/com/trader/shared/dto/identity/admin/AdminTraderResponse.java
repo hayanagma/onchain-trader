@@ -10,6 +10,7 @@ public class AdminTraderResponse {
     private String bannedReason;
     private boolean active;
     private WalletTraderResponse wallet;
+    private boolean subscribed;
 
     public AdminTraderResponse() {
     }
@@ -19,13 +20,15 @@ public class AdminTraderResponse {
             boolean banned,
             String bannedReason,
             boolean active,
-            WalletTraderResponse wallet) {
+            WalletTraderResponse wallet,
+            boolean subscribed) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.active = active;
         this.wallet = wallet;
+        this.subscribed = subscribed;
     }
 
     public Long getId() {
@@ -74,5 +77,13 @@ public class AdminTraderResponse {
 
     public void setWallet(WalletTraderResponse wallet) {
         this.wallet = wallet;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
     }
 }

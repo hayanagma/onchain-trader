@@ -41,23 +41,21 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
     public Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
-        return new Converter<Jwt, Mono<AbstractAuthenticationToken>>() {
-            @Override
-            public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
-                String subject = jwt.getSubject();
-                List<String> roles = jwt.getClaimAsStringList("roles");
+        return jwt -> {
+            String subject = jwt.getSubject();
+            List<String> roles = jwt.getClaimAsStringList("roles");
+            Object tvClaim = jwt.getClaim("tv");
+            int tokenVersion = (tvClaim instanceof Number n) ? n.intValue() : 0;
 
-                Object tvClaim = jwt.getClaim("tv");
-                int tokenVersion = (tvClaim instanceof Number n) ? n.intValue() : 0;
+            JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
+            delegate.setJwtGrantedAuthoritiesConverter(new CustomRoleConverter());
 
-                JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
-                delegate.setJwtGrantedAuthoritiesConverter(new CustomRoleConverter());
-
-                return Mono.fromRunnable(() -> tokenValidator.validate(roles.get(0), subject, tokenVersion))
-                        .then(Mono.fromCallable(() -> delegate.convert(jwt)));
-            }
+            String role = roles.get(0);
+            return tokenValidator.validate(role, subject, tokenVersion)
+                    .then(Mono.defer(() -> Mono.just(delegate.convert(jwt))));
         };
     }
+
+    
 }

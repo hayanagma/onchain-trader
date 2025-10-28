@@ -57,7 +57,7 @@ public class WalletController {
 
     @GetMapping("/wallet-by-trader")
     public ResponseEntity<WalletTraderResponse> getWalletForTrader(@RequestParam Long traderId) {
-        return ResponseEntity.ok(walletService.getWalletWithBalancesByTraderId(traderId));
+        return ResponseEntity.ok(walletService.getWalletByTraderId(traderId));
     }
 
     @GetMapping("/resolve-trader")

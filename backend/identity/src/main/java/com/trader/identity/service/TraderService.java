@@ -111,7 +111,8 @@ public class TraderService {
                 trader.getUsername(),
                 trader.isBanned(),
                 trader.getBannedReason(),
-                trader.isActive());
+                trader.isActive(),
+                trader.isSubscribed());
     }
 
     public UsernameResponse randomizeUsername(Long traderId) {

@@ -60,7 +60,8 @@ public class TraderService {
                                                 trader.isBanned(),
                                                 trader.getBannedReason(),
                                                 trader.isActive(),
-                                                wallet)))
+                                                wallet,
+                                                trader.isSubscribed())))
                                 .flux();
                     });
         } else {
@@ -72,7 +73,8 @@ public class TraderService {
                                     trader.isBanned(),
                                     trader.getBannedReason(),
                                     trader.isActive(),
-                                    wallet)));
+                                    wallet,
+                                    trader.isSubscribed())));
         }
     }
 

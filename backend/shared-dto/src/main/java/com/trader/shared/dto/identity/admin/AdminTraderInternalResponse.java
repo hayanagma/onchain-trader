@@ -7,6 +7,7 @@ public class AdminTraderInternalResponse {
     private boolean banned;
     private String bannedReason;
     private boolean active;
+    private boolean subscribed;
 
     public AdminTraderInternalResponse() {
     }
@@ -15,12 +16,14 @@ public class AdminTraderInternalResponse {
             String username,
             boolean banned,
             String bannedReason,
-            boolean active) {
+            boolean active,
+            boolean subscribed) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.active = active;
+        this.subscribed = subscribed;
     }
 
     public Long getId() {
@@ -61,5 +64,13 @@ public class AdminTraderInternalResponse {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
     }
 }
