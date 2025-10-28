@@ -5,7 +5,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 
 import com.trader.api.util.WebClientUtil;
-import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -20,34 +20,32 @@ public class WalletClient {
                                 .build();
         }
 
-        public Mono<Long> getPlayerIdByWalletAddress(String walletAddress) {
+        public Mono<Long> getTraderIdByWalletAddress(String walletAddress) {
                 return WebClientUtil.handle(
                                 webClient.get()
                                                 .uri(uriBuilder -> uriBuilder
-                                                                .path("/resolve-player")
+                                                                .path("/resolve-trader")
                                                                 .queryParam("address", walletAddress)
                                                                 .build())
                                                 .retrieve(),
                                 Long.class);
         }
- 
-        public Mono<WalletPlayerResponse> getWalletForPlayer(Long playerId) {
+
+        public Mono<WalletTraderResponse> getWalletForTrader(Long traderId) {
                 return WebClientUtil.handle(
                                 webClient.get()
                                                 .uri(uriBuilder -> uriBuilder
-                                                                .path("/wallet-by-player")
-                                                                .queryParam("playerId", playerId)
+                                                                .path("/wallet-by-trader")
+                                                                .queryParam("traderId", traderId)
                                                                 .build())
                                                 .retrieve(),
-                                WalletPlayerResponse.class);
+                                WalletTraderResponse.class);
         }
- 
-        public Mono<Void> cleanupPlayerWallet(Long playerId) {
+
+        public Mono<Void> cleanupTraderWallet(Long traderId) {
                 return webClient.post()
-                                .uri("/{playerId}/cleanup", playerId)
+                                .uri("/{traderId}/cleanup", traderId)
                                 .retrieve()
                                 .bodyToMono(Void.class);
         }
- 
 }
- 

@@ -1,4 +1,4 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.trader;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

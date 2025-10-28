@@ -1,7 +1,7 @@
 package com.trader.auth.security;
 
 public enum RefreshTokenCookie {
-    PLAYER("PLAYER_REFRESH"),
+    TRADER("TRADER_REFRESH"),
     ADMIN("ADMIN_REFRESH");
 
     private final String name;

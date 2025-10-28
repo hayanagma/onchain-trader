@@ -5,8 +5,8 @@ import java.time.Instant;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "player_nonces")
-public class PlayerNonce {
+@Table(name = "trader_nonces")
+public class TraderNonce {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

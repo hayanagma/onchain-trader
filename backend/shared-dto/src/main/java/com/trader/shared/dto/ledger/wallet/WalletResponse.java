@@ -2,26 +2,26 @@ package com.trader.shared.dto.ledger.wallet;
 
 public class WalletResponse {
     private Long id;
-    private Long playerId;
+    private Long traderId;
     private String address;
     private String network;
 
     public WalletResponse() {
     }
 
-    public WalletResponse(Long id, String address, String network, Long playerId) {
+    public WalletResponse(Long id, String address, String network, Long traderId) {
         this.id = id;
         this.address = address;
         this.network = network;
-        this.playerId = playerId;
+        this.traderId = traderId;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getTraderId() {
+        return traderId;
     }
 
     public String getAddress() {

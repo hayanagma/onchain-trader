@@ -8,9 +8,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.ledger.dto.TokenMetadata;
 import com.trader.ledger.model.Currency;
-import com.trader.ledger.model.PlayerCurrency;
+import com.trader.ledger.model.TraderCurrency;
 import com.trader.ledger.repository.CurrencyRepository;
-import com.trader.ledger.repository.PlayerCurrencyRepository;
+import com.trader.ledger.repository.TraderCurrencyRepository;
 import com.trader.ledger.validation.CurrencyValidator;
 import com.trader.ledger.verifier.BlockchainVerifierFactory;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
@@ -25,14 +25,16 @@ public class CurrencyService {
 
     private final CurrencyRepository currencyRepository;
     private final BlockchainVerifierFactory blockchainVerifierFactory;
-    private final PlayerCurrencyRepository playerCurrencyRepository;
+    private final TraderCurrencyRepository traderCurrencyRepository;
     private final CurrencyValidator currencyValidator;
 
-    public CurrencyService(CurrencyRepository currencyRepository, BlockchainVerifierFactory blockchainVerifierFactory,
-            PlayerCurrencyRepository playerCurrencyRepository, CurrencyValidator currencyValidator) {
+    public CurrencyService(CurrencyRepository currencyRepository,
+            BlockchainVerifierFactory blockchainVerifierFactory,
+            TraderCurrencyRepository traderCurrencyRepository,
+            CurrencyValidator currencyValidator) {
         this.currencyRepository = currencyRepository;
         this.blockchainVerifierFactory = blockchainVerifierFactory;
-        this.playerCurrencyRepository = playerCurrencyRepository;
+        this.traderCurrencyRepository = traderCurrencyRepository;
         this.currencyValidator = currencyValidator;
     }
 
@@ -68,8 +70,8 @@ public class CurrencyService {
                 .toList();
     }
 
-    public List<CurrencyResponse> getVisibleCurrencies(Long playerId, NetworkType network) {
-        return currencyRepository.findVisibleByPlayerAndNetwork(playerId, network).stream()
+    public List<CurrencyResponse> getVisibleCurrencies(Long traderId, NetworkType network) {
+        return currencyRepository.findVisibleByTraderAndNetwork(traderId, network).stream()
                 .map(currency -> new CurrencyResponse(
                         currency.getCode(),
                         currency.getName(),
@@ -81,7 +83,7 @@ public class CurrencyService {
     }
 
     @Transactional
-    public void createCurrency(Long playerId, CurrencyAddRequest request) {
+    public void createCurrency(Long traderId, CurrencyAddRequest request) {
         NetworkType network = request.getNetwork();
         String contractAddress = request.getContractAddress();
 
@@ -101,14 +103,13 @@ public class CurrencyService {
                     return currencyRepository.save(c);
                 });
 
-        if (playerCurrencyRepository.existsByPlayerIdAndCurrency_Id(playerId, currency.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Player already added this token");
+        if (traderCurrencyRepository.existsByTraderIdAndCurrency_Id(traderId, currency.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Trader already added this token");
         }
 
-        PlayerCurrency playerCurrency = new PlayerCurrency();
-        playerCurrency.setPlayerId(playerId);
-        playerCurrency.setCurrency(currency);
-        playerCurrencyRepository.save(playerCurrency);
+        TraderCurrency traderCurrency = new TraderCurrency();
+        traderCurrency.setTraderId(traderId);
+        traderCurrency.setCurrency(currency);
+        traderCurrencyRepository.save(traderCurrency);
     }
-
 }

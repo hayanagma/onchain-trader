@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trader.ledger.service.WalletService;
 import com.trader.ledger.validation.WalletValidator;
 import com.trader.shared.dto.ledger.wallet.WalletEnsureRequest;
-import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletSignatureValidationRequest;
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 import com.trader.shared.dto.ledger.wallet.WalletValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationResponse;
 
@@ -32,7 +32,7 @@ public class WalletController {
 
     @PostMapping("/ensure")
     public ResponseEntity<Void> ensureWallet(@RequestBody WalletEnsureRequest request) {
-        walletService.ensureWallet(request.getPlayerId(), request.getAddress(), request.getNetwork());
+        walletService.ensureWallet(request.getTraderId(), request.getAddress(), request.getNetwork());
         return ResponseEntity.ok().build();
     }
 
@@ -55,20 +55,19 @@ public class WalletController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/wallet-by-player")
-    public ResponseEntity<WalletPlayerResponse> getWalletForPlayer(@RequestParam Long playerId) {
-        return ResponseEntity.ok(walletService.getWalletWithBalancesByPlayerId(playerId));
+    @GetMapping("/wallet-by-trader")
+    public ResponseEntity<WalletTraderResponse> getWalletForTrader(@RequestParam Long traderId) {
+        return ResponseEntity.ok(walletService.getWalletWithBalancesByTraderId(traderId));
     }
 
-    @GetMapping("/resolve-player")
-    public ResponseEntity<Long> getPlayerIdByWalletAddress(@RequestParam String address) {
-        return ResponseEntity.ok(walletService.findPlayerIdByWalletAddress(address));
+    @GetMapping("/resolve-trader")
+    public ResponseEntity<Long> getTraderIdByWalletAddress(@RequestParam String address) {
+        return ResponseEntity.ok(walletService.findTraderIdByWalletAddress(address));
     }
 
-    @PostMapping("/{playerId}/cleanup")
-    public ResponseEntity<Void> cleanupPlayerWallet(@PathVariable Long playerId) {
-        walletService.cleanupPlayerWallet(playerId);
+    @PostMapping("/{traderId}/cleanup")
+    public ResponseEntity<Void> cleanupTraderWallet(@PathVariable Long traderId) {
+        walletService.cleanupTraderWallet(traderId);
         return ResponseEntity.ok().build();
     }
-
 }

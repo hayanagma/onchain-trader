@@ -18,7 +18,7 @@ public class AuthClient {
                 .build();
     }
 
-    public Mono<Void> clearPlayerCookies() {
+    public Mono<Void> clearTraderCookies() {
         return WebClientUtil.handleVoid(
                 webClient.post()
                         .uri("/clear-cookies")

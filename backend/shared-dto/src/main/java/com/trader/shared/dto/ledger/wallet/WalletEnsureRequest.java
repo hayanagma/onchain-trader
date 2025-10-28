@@ -1,21 +1,21 @@
 package com.trader.shared.dto.ledger.wallet;
 
 public class WalletEnsureRequest {
-    private Long playerId;
+    private Long traderId;
     private String address;
     private String network;
 
     public WalletEnsureRequest() {
     }
 
-    public WalletEnsureRequest(Long playerId, String address, String network) {
-        this.playerId = playerId;
+    public WalletEnsureRequest(Long traderId, String address, String network) {
+        this.traderId = traderId;
         this.address = address;
         this.network = network;
     }
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getTraderId() {
+        return traderId;
     }
 
     public String getAddress() {

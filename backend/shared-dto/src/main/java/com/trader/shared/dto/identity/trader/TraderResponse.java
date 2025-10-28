@@ -1,26 +1,28 @@
-package com.trader.shared.dto.identity.admin;
+package com.trader.shared.dto.identity.trader;
 
-public class AdminPlayerInternalResponse {
-
+public class TraderResponse {
     private Long id;
     private String username;
     private boolean banned;
     private String bannedReason;
-    private boolean active;
+    private int tokenVersion;
+    private boolean subscribed;
 
-    public AdminPlayerInternalResponse() {
+    public TraderResponse() {
     }
 
-    public AdminPlayerInternalResponse(Long id,
+    public TraderResponse(Long id,
             String username,
             boolean banned,
             String bannedReason,
-            boolean active) {
+            int tokenVersion,
+            boolean subscribed) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
-        this.active = active;
+        this.tokenVersion = tokenVersion;
+        this.subscribed = subscribed;
     }
 
     public Long getId() {
@@ -55,11 +57,19 @@ public class AdminPlayerInternalResponse {
         this.bannedReason = bannedReason;
     }
 
-    public boolean isActive() {
-        return active;
+    public int getTokenVersion() {
+        return tokenVersion;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setTokenVersion(int tokenVersion) {
+        this.tokenVersion = tokenVersion;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
     }
 }

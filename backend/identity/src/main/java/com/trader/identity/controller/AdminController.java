@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.identity.service.AdminService;
-import com.trader.identity.service.PlayerService;
-import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
+import com.trader.identity.service.TraderService;
 import com.trader.shared.dto.identity.admin.AdminResponse;
+import com.trader.shared.dto.identity.admin.AdminTraderInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
 
 @RestController
 @RequestMapping("/api/internal/identity/admin")
 public class AdminController {
     private final AdminService adminService;
-    private final PlayerService playerService;
+    private final TraderService traderService;
 
-    public AdminController(AdminService adminService, PlayerService playerService) {
+    public AdminController(AdminService adminService, TraderService traderService) {
         this.adminService = adminService;
-        this.playerService = playerService;
+        this.traderService = traderService;
     }
 
     @GetMapping("/{username}")
@@ -34,20 +34,19 @@ public class AdminController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/players/ban-status")
+    @PutMapping("/traders/ban-status")
     public ResponseEntity<Void> updateBanStatus(@RequestBody BanRequest request) {
-        playerService.setBanStatus(request);
+        traderService.setBanStatus(request);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/players")
-    public List<AdminPlayerInternalResponse> getPlayers() {
-        return playerService.getPlayers();
+    @GetMapping("/traders")
+    public List<AdminTraderInternalResponse> getTraders() {
+        return traderService.getTraders();
     }
 
-    @GetMapping("/players/{id}")
-    public AdminPlayerInternalResponse getPlayer(@PathVariable Long id) {
-        return playerService.getAdminPlayerById(id);
+    @GetMapping("/traders/{id}")
+    public AdminTraderInternalResponse getTrader(@PathVariable Long id) {
+        return traderService.getAdminTraderById(id);
     }
-
 }

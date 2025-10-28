@@ -12,12 +12,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 
 @Component
-public class PlayerAuthProvider implements AuthenticationProvider {
+public class TraderAuthProvider implements AuthenticationProvider {
 
-    private final LedgerClient walletClient;
+    private final LedgerClient ledgerClient;
 
-    public PlayerAuthProvider(LedgerClient walletClient) {
-        this.walletClient = walletClient;
+    public TraderAuthProvider(LedgerClient ledgerClient) {
+        this.ledgerClient = ledgerClient;
     }
 
     @Override
@@ -26,11 +26,11 @@ public class PlayerAuthProvider implements AuthenticationProvider {
         String walletAddress = (String) token.getPrincipal();
         String network = token.getNetwork();
 
-        return walletClient.findByAddressAndNetwork(walletAddress, network)
+        return ledgerClient.findByAddressAndNetwork(walletAddress, network)
                 .map(wallet -> new WalletAuthenticationToken(
-                        wallet.getPlayerId(),
+                        wallet.getTraderId(),
                         network,
-                        List.of(new SimpleGrantedAuthority("ROLE_PLAYER"))))
+                        List.of(new SimpleGrantedAuthority("ROLE_TRADER"))))
                 .orElseThrow(() -> new BadCredentialsException("Invalid wallet"));
     }
 

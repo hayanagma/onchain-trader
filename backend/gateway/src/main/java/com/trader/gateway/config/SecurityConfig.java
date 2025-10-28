@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/auth/**", "/actuator/health").permitAll()
                         .pathMatchers("/api/admin/**").hasRole("ADMIN")
-                        .pathMatchers("/api/player/**").hasRole("PLAYER")
+                        .pathMatchers("/api/trader/**").hasRole("TRADER")
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
@@ -55,10 +55,9 @@ public class SecurityConfig {
                 JwtAuthenticationConverter delegate = new JwtAuthenticationConverter();
                 delegate.setJwtGrantedAuthoritiesConverter(new CustomRoleConverter());
 
-                return tokenValidator.validate(roles.get(0), subject, tokenVersion)
+                return Mono.fromRunnable(() -> tokenValidator.validate(roles.get(0), subject, tokenVersion))
                         .then(Mono.fromCallable(() -> delegate.convert(jwt)));
             }
         };
     }
-
 }

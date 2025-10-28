@@ -1,16 +1,16 @@
 package com.trader.shared.dto.identity.admin;
 
 public class BanRequest {
-    private Long playerId;
+    private Long traderId;
     private boolean banned;
     private String reason;
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getTraderId() {
+        return traderId;
     }
 
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
+    public void getTraderId(Long traderId) {
+        this.traderId = traderId;
     }
 
     public boolean isBanned() {

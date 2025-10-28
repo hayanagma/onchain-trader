@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: casino-gateway
+    name: trader-gateway
 
   security:
     oauth2:
@@ -20,11 +20,11 @@ spring:
           predicates:
             - Path=/api/auth/**
           
-        # API service (player, public, admin)
+        # API service (trader, public, admin)
         - id: api
           uri: http://api:8084
           predicates:
-            - Path=/api/player/**, /api/public/**, /api/admin/**
+            - Path=/api/trader/**, /api/public/**, /api/admin/**
     
       globalcors:
         add-to-simple-url-handler-mapping: true

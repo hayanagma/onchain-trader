@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trader.auth.model.PlayerNonce;
+import com.trader.auth.model.TraderNonce;
 
 @Component
 public class NonceValidator {
 
-    public void validate(PlayerNonce entity, String walletAddress, String network) {
+    public void validate(TraderNonce entity, String walletAddress, String network) {
         if (entity.isUsed()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nonce already used");
         }

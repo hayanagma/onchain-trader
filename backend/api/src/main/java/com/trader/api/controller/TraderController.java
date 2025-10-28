@@ -8,54 +8,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trader.api.service.PlayerService;
-import com.trader.shared.dto.identity.player.DeleteAccountRequest;
-import com.trader.shared.dto.identity.player.PlayerProfileResponse;
-import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
-import com.trader.shared.dto.identity.player.UsernameResponse;
+import com.trader.api.service.TraderService;
+import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
+import com.trader.shared.dto.identity.trader.TraderProfileResponse;
+import com.trader.shared.dto.identity.trader.UpdateUsernameRequest;
+import com.trader.shared.dto.identity.trader.UsernameResponse;
 
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/player")
-public class PlayerController {
+@RequestMapping("/api/trader")
+public class TraderController {
 
-    private final PlayerService playerService;
+    private final TraderService traderService;
 
-    public PlayerController(PlayerService playerService) {
-        this.playerService = playerService;
+    public TraderController(TraderService traderService) {
+        this.traderService = traderService;
     }
 
     @GetMapping("/profile")
-    public Mono<ResponseEntity<PlayerProfileResponse>> getPlayerProfile() {
-        return playerService.getPlayerProfile()
+    public Mono<ResponseEntity<TraderProfileResponse>> getTraderProfile() {
+        return traderService.getTraderProfile()
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping("/profile/random-username")
     public Mono<ResponseEntity<UsernameResponse>> randomizeUsername() {
-        return playerService.randomizeUsername()
+        return traderService.randomizeUsername()
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping("/profile/username")
     public Mono<ResponseEntity<UsernameResponse>> getUsername() {
-        return playerService.getUsername()
+        return traderService.getUsername()
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping("/profile/username")
     public Mono<ResponseEntity<Void>> updateUsername(@RequestBody UpdateUsernameRequest request) {
-        return playerService.updateUsername(request)
+        return traderService.updateUsername(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 
     @PostMapping("/account/delete")
     public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody DeleteAccountRequest request) {
-        return playerService.deleteAccount(request)
+        return traderService.deleteAccount(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
-
-
-
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.auth.security.JwtCookieProvider;
 import com.trader.auth.security.RefreshTokenCookie;
-import com.trader.auth.service.PlayerAuthService;
+import com.trader.auth.service.TraderAuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,18 +17,18 @@ import org.springframework.http.*;
 public class AuthController {
 
     private final JwtCookieProvider jwtCookieProvider;
-    private final PlayerAuthService playerAuthService;
+    private final TraderAuthService traderAuthService;
 
-    public AuthController(JwtCookieProvider jwtCookieProvider, PlayerAuthService playerAuthService) {
+    public AuthController(JwtCookieProvider jwtCookieProvider, TraderAuthService traderAuthService) {
         this.jwtCookieProvider = jwtCookieProvider;
-        this.playerAuthService = playerAuthService;
+        this.traderAuthService = traderAuthService;
     }
 
     @PostMapping("/clear-cookies")
     public ResponseEntity<Void> clearCookies(HttpServletRequest request) {
-        String refreshToken = jwtCookieProvider.extractRefreshToken(request, RefreshTokenCookie.PLAYER);
-        playerAuthService.logout(refreshToken);
-        ResponseCookie cleared = jwtCookieProvider.clearRefreshCookie(RefreshTokenCookie.PLAYER);
+        String refreshToken = jwtCookieProvider.extractRefreshToken(request, RefreshTokenCookie.TRADER);
+        traderAuthService.logout(refreshToken);
+        ResponseCookie cleared = jwtCookieProvider.clearRefreshCookie(RefreshTokenCookie.TRADER);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cleared.toString())
                 .build();

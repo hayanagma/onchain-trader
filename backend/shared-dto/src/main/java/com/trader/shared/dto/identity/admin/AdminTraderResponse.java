@@ -1,28 +1,31 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.admin;
 
-public class PlayerResponse {
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
+
+public class AdminTraderResponse {
+
     private Long id;
     private String username;
     private boolean banned;
     private String bannedReason;
-    private int tokenVersion;
-    private boolean subscribed;
+    private boolean active;
+    private WalletTraderResponse wallet;
 
-    public PlayerResponse() {
+    public AdminTraderResponse() {
     }
 
-    public PlayerResponse(Long id,
+    public AdminTraderResponse(Long id,
             String username,
             boolean banned,
             String bannedReason,
-            int tokenVersion,
-            boolean subscribed) {
+            boolean active,
+            WalletTraderResponse wallet) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
-        this.tokenVersion = tokenVersion;
-        this.subscribed = subscribed;
+        this.active = active;
+        this.wallet = wallet;
     }
 
     public Long getId() {
@@ -57,19 +60,19 @@ public class PlayerResponse {
         this.bannedReason = bannedReason;
     }
 
-    public int getTokenVersion() {
-        return tokenVersion;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setTokenVersion(int tokenVersion) {
-        this.tokenVersion = tokenVersion;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public boolean isSubscribed() {
-        return subscribed;
+    public WalletTraderResponse getWallet() {
+        return wallet;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
+    public void setWallet(WalletTraderResponse wallet) {
+        this.wallet = wallet;
     }
 }

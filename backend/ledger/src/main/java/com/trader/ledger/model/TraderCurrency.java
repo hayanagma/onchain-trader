@@ -3,17 +3,17 @@ package com.trader.ledger.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "player_currencies", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "player_id", "currency_id" })
+@Table(name = "trader_currencies", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "trader_id", "currency_id" })
 })
-public class PlayerCurrency {
+public class TraderCurrency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "player_id", nullable = false)
-    private Long playerId;
+    @Column(name = "trader_id", nullable = false)
+    private Long traderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
@@ -27,12 +27,12 @@ public class PlayerCurrency {
         this.id = id;
     }
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getTraderId() {
+        return traderId;
     }
 
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
+    public void setTraderId(Long traderId) {
+        this.traderId = traderId;
     }
 
     public Currency getCurrency() {

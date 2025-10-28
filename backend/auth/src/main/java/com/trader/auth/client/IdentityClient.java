@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import com.trader.auth.util.RestTemplateUtil;
 import com.trader.shared.dto.identity.admin.AdminResponse;
-import com.trader.shared.dto.identity.player.PlayerResponse;
+import com.trader.shared.dto.identity.trader.TraderResponse;
 
 @Service
 public class IdentityClient {
@@ -38,20 +38,20 @@ public class IdentityClient {
         }
     }
 
-    public PlayerResponse getPlayer(Long playerId) {
+    public TraderResponse getTrader(Long traderId) {
         return RestTemplateUtil.get(
                 restTemplate,
-                "/players/{playerId}",
-                PlayerResponse.class,
-                playerId);
+                "/traders/{traderId}",
+                TraderResponse.class,
+                traderId);
     }
 
-    public PlayerResponse createPlayer() {
+    public TraderResponse createTrader() {
         return RestTemplateUtil.post(
                 restTemplate,
-                "/players/create",
+                "/traders/create",
                 null,
-                PlayerResponse.class);
+                TraderResponse.class);
     }
 
     public int getTokenVersion(String role, String subject) {

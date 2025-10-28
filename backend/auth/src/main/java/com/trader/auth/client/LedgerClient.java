@@ -65,11 +65,11 @@ public class LedgerClient {
                 WalletValidationResponse.class);
     }
 
-    public void ensureWallet(Long playerId, String address, String network) {
+    public void ensureWallet(Long traderId, String address, String network) {
         RestTemplateUtil.postEntity(
                 restTemplate,
                 "/wallets/ensure",
-                new WalletEnsureRequest(playerId, address, network),
+                new WalletEnsureRequest(traderId, address, network),
                 Void.class);
     }
 }

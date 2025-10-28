@@ -1,18 +1,18 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.trader;
 
-import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
-public class PlayerProfileResponse {
+public class TraderProfileResponse {
     private String username;
-    private WalletPlayerResponse wallet;
+    private WalletTraderResponse wallet;
     private UsernameChangeStatus usernameChangeStatus;
     private boolean subscribed;
 
-    public PlayerProfileResponse() {
+    public TraderProfileResponse() {
     }
 
-    public PlayerProfileResponse(String username,
-            WalletPlayerResponse wallet,
+    public TraderProfileResponse(String username,
+            WalletTraderResponse wallet,
             UsernameChangeStatus usernameChangeStatus,
             boolean subscribed) {
         this.username = username;
@@ -29,11 +29,11 @@ public class PlayerProfileResponse {
         this.username = username;
     }
 
-    public WalletPlayerResponse getWallet() {
+    public WalletTraderResponse getWallet() {
         return wallet;
     }
 
-    public void setWallet(WalletPlayerResponse wallet) {
+    public void setWallet(WalletTraderResponse wallet) {
         this.wallet = wallet;
     }
 

@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.stereotype.Component;
 
-import com.trader.identity.repository.PlayerRepository;
+import com.trader.identity.repository.TraderRepository;
 
 @Component
 public class RandomNameGenerator {
 
-    private final PlayerRepository playerRepository;
+    private final TraderRepository traderRepository;
 
-    public RandomNameGenerator(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
+    public RandomNameGenerator(TraderRepository traderRepository) {
+        this.traderRepository = traderRepository;
     }
 
     private final List<String> casinoWords = List.of(
@@ -71,7 +71,7 @@ public class RandomNameGenerator {
         String username;
         do {
             username = generate();
-        } while (playerRepository.existsByUsername(username));
+        } while (traderRepository.existsByUsername(username));
         return username;
     }
 }

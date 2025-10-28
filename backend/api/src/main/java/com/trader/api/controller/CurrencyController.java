@@ -18,7 +18,7 @@ import com.trader.shared.enums.NetworkType;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/player/currency")
+@RequestMapping("/api/trader/currency")
 public class CurrencyController {
 
     private final CurrencyService currencyService;
@@ -29,14 +29,12 @@ public class CurrencyController {
 
     @PostMapping
     public Mono<ResponseEntity<Void>> addCurrency(@RequestBody CurrencyAddRequest request) {
-        return currencyService.addCurrencyForCurrentPlayer(request)
-        
+        return currencyService.addCurrencyForCurrentTrader(request)
                 .thenReturn(ResponseEntity.ok().build());
     }
 
     @GetMapping
     public Mono<List<CurrencyResponse>> getCurrenciesByNetwork(@RequestParam NetworkType network) {
-        return currencyService.getCurrenciesForCurrentPlayer(network);
+        return currencyService.getCurrenciesForCurrentTrader(network);
     }
-
 }

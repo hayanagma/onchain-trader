@@ -16,34 +16,34 @@ public class Wallet {
     @Column(nullable = false, length = 128)
     private String address;
 
-    @Column(name = "player_id", nullable = false)
-    private Long playerId; 
+    @Column(name = "trader_id", nullable = false)
+    private Long traderId;
 
     public Long getId() {
         return id;
     }
 
-    public Long getPlayerId() {
-        return playerId;
+    public Long getTraderId() {
+        return traderId;
     }
 
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
+    public void setTraderId(Long traderId) {
+        this.traderId = traderId;
     }
 
     public String getNetwork() {
         return network;
     }
 
-    public void setNetwork(String n) {
-        this.network = n;
+    public void setNetwork(String network) {
+        this.network = network;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String a) {
-        this.address = a;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

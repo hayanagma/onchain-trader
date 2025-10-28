@@ -8,8 +8,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.ledger.model.Wallet;
 import com.trader.ledger.repository.WalletRepository;
-import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
 @Service
 public class WalletService {
@@ -26,47 +26,46 @@ public class WalletService {
                         wallet.getId(),
                         wallet.getAddress(),
                         wallet.getNetwork(),
-                        wallet.getPlayerId()));
+                        wallet.getTraderId()));
     }
 
-    public void ensureWallet(Long playerId, String address, String network) {
+    public void ensureWallet(Long traderId, String address, String network) {
         walletRepository.findByAddressAndNetwork(address, network)
-                .orElseGet(() -> createWallet(playerId, address, network));
+                .orElseGet(() -> createWallet(traderId, address, network));
     }
 
-    private Wallet createWallet(Long playerId, String address, String network) {
+    private Wallet createWallet(Long traderId, String address, String network) {
         Wallet wallet = new Wallet();
-        wallet.setPlayerId(playerId);
+        wallet.setTraderId(traderId);
         wallet.setAddress(address);
         wallet.setNetwork(network);
 
-        Wallet saved = walletRepository.save(wallet);
-        return saved;
+        return walletRepository.save(wallet);
     }
 
-    public WalletPlayerResponse getWalletWithBalancesByPlayerId(Long playerId) {
-        Wallet wallet = getWalletForPlayerEntity(playerId);
-        return new WalletPlayerResponse(wallet.getAddress(), wallet.getNetwork());
+    public WalletTraderResponse getWalletWithBalancesByTraderId(Long traderId) {
+        Wallet wallet = getWalletForTraderEntity(traderId);
+        return new WalletTraderResponse(wallet.getAddress(), wallet.getNetwork());
     }
 
-    public Long findPlayerIdByWalletAddress(String address) {
+    public Long findTraderIdByWalletAddress(String address) {
         Wallet wallet = walletRepository.findByAddress(address)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Wallet not found for address " + address));
-        return wallet.getPlayerId();
+        return wallet.getTraderId();
     }
 
-    public void cleanupPlayerWallet(Long playerId) {
-        Wallet wallet = getWalletForPlayerEntity(playerId);
+    public void cleanupTraderWallet(Long traderId) {
+        Wallet wallet = getWalletForTraderEntity(traderId);
         wallet.setAddress("unlinked-" + wallet.getId());
         walletRepository.save(wallet);
     }
-    
-    public Wallet getWalletForPlayerEntity(Long playerId) {
-        return walletRepository.findByPlayerId(playerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Wallet not found for playerId " + playerId));
-    }
 
+    public Wallet getWalletForTraderEntity(Long traderId) {
+        return walletRepository.findByTraderId(traderId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Wallet not found for traderId " + traderId));
+    }
 }

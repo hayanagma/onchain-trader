@@ -42,16 +42,16 @@ public class TokenValidator {
         return adminId;
     }
 
-    public Long validateAndGetPlayerId(String refreshToken, IdentityClient identityClient) {
+    public Long validateAndGetTraderId(String refreshToken, IdentityClient identityClient) {
         var claims = jwtTokenProvider.parseToken(refreshToken);
-        Long playerId = Long.valueOf(claims.getSubject());
+        Long traderId = Long.valueOf(claims.getSubject());
         int tokenVersion = claims.get("tv", Integer.class);
 
-        int actualVersion = identityClient.getTokenVersion("ROLE_PLAYER", playerId.toString());
+        int actualVersion = identityClient.getTokenVersion("ROLE_TRADER", traderId.toString());
         if (tokenVersion != actualVersion) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Player token revoked");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Trader token revoked");
         }
-        return playerId;
+        return traderId;
     }
 
     public void validate(String role, String subject, int tokenVersion) {

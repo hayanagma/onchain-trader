@@ -7,18 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trader.identity.model.Player;
-import com.trader.identity.repository.PlayerRepository;
-import com.trader.shared.dto.identity.player.UsernameChangeStatus;
-
+import com.trader.identity.model.Trader;
+import com.trader.identity.repository.TraderRepository;
+import com.trader.shared.dto.identity.trader.UsernameChangeStatus;
 
 @Component
-public class PlayerValidator {
+public class TraderValidator {
 
-    private final PlayerRepository playerRepository;
+    private final TraderRepository traderRepository;
 
-    public PlayerValidator(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
+    public TraderValidator(TraderRepository traderRepository) {
+        this.traderRepository = traderRepository;
     }
 
     public void validateUsername(String username) {
@@ -31,19 +30,19 @@ public class PlayerValidator {
         if (!username.matches("^[a-zA-Z0-9_]+$")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username contains invalid characters");
         }
-        if (playerRepository.existsByUsername(username)) {
+        if (traderRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
         }
     }
 
-    public UsernameChangeStatus getUsernameChangeStatus(Player player) {
+    public UsernameChangeStatus getUsernameChangeStatus(Trader trader) {
         Duration cooldown = Duration.ofDays(7);
 
-        if (player.getLastUsernameChangeAt() == null) {
+        if (trader.getLastUsernameChangeAt() == null) {
             return new UsernameChangeStatus(true, 0);
         }
 
-        Duration sinceLastChange = Duration.between(player.getLastUsernameChangeAt(), Instant.now());
+        Duration sinceLastChange = Duration.between(trader.getLastUsernameChangeAt(), Instant.now());
         if (sinceLastChange.compareTo(cooldown) >= 0) {
             return new UsernameChangeStatus(true, 0);
         } else {

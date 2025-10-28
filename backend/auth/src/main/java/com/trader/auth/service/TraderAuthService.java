@@ -12,10 +12,10 @@ import com.trader.auth.client.LedgerClient;
 import com.trader.auth.dto.AuthResult;
 import com.trader.auth.dto.player.ChallengeRequest;
 import com.trader.auth.dto.player.ChallengeResponse;
-import com.trader.auth.dto.player.PlayerLoginRequest;
+import com.trader.auth.dto.player.TraderLoginRequest;
 import com.trader.auth.security.WalletAuthenticationToken;
 import com.trader.auth.validation.TokenValidator;
-import com.trader.shared.dto.identity.player.PlayerResponse;
+import com.trader.shared.dto.identity.trader.TraderResponse;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletValidationResponse;
 
@@ -25,31 +25,31 @@ import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 
 @Service
-public class PlayerAuthService {
+public class TraderAuthService {
 
-    private final PlayerNonceService playerNonceService;
-    private final LedgerClient walletClient;
+    private final TraderNonceService traderNonceService;
+    private final LedgerClient ledgerClient;
     private final AuthenticationManager authenticationManager;
     private final IdentityClient identityClient;
     private final TokenValidator tokenValidator;
 
-    public PlayerAuthService(PlayerNonceService playerNonceService, LedgerClient walletClient,
+    public TraderAuthService(TraderNonceService traderNonceService,
+            LedgerClient ledgerClient,
             TokenValidator tokenValidator,
-            AuthenticationManager authenticationManager, IdentityClient identityClient,
-            TokenValidator tokenValidator2) {
-        this.playerNonceService = playerNonceService;
-        this.walletClient = walletClient;
+            AuthenticationManager authenticationManager,
+            IdentityClient identityClient) {
+        this.traderNonceService = traderNonceService;
+        this.ledgerClient = ledgerClient;
         this.authenticationManager = authenticationManager;
         this.identityClient = identityClient;
-        this.tokenValidator = tokenValidator2;
-
+        this.tokenValidator = tokenValidator;
     }
 
     public ChallengeResponse createChallenge(ChallengeRequest request) {
-        WalletValidationResponse validated = walletClient.validateWallet(request.getWalletAddress(),
+        WalletValidationResponse validated = ledgerClient.validateWallet(request.getWalletAddress(),
                 request.getNetwork());
 
-        String nonce = playerNonceService.createNonce(
+        String nonce = traderNonceService.createNonce(
                 validated.getAddress(),
                 validated.getNetwork());
 
@@ -57,44 +57,44 @@ public class PlayerAuthService {
     }
 
     @Transactional
-    public AuthResult login(PlayerLoginRequest request) {
-        WalletValidationResponse validated = walletClient.validateWalletSignature(
+    public AuthResult login(TraderLoginRequest request) {
+        WalletValidationResponse validated = ledgerClient.validateWalletSignature(
                 request.getWalletAddress(),
                 request.getNetwork(),
                 request.getNonce(),
                 request.getSignature());
 
-        playerNonceService.consumeNonce(request.getNonce(), validated.getAddress(), validated.getNetwork());
+        traderNonceService.consumeNonce(request.getNonce(), validated.getAddress(), validated.getNetwork());
 
-        Optional<WalletResponse> walletOpt = walletClient.findByAddressAndNetwork(validated.getAddress(),
+        Optional<WalletResponse> walletOpt = ledgerClient.findByAddressAndNetwork(validated.getAddress(),
                 validated.getNetwork());
 
-        PlayerResponse player;
+        TraderResponse trader;
         if (walletOpt.isPresent()) {
-            player = identityClient.getPlayer(walletOpt.get().getPlayerId());
+            trader = identityClient.getTrader(walletOpt.get().getTraderId());
         } else {
-            player = identityClient.createPlayer();
-            walletClient.ensureWallet(player.getId(), validated.getAddress(), validated.getNetwork());
+            trader = identityClient.createTrader();
+            ledgerClient.ensureWallet(trader.getId(), validated.getAddress(), validated.getNetwork());
         }
 
         Authentication authentication = authenticationManager.authenticate(
                 new WalletAuthenticationToken(validated.getAddress(), validated.getNetwork()));
 
-        Long playerId = Long.valueOf(authentication.getPrincipal().toString());
+        Long traderId = Long.valueOf(authentication.getPrincipal().toString());
 
-        if (player.isBanned()) {
+        if (trader.isBanned()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    player.getBannedReason() != null ? player.getBannedReason() : "Player is banned");
+                    trader.getBannedReason() != null ? trader.getBannedReason() : "Trader is banned");
         }
 
-        int tokenVersion = identityClient.getTokenVersion("ROLE_PLAYER", playerId.toString());
-        return tokenValidator.issueTokens(playerId.toString(), "ROLE_PLAYER", tokenVersion);
+        int tokenVersion = identityClient.getTokenVersion("ROLE_TRADER", traderId.toString());
+        return tokenValidator.issueTokens(traderId.toString(), "ROLE_TRADER", tokenVersion);
     }
 
     public AuthResult refresh(String refreshToken) {
-        Long playerId = tokenValidator.validateAndGetPlayerId(refreshToken, identityClient);
-        int tokenVersion = identityClient.getTokenVersion("ROLE_PLAYER", playerId.toString());
-        return tokenValidator.issueTokens(playerId.toString(), "ROLE_PLAYER", tokenVersion);
+        Long traderId = tokenValidator.validateAndGetTraderId(refreshToken, identityClient);
+        int tokenVersion = identityClient.getTokenVersion("ROLE_TRADER", traderId.toString());
+        return tokenValidator.issueTokens(traderId.toString(), "ROLE_TRADER", tokenVersion);
     }
 
     public void logout(String refreshToken) {
@@ -102,8 +102,8 @@ public class PlayerAuthService {
             return;
         }
         try {
-            Long playerId = tokenValidator.validateAndGetPlayerId(refreshToken, identityClient);
-            identityClient.bumpTokenVersion("ROLE_PLAYER", playerId.toString());
+            Long traderId = tokenValidator.validateAndGetTraderId(refreshToken, identityClient);
+            identityClient.bumpTokenVersion("ROLE_TRADER", traderId.toString());
         } catch (JwtException e) {
             // ignore invalid token
         }

@@ -1,31 +1,26 @@
 package com.trader.shared.dto.identity.admin;
 
-import com.trader.shared.dto.ledger.wallet.WalletPlayerResponse;
-
-public class AdminPlayerResponse {
+public class AdminTraderInternalResponse {
 
     private Long id;
     private String username;
     private boolean banned;
     private String bannedReason;
     private boolean active;
-    private WalletPlayerResponse wallet;
 
-    public AdminPlayerResponse() {
+    public AdminTraderInternalResponse() {
     }
 
-    public AdminPlayerResponse(Long id,
+    public AdminTraderInternalResponse(Long id,
             String username,
             boolean banned,
             String bannedReason,
-            boolean active,
-            WalletPlayerResponse wallet) {
+            boolean active) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.active = active;
-        this.wallet = wallet;
     }
 
     public Long getId() {
@@ -66,13 +61,5 @@ public class AdminPlayerResponse {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public WalletPlayerResponse getWallet() {
-        return wallet;
-    }
-
-    public void setWallet(WalletPlayerResponse wallet) {
-        this.wallet = wallet;
     }
 }

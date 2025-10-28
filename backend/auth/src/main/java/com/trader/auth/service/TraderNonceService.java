@@ -10,22 +10,21 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trader.auth.model.PlayerNonce;
-import com.trader.auth.repository.PlayerNonceRepository;
+import com.trader.auth.model.TraderNonce;
+import com.trader.auth.repository.TraderNonceRepository;
 import com.trader.auth.validation.NonceValidator;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class PlayerNonceService {
+public class TraderNonceService {
 
-    private final PlayerNonceRepository playerNonceRepository;
+    private final TraderNonceRepository traderNonceRepository;
     private final NonceValidator nonceValidator;
-
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public PlayerNonceService(PlayerNonceRepository playerNonceRepository, NonceValidator nonceValidator) {
-        this.playerNonceRepository = playerNonceRepository;
+    public TraderNonceService(TraderNonceRepository traderNonceRepository, NonceValidator nonceValidator) {
+        this.traderNonceRepository = traderNonceRepository;
         this.nonceValidator = nonceValidator;
     }
 
@@ -33,29 +32,29 @@ public class PlayerNonceService {
     @Transactional
     public void cleanupOldNonces() {
         Instant cutoff = Instant.now().minus(15, ChronoUnit.MINUTES);
-        playerNonceRepository.deleteByUsedTrueOrCreatedAtBefore(cutoff);
+        traderNonceRepository.deleteByUsedTrueOrCreatedAtBefore(cutoff);
     }
 
     public String createNonce(String walletAddress, String network) {
         String nonce = generateNonce();
-        PlayerNonce entity = new PlayerNonce();
+        TraderNonce entity = new TraderNonce();
         entity.setNonce(nonce);
         entity.setWalletAddress(walletAddress);
         entity.setNetwork(network);
         entity.setUsed(false);
-        playerNonceRepository.save(entity);
+        traderNonceRepository.save(entity);
         return nonce;
     }
 
     @Transactional
-    public PlayerNonce consumeNonce(String nonce, String walletAddress, String network) {
-        PlayerNonce entity = playerNonceRepository.findByNonce(nonce)
+    public TraderNonce consumeNonce(String nonce, String walletAddress, String network) {
+        TraderNonce entity = traderNonceRepository.findByNonce(nonce)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nonce not found"));
 
         nonceValidator.validate(entity, walletAddress, network);
 
         entity.setUsed(true);
-        return playerNonceRepository.save(entity);
+        return traderNonceRepository.save(entity);
     }
 
     private String generateNonce() {

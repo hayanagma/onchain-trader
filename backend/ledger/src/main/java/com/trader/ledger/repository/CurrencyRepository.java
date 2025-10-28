@@ -23,11 +23,11 @@ public interface CurrencyRepository extends JpaRepository<Currency, Long> {
                 and (
                   c.kind = com.trader.shared.enums.CurrencyKind.NATIVE
                   or exists (
-                    select 1 from PlayerCurrency pc
-                    where pc.currency = c and pc.playerId = :playerId
+                    select 1 from TraderCurrency tc
+                    where tc.currency = c and tc.traderId = :traderId
                   )
                 )
               order by c.code
             """)
-    List<Currency> findVisibleByPlayerAndNetwork(Long playerId, NetworkType network);
+    List<Currency> findVisibleByTraderAndNetwork(Long traderId, NetworkType network);
 }

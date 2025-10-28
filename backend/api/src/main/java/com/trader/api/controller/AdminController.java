@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.client.IdentityClient;
 import com.trader.api.client.ledger.CurrencyClient;
-import com.trader.api.service.PlayerService;
-import com.trader.shared.dto.identity.admin.AdminPlayerResponse;
+import com.trader.api.service.TraderService;
+import com.trader.shared.dto.identity.admin.AdminTraderResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 
@@ -22,32 +22,33 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/admin")
 public class AdminController {
 
-    private final PlayerService playerService;
+    private final TraderService traderService;
     private final IdentityClient identityClient;
     private final CurrencyClient currencyClient;
 
     public AdminController(
-            PlayerService playerService, IdentityClient identityClient,
+            TraderService traderService,
+            IdentityClient identityClient,
             CurrencyClient currencyClient) {
-        this.playerService = playerService;
+        this.traderService = traderService;
         this.identityClient = identityClient;
         this.currencyClient = currencyClient;
     }
- 
-    @GetMapping("/players")
-    public Mono<ResponseEntity<List<AdminPlayerResponse>>> getPlayers(
+
+    @GetMapping("/traders")
+    public Mono<ResponseEntity<List<AdminTraderResponse>>> getTraders(
             @RequestParam(required = false) String walletAddress) {
-        return playerService.getPlayers(walletAddress)
+        return traderService.getTraders(walletAddress)
                 .collectList()
                 .map(ResponseEntity::ok);
     }
 
-    @PutMapping("/player/ban-status")
+    @PutMapping("/trader/ban-status")
     public Mono<ResponseEntity<Void>> updateBanStatus(@RequestBody BanRequest request) {
         return identityClient.updateBanStatus(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
- 
+
     @GetMapping("/currencies")
     public Mono<ResponseEntity<List<CurrencyResponse>>> getAllCurrencies() {
         return currencyClient.getAllCurrencies()
@@ -55,4 +56,3 @@ public class AdminController {
                 .map(ResponseEntity::ok);
     }
 }
- 

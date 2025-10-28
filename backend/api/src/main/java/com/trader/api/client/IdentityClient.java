@@ -3,18 +3,17 @@ package com.trader.api.client;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 import com.trader.api.util.WebClientUtil;
-import com.trader.shared.dto.identity.admin.AdminPlayerInternalResponse;
+import com.trader.shared.dto.identity.admin.AdminTraderInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
-import com.trader.shared.dto.identity.player.DeleteAccountRequest;
-import com.trader.shared.dto.identity.player.PlayerProfileInternalResponse;
-import com.trader.shared.dto.identity.player.UpdateUsernameRequest;
-import com.trader.shared.dto.identity.player.UsernameResponse;
+import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
+import com.trader.shared.dto.identity.trader.TraderProfileInternalResponse;
+import com.trader.shared.dto.identity.trader.UpdateUsernameRequest;
+import com.trader.shared.dto.identity.trader.UsernameResponse;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
- 
+
 @Service
 public class IdentityClient {
 
@@ -26,73 +25,69 @@ public class IdentityClient {
                                 .build();
         }
 
-        public Mono<PlayerProfileInternalResponse> getPlayerProfile(Long playerId) {
+        public Mono<TraderProfileInternalResponse> getTraderProfile(Long traderId) {
                 return WebClientUtil.handle(
                                 webClient.get()
-                                                .uri("/players/{id}/profile", playerId)
+                                                .uri("/traders/{id}/profile", traderId)
                                                 .retrieve(),
-                                PlayerProfileInternalResponse.class);
+                                TraderProfileInternalResponse.class);
         }
 
-        public Mono<AdminPlayerInternalResponse> getPlayer(Long playerId) {
+        public Mono<AdminTraderInternalResponse> getTrader(Long traderId) {
                 return WebClientUtil.handle(
                                 webClient.get()
                                                 .uri(uriBuilder -> uriBuilder
-                                                                .path("/admin/players/{id}")
-                                                                .build(playerId))
+                                                                .path("/admin/traders/{id}")
+                                                                .build(traderId))
                                                 .retrieve(),
-                                AdminPlayerInternalResponse.class);
+                                AdminTraderInternalResponse.class);
         }
 
-        public Flux<AdminPlayerInternalResponse> getPlayers() {
+        public Flux<AdminTraderInternalResponse> getTraders() {
                 return WebClientUtil.handleFlux(
                                 webClient.get()
-                                                .uri("/admin/players")
+                                                .uri("/admin/traders")
                                                 .retrieve(),
-                                AdminPlayerInternalResponse.class);
+                                AdminTraderInternalResponse.class);
         }
-        
+
         public Mono<Void> updateBanStatus(BanRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.put()
-                                                .uri("/admin/players/ban-status")
+                                                .uri("/admin/traders/ban-status")
                                                 .bodyValue(request)
                                                 .retrieve());
         }
-        
 
-        public Mono<UsernameResponse> randomizeUsername(Long playerId) {
+        public Mono<UsernameResponse> randomizeUsername(Long traderId) {
                 return WebClientUtil.handle(
                                 webClient.post()
-                                                .uri("/players/{id}/profile/random-username", playerId)
+                                                .uri("/traders/{id}/profile/random-username", traderId)
                                                 .retrieve(),
                                 UsernameResponse.class);
         }
 
-        public Mono<UsernameResponse> getUsername(Long playerId) {
+        public Mono<UsernameResponse> getUsername(Long traderId) {
                 return WebClientUtil.handle(
                                 webClient.get()
-                                                .uri("/players/{id}/profile/username", playerId)
+                                                .uri("/traders/{id}/profile/username", traderId)
                                                 .retrieve(),
                                 UsernameResponse.class);
         }
 
-        public Mono<Void> updateUsername(Long playerId, UpdateUsernameRequest request) {
+        public Mono<Void> updateUsername(Long traderId, UpdateUsernameRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.put()
-                                                .uri("/players/{id}/profile/username", playerId)
+                                                .uri("/traders/{id}/profile/username", traderId)
                                                 .bodyValue(request)
                                                 .retrieve());
         }
 
-
-        public Mono<Void> deletePlayerAccount(Long playerId, DeleteAccountRequest request) {
+        public Mono<Void> deleteTraderAccount(Long traderId, DeleteAccountRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.post()
-                                                .uri("/players/{id}/delete", playerId)
+                                                .uri("/traders/{id}/delete", traderId)
                                                 .bodyValue(request)
                                                 .retrieve());
         }
-        
 }
- 

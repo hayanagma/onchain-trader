@@ -7,9 +7,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
 @Component
-public class PlayerContext {
+public class TraderContext {
 
-    public Long getCurrentPlayerId() {
+    public Long getCurrentTraderId() {
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attrs == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No request context available");

@@ -1,8 +1,8 @@
-CREATE TABLE player_nonces (
+CREATE TABLE trader_nonces (
     id BIGSERIAL PRIMARY KEY,
-    nonce VARCHAR(255) UNIQUE NOT NULL,
-    wallet_address VARCHAR(255) NOT NULL,
-    network VARCHAR(50) NOT NULL,
+    nonce VARCHAR(64) NOT NULL UNIQUE,
+    wallet_address VARCHAR(128) NOT NULL,
+    network VARCHAR(32) NOT NULL,
     used BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,15 +1,15 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.trader;
 
-public class PlayerProfileInternalResponse {
+public class TraderProfileInternalResponse {
     private Long id;
     private String username;
     private UsernameChangeStatus usernameChangeStatus;
     private boolean subscribed;
 
-    public PlayerProfileInternalResponse() {
+    public TraderProfileInternalResponse() {
     }
 
-    public PlayerProfileInternalResponse(Long id,
+    public TraderProfileInternalResponse(Long id,
             String username,
             UsernameChangeStatus usernameChangeStatus,
             boolean subscribed) {

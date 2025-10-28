@@ -1,7 +1,7 @@
 package com.trader.auth.dto.player;
 
 
-public class PlayerLoginRequest {
+public class TraderLoginRequest {
 
     private String walletAddress;
     private String network;

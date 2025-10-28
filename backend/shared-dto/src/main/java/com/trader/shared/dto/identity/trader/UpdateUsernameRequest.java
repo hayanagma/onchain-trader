@@ -1,4 +1,4 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.trader;
 
 public class UpdateUsernameRequest {
     private String username;

@@ -1,4 +1,4 @@
-package com.trader.shared.dto.identity.player;
+package com.trader.shared.dto.identity.trader;
 
 public class UsernameResponse {
     private String username;

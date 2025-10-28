@@ -13,15 +13,15 @@ CREATE TABLE wallets (
     id BIGSERIAL PRIMARY KEY,
     network VARCHAR(16) NOT NULL,
     address VARCHAR(128) NOT NULL,
-    player_id BIGINT NOT NULL,
+    trader_id BIGINT NOT NULL,
     CONSTRAINT uq_wallet_address_network UNIQUE (address, network)
 );
 
-CREATE TABLE player_currencies (
+CREATE TABLE trader_currencies (
     id BIGSERIAL PRIMARY KEY,
-    player_id BIGINT NOT NULL,
+    trader_id BIGINT NOT NULL,
     currency_id BIGINT NOT NULL,
-    CONSTRAINT uq_player_currency UNIQUE (player_id, currency_id),
-    CONSTRAINT fk_player_currencies_currency
+    CONSTRAINT uq_trader_currency UNIQUE (trader_id, currency_id),
+    CONSTRAINT fk_trader_currencies_currency
         FOREIGN KEY (currency_id) REFERENCES currencies(id)
 );

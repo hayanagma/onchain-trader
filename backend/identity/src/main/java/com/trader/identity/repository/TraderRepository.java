@@ -7,20 +7,20 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.trader.identity.model.Player;
+import com.trader.identity.model.Trader;
 
 import jakarta.transaction.Transactional;
 
-public interface PlayerRepository extends JpaRepository<Player, Long> {
+public interface TraderRepository extends JpaRepository<Trader, Long> {
     boolean existsByUsername(String username);
 
-    Optional<Player> findByUsername(String username);
+    Optional<Trader> findByUsername(String username);
 
-    @Query("SELECT p.tokenVersion FROM Player p WHERE p.id = :id")
+    @Query("SELECT t.tokenVersion FROM Trader t WHERE t.id = :id")
     int getTokenVersionById(@Param("id") Long id);
 
     @Modifying
     @Transactional
-    @Query("UPDATE Player p SET p.tokenVersion = p.tokenVersion + 1 WHERE p.id = :id")
+    @Query("UPDATE Trader t SET t.tokenVersion = t.tokenVersion + 1 WHERE t.id = :id")
     void bumpTokenVersionById(@Param("id") Long id);
 }

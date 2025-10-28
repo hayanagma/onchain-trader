@@ -1,13 +1,13 @@
 package com.trader.shared.dto.ledger.wallet;
 
-public class WalletPlayerResponse {
+public class WalletTraderResponse {
     private String address;
     private String network;
 
-    public WalletPlayerResponse() {
+    public WalletTraderResponse() {
     }
 
-    public WalletPlayerResponse(String address, String network) {
+    public WalletTraderResponse(String address, String network) {
         this.address = address;
         this.network = network;
     }

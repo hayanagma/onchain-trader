@@ -32,16 +32,16 @@ public class CurrencyController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createCurrency(@RequestParam Long playerId,
+    public ResponseEntity<Void> createCurrency(@RequestParam Long traderId,
             @RequestBody CurrencyAddRequest request) {
-        currencyService.createCurrency(playerId, request);
+        currencyService.createCurrency(traderId, request);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/network/{network}")
     public ResponseEntity<List<CurrencyResponse>> getCurrenciesByNetwork(
             @PathVariable NetworkType network,
-            @RequestParam Long playerId) {
-        return ResponseEntity.ok(currencyService.getVisibleCurrencies(playerId, network));
+            @RequestParam Long traderId) {
+        return ResponseEntity.ok(currencyService.getVisibleCurrencies(traderId, network));
     }
 }

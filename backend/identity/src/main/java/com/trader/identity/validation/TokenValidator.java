@@ -5,24 +5,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.identity.service.AdminService;
-import com.trader.identity.service.PlayerService;
+import com.trader.identity.service.TraderService;
 
 @Service
 public class TokenValidator {
 
     private final AdminService adminService;
-    private final PlayerService playerService;
+    private final TraderService traderService;
 
-    public TokenValidator(AdminService adminService, PlayerService playerService) {
+    public TokenValidator(AdminService adminService, TraderService traderService) {
         this.adminService = adminService;
-        this.playerService = playerService;
+        this.traderService = traderService;
     }
 
     public int getTokenVersion(String role, String subject) {
         if ("ROLE_ADMIN".equals(role)) {
             return adminService.getTokenVersion(subject);
-        } else if ("ROLE_PLAYER".equals(role)) {
-            return playerService.getTokenVersion(Long.valueOf(subject));
+        } else if ("ROLE_TRADER".equals(role)) {
+            return traderService.getTokenVersion(Long.valueOf(subject));
         } else {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -33,8 +33,8 @@ public class TokenValidator {
     public void bumpTokenVersion(String role, String subject) {
         if ("ROLE_ADMIN".equals(role)) {
             adminService.bumpTokenVersion(subject);
-        } else if ("ROLE_PLAYER".equals(role)) {
-            playerService.bumpTokenVersion(Long.valueOf(subject));
+        } else if ("ROLE_TRADER".equals(role)) {
+            traderService.bumpTokenVersion(Long.valueOf(subject));
         } else {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
