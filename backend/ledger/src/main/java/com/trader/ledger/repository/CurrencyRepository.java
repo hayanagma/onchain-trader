@@ -5,10 +5,12 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.trader.ledger.model.Currency;
 import com.trader.shared.enums.NetworkType;
 
+@Repository
 public interface CurrencyRepository extends JpaRepository<Currency, Long> {
     List<Currency> findByNetwork(NetworkType network);
 
@@ -30,4 +32,5 @@ public interface CurrencyRepository extends JpaRepository<Currency, Long> {
               order by c.code
             """)
     List<Currency> findVisibleByTraderAndNetwork(Long traderId, NetworkType network);
+
 }

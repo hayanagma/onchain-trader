@@ -13,13 +13,17 @@ import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 import com.trader.shared.enums.NetworkType;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class WalletService {
 
     private final WalletRepository walletRepository;
+    private final TraderCurrencyService traderCurrencyService;
 
-    public WalletService(WalletRepository walletRepository) {
+    public WalletService(WalletRepository walletRepository, TraderCurrencyService traderCurrencyService) {
         this.walletRepository = walletRepository;
+        this.traderCurrencyService = traderCurrencyService;
     }
 
     public Optional<WalletResponse> findByAddressAndNetwork(String address, NetworkType network) {
@@ -79,12 +83,21 @@ public class WalletService {
         return wallet.getTraderId();
     }
 
+    @Transactional
     public void cleanupTraderWallet(Long traderId) {
-        Wallet wallet = getWalletForTraderEntity(traderId);
-        wallet.setAddress("unlinked-" + wallet.getId());
-        walletRepository.save(wallet);
-    }
+        List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
 
+        traderCurrencyService.removeAllForTrader(traderId);
+        if (wallets.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No wallets found for trader");
+        }
+
+        for (Wallet wallet : wallets) {
+            wallet.setAddress("unlinked-" + wallet.getId());
+        }
+
+        walletRepository.saveAll(wallets);
+    }
     public Wallet getWalletForTraderEntity(Long traderId) {
         return walletRepository.findByTraderId(traderId)
                 .orElseThrow(() -> new ResponseStatusException(

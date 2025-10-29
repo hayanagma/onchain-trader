@@ -2,15 +2,11 @@ package com.trader.ledger.service;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.ledger.dto.TokenMetadata;
 import com.trader.ledger.model.Currency;
-import com.trader.ledger.model.TraderCurrency;
 import com.trader.ledger.repository.CurrencyRepository;
-import com.trader.ledger.repository.TraderCurrencyRepository;
 import com.trader.ledger.validation.CurrencyValidator;
 import com.trader.ledger.verifier.BlockchainVerifierFactory;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
@@ -25,19 +21,19 @@ public class CurrencyService {
 
     private final CurrencyRepository currencyRepository;
     private final BlockchainVerifierFactory blockchainVerifierFactory;
-    private final TraderCurrencyRepository traderCurrencyRepository;
     private final CurrencyValidator currencyValidator;
     private final WalletService walletService;
+    private final TraderCurrencyService traderCurrencyService;
 
     public CurrencyService(CurrencyRepository currencyRepository,
             BlockchainVerifierFactory blockchainVerifierFactory,
-            TraderCurrencyRepository traderCurrencyRepository,
-            CurrencyValidator currencyValidator, WalletService walletService) {
+            CurrencyValidator currencyValidator, WalletService walletService,
+            TraderCurrencyService traderCurrencyService) {
         this.currencyRepository = currencyRepository;
         this.blockchainVerifierFactory = blockchainVerifierFactory;
-        this.traderCurrencyRepository = traderCurrencyRepository;
         this.currencyValidator = currencyValidator;
         this.walletService = walletService;
+        this.traderCurrencyService = traderCurrencyService;
     }
 
     public void createDefaultCurrencies() {
@@ -98,7 +94,7 @@ public class CurrencyService {
                     TokenMetadata m = blockchainVerifierFactory.getVerifier(network).verify(contractAddress);
                     Currency c = new Currency();
                     c.setCode(m.getSymbol());
-                    c.setName(m.getName() != null && !m.getName().isBlank() ? m.getName() : m.getSymbol());
+                    c.setName((m.getName() != null && !m.getName().isBlank()) ? m.getName() : m.getSymbol());
                     c.setNetwork(network);
                     c.setDecimals(m.getDecimals());
                     c.setKind(CurrencyKind.TOKEN);
@@ -106,13 +102,7 @@ public class CurrencyService {
                     return currencyRepository.save(c);
                 });
 
-        if (traderCurrencyRepository.existsByTraderIdAndCurrencyId(traderId, currency.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Trader already added this token");
-        }
-
-        TraderCurrency traderCurrency = new TraderCurrency();
-        traderCurrency.setTraderId(traderId);
-        traderCurrency.setCurrency(currency);
-        traderCurrencyRepository.save(traderCurrency);
+        traderCurrencyService.linkTraderToCurrency(traderId, currency);
     }
+
 }

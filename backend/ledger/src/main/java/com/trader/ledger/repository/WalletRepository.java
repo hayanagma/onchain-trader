@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.trader.ledger.model.Wallet;
 import com.trader.shared.enums.NetworkType;
 
+@Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Optional<Wallet> findByTraderId(Long traderId);
