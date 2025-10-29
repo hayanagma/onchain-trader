@@ -32,4 +32,9 @@ public class CurrencyService {
         return currencyClient.getVisibleCurrencies(traderId)
                 .collectList();
     }
+
+    public Mono<Void> removeCurrencyForCurrentTrader(Long currencyId) {
+        Long traderId = traderContext.getCurrentTraderId();
+        return currencyClient.removeCurrency(traderId, currencyId);
+    }
 }

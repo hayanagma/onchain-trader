@@ -8,6 +8,8 @@ import com.trader.ledger.model.Currency;
 import com.trader.ledger.model.TraderCurrency;
 import com.trader.ledger.repository.TraderCurrencyRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TraderCurrencyService {
 
@@ -30,5 +32,10 @@ public class TraderCurrencyService {
 
     public void removeAllForTrader(Long traderId) {
         traderCurrencyRepository.deleteAllByTraderId(traderId);
+    }
+
+    @Transactional
+    public void removeTraderCurrency(Long traderId, Long currencyId) {
+        traderCurrencyRepository.deleteByTraderIdAndCurrencyId(traderId, currencyId);
     }
 }

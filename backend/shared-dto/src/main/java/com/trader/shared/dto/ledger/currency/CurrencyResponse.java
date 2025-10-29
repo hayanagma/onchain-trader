@@ -5,6 +5,7 @@ import com.trader.shared.enums.NetworkType;
 
 public class CurrencyResponse {
 
+    private Long id;
     private String code;
     private String name;
     private NetworkType network;
@@ -15,18 +16,28 @@ public class CurrencyResponse {
     public CurrencyResponse() {
     }
 
-    public CurrencyResponse(String code,
+    public CurrencyResponse(Long id,
+            String code,
             String name,
             NetworkType network,
             int decimals,
             CurrencyKind kind,
             String contractAddress) {
+        this.id = id;
         this.code = code;
         this.name = name;
         this.network = network;
         this.decimals = decimals;
         this.kind = kind;
         this.contractAddress = contractAddress;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCode() {

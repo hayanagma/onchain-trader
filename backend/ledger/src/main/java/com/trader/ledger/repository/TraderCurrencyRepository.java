@@ -11,4 +11,6 @@ public interface TraderCurrencyRepository extends JpaRepository<TraderCurrency, 
     boolean existsByTraderIdAndCurrencyId(Long traderId, Long currencyId);
 
     void deleteAllByTraderId(Long traderId);
+    
+    void deleteByTraderIdAndCurrencyId(Long traderId, Long currencyId);
 }

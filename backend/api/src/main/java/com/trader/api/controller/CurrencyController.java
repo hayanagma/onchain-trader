@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.service.CurrencyService;
@@ -34,5 +35,11 @@ public class CurrencyController {
     @GetMapping
     public Mono<List<CurrencyResponse>> getCurrenciesForTrader() {
         return currencyService.getCurrenciesForCurrentTrader();
+    }
+
+    @PostMapping("/remove")
+    public Mono<ResponseEntity<Void>> removeCurrency(@RequestParam Long currencyId) {
+        return currencyService.removeCurrencyForCurrentTrader(currencyId)
+                .thenReturn(ResponseEntity.ok().build());
     }
 }

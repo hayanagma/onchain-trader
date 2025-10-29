@@ -6,7 +6,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.trader.api.util.WebClientUtil;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
-import com.trader.shared.enums.NetworkType;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -49,5 +48,16 @@ public class CurrencyClient {
                                                                 .build())
                                                 .retrieve(),
                                 CurrencyResponse.class);
+        }
+
+        public Mono<Void> removeCurrency(Long traderId, Long currencyId) {
+                return WebClientUtil.handleVoid(
+                                webClient.post()
+                                                .uri(uriBuilder -> uriBuilder
+                                                                .path("/remove")
+                                                                .queryParam("traderId", traderId)
+                                                                .queryParam("currencyId", currencyId)
+                                                                .build())
+                                                .retrieve());
         }
 }

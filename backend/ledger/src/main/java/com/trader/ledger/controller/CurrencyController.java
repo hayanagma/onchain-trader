@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.ledger.service.CurrencyService;
+import com.trader.ledger.service.TraderCurrencyService;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 
@@ -19,9 +20,11 @@ import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 public class CurrencyController {
 
     private final CurrencyService currencyService;
+    private final TraderCurrencyService traderCurrencyService;
 
-    public CurrencyController(CurrencyService currencyService) {
+    public CurrencyController(CurrencyService currencyService, TraderCurrencyService traderCurrencyService) {
         this.currencyService = currencyService;
+        this.traderCurrencyService = traderCurrencyService;
     }
 
     @GetMapping
@@ -41,5 +44,10 @@ public class CurrencyController {
         return ResponseEntity.ok(currencyService.getVisibleCurrencies(traderId));
     }
 
+    @PostMapping("/remove")
+    public ResponseEntity<Void> removeTraderCurrency(@RequestParam Long traderId, @RequestParam Long currencyId) {
+        traderCurrencyService.removeTraderCurrency(traderId, currencyId);
+        return ResponseEntity.ok().build();
+    }
 
 }

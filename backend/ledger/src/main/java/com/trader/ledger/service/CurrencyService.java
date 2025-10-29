@@ -59,6 +59,7 @@ public class CurrencyService {
     public List<CurrencyResponse> getAllCurrencies() {
         return currencyRepository.findAll().stream()
                 .map(currency -> new CurrencyResponse(
+                        currency.getId(),
                         currency.getCode(),
                         currency.getName(),
                         currency.getNetwork(),
@@ -73,6 +74,7 @@ public class CurrencyService {
 
         return currencyRepository.findVisibleByTraderAndNetwork(traderId, traderNetwork).stream()
                 .map(currency -> new CurrencyResponse(
+                        currency.getId(),
                         currency.getCode(),
                         currency.getName(),
                         currency.getNetwork(),
