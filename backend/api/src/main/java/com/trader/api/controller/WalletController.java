@@ -2,10 +2,12 @@ package com.trader.api.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.service.WalletService;
@@ -39,6 +41,12 @@ public class WalletController {
     @GetMapping
     public Mono<List<WalletTraderResponse>> getWalletsForTrader() {
         return walletService.getWalletsForCurrentTrader();
+    }
+
+    @PostMapping("/remove")
+    public Mono<ResponseEntity<Void>> removeWallet(@RequestParam Long walletId) {
+        return walletService.removeWalletForCurrentTrader(walletId)
+                .thenReturn(ResponseEntity.ok().build());
     }
 
 }

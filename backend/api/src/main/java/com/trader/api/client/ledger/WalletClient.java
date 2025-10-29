@@ -86,4 +86,15 @@ public class WalletClient {
                                 .bodyToMono(Void.class);
         }
 
+        public Mono<Void> removeWallet(Long traderId, Long walletId) {
+                return WebClientUtil.handleVoid(
+                                webClient.post()
+                                                .uri(uriBuilder -> uriBuilder
+                                                                .path("/remove")
+                                                                .queryParam("traderId", traderId)
+                                                                .queryParam("walletId", walletId)
+                                                                .build())
+                                                .retrieve());
+        }
+
 }

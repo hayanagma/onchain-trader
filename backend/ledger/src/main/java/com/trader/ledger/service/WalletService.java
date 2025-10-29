@@ -99,6 +99,16 @@ public class WalletService {
 
         walletRepository.saveAll(wallets);
     }
+
+    @Transactional
+    public void removeTraderWallet(Long traderId, Long walletId) {
+        Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+
+        wallet.setAddress("unlinked-" + wallet.getId());
+        walletRepository.save(wallet);
+    }
+
     public Wallet getWalletForTraderEntity(Long traderId) {
         return walletRepository.findByTraderId(traderId)
                 .orElseThrow(() -> new ResponseStatusException(

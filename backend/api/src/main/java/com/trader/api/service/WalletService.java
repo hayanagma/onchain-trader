@@ -78,4 +78,9 @@ public class WalletService {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.getWalletsForTrader(traderId).collectList();
         }
+
+        public Mono<Void> removeWalletForCurrentTrader(Long walletId) {
+                Long traderId = traderContext.getCurrentTraderId();
+                return walletClient.removeWallet(traderId, walletId);
+        }
 }

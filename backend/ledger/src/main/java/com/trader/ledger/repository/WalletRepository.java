@@ -19,4 +19,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     Optional<Wallet> findByAddressAndNetwork(String address, NetworkType network);
 
     List<Wallet> findAllByTraderId(Long traderId);
+
+    Optional<Wallet> findByIdAndTraderId(Long id, Long traderId);
+
 }

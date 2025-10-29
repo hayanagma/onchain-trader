@@ -102,4 +102,10 @@ public class WalletController {
         walletNonceService.verifyAndAddWallet(traderId, request);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/remove")
+    public ResponseEntity<Void> removeTraderWallet(@RequestParam Long traderId, @RequestParam Long walletId) {
+        walletService.removeTraderWallet(traderId, walletId);
+        return ResponseEntity.ok().build();
+    }
 }
