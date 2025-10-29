@@ -43,6 +43,7 @@ public class WalletService {
     public List<WalletTraderResponse> getWalletsByTraderId(Long traderId) {
         return walletRepository.findAllByTraderId(traderId).stream()
                 .map(wallet -> new WalletTraderResponse(
+                        wallet.getId(),
                         wallet.getAddress(),
                         wallet.getNetwork()))
                 .toList();
@@ -72,7 +73,7 @@ public class WalletService {
 
     public WalletTraderResponse getWalletByTraderId(Long traderId) {
         Wallet wallet = getWalletForTraderEntity(traderId);
-        return new WalletTraderResponse(wallet.getAddress(), wallet.getNetwork());
+        return new WalletTraderResponse(wallet.getId(), wallet.getAddress(), wallet.getNetwork());
     }
 
     public Long findTraderIdByWalletAddress(String address) {

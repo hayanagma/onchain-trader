@@ -1,5 +1,7 @@
 package com.trader.api.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.trader.api.client.IdentityClient;
@@ -9,6 +11,7 @@ import com.trader.shared.dto.identity.trader.TraderProfileSingleResponse;
 import com.trader.shared.dto.ledger.wallet.WalletAddRequest;
 import com.trader.shared.dto.ledger.wallet.WalletChallengeRequest;
 import com.trader.shared.dto.ledger.wallet.WalletChallengeResponse;
+import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -69,5 +72,10 @@ public class WalletService {
         public Mono<Void> verifyAndAddWallet(WalletAddRequest request) {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.verifyAndAddWallet(traderId, request);
+        }
+
+        public Mono<List<WalletTraderResponse>> getWalletsForCurrentTrader() {
+                Long traderId = traderContext.getCurrentTraderId();
+                return walletClient.getWalletsForTrader(traderId).collectList();
         }
 }
