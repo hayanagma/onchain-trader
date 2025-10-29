@@ -29,8 +29,6 @@ public class CurrencyClient {
                                 CurrencyResponse.class);
         }
 
-        
-
         public Mono<Void> addCurrency(Long traderId, CurrencyAddRequest request) {
                 return WebClientUtil.handleVoid(
                                 webClient.post()
@@ -42,13 +40,13 @@ public class CurrencyClient {
                                                 .retrieve());
         }
 
-        public Flux<CurrencyResponse> getVisibleCurrencies(Long traderId, NetworkType network) {
+        public Flux<CurrencyResponse> getVisibleCurrencies(Long traderId) {
                 return WebClientUtil.handleFlux(
                                 webClient.get()
                                                 .uri(uriBuilder -> uriBuilder
-                                                                .path("/network/{network}")
+                                                                .path("/trader")
                                                                 .queryParam("traderId", traderId)
-                                                                .build(network))
+                                                                .build())
                                                 .retrieve(),
                                 CurrencyResponse.class);
         }

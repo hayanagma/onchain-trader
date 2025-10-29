@@ -105,5 +105,12 @@ public class WalletService {
                         "Wallet not found for traderId " + traderId));
     }
 
-    
+    public NetworkType getTraderNetwork(Long traderId) {
+        return getWalletsByTraderId(traderId).stream()
+                .findFirst()
+                .map(WalletTraderResponse::getNetwork)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trader has no wallet"));
+    }
+
+
 }

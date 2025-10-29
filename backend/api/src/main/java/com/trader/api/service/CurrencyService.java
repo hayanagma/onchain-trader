@@ -8,7 +8,6 @@ import com.trader.api.client.ledger.CurrencyClient;
 import com.trader.api.security.TraderContext;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
-import com.trader.shared.enums.NetworkType;
 
 import reactor.core.publisher.Mono;
 
@@ -28,9 +27,9 @@ public class CurrencyService {
         return currencyClient.addCurrency(traderId, request);
     }
 
-    public Mono<List<CurrencyResponse>> getCurrenciesForCurrentTrader(NetworkType network) {
+    public Mono<List<CurrencyResponse>> getCurrenciesForCurrentTrader() {
         Long traderId = traderContext.getCurrentTraderId();
-        return currencyClient.getVisibleCurrencies(traderId, network)
+        return currencyClient.getVisibleCurrencies(traderId)
                 .collectList();
     }
 }

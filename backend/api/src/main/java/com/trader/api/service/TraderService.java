@@ -11,7 +11,6 @@ import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
 import com.trader.shared.dto.identity.trader.TraderProfileResponse;
 import com.trader.shared.dto.identity.trader.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.trader.UsernameResponse;
-import com.trader.shared.enums.NetworkType;
 
 import reactor.core.publisher.Mono;
 
@@ -41,19 +40,15 @@ public class TraderService {
 
         return walletClient.getWalletsForTrader(traderId)
                 .collectList()
-                .flatMap(wallets -> {
-                    NetworkType network = wallets.get(0).getNetwork();
-
-                    return currencyClient.getVisibleCurrencies(traderId, network)
-                            .collectList()
-                            .flatMap(currencies -> identityClient.getTraderProfile(traderId)
-                                    .map(trader -> new TraderProfileResponse(
-                                            trader.getUsername(),
-                                            wallets,
-                                            currencies,
-                                            trader.getUsernameChangeStatus(),
-                                            trader.isSubscribed())));
-                });
+                .flatMap(wallets -> currencyClient.getVisibleCurrencies(traderId)
+                        .collectList()
+                        .flatMap(currencies -> identityClient.getTraderProfile(traderId)
+                                .map(trader -> new TraderProfileResponse(
+                                        trader.getUsername(),
+                                        wallets,
+                                        currencies,
+                                        trader.getUsernameChangeStatus(),
+                                        trader.isSubscribed()))));
     }
 
     /*
