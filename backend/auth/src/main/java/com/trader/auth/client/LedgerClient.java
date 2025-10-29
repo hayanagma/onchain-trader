@@ -13,6 +13,7 @@ import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletSignatureValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationResponse;
+import com.trader.shared.enums.NetworkType;
 
 @Service
 public class LedgerClient {
@@ -25,7 +26,7 @@ public class LedgerClient {
                 .build();
     }
 
-    public Optional<WalletResponse> findByAddressAndNetwork(String address, String network) {
+    public Optional<WalletResponse> findByAddressAndNetwork(String address, NetworkType network) {
         try {
             WalletResponse body = RestTemplateUtil.get(
                     restTemplate,
@@ -42,7 +43,7 @@ public class LedgerClient {
         }
     }
 
-    public WalletValidationResponse validateWallet(String address, String network) {
+    public WalletValidationResponse validateWallet(String address, NetworkType network) {
         WalletValidationRequest req = new WalletValidationRequest(address, network);
         return RestTemplateUtil.post(
                 restTemplate,
@@ -53,7 +54,7 @@ public class LedgerClient {
 
     public WalletValidationResponse validateWalletSignature(
             String address,
-            String network,
+            NetworkType network,
             String nonce,
             String signature) {
         WalletSignatureValidationRequest req = new WalletSignatureValidationRequest(address, network, nonce, signature);
@@ -65,7 +66,7 @@ public class LedgerClient {
                 WalletValidationResponse.class);
     }
 
-    public void ensureWallet(Long traderId, String address, String network) {
+    public void ensureWallet(Long traderId, String address, NetworkType network) {
         RestTemplateUtil.postEntity(
                 restTemplate,
                 "/wallets/ensure",

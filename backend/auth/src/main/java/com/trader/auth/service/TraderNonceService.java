@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trader.auth.model.TraderNonce;
 import com.trader.auth.repository.TraderNonceRepository;
 import com.trader.auth.validation.NonceValidator;
+import com.trader.shared.enums.NetworkType;
 
 import jakarta.transaction.Transactional;
 
@@ -35,7 +36,7 @@ public class TraderNonceService {
         traderNonceRepository.deleteByUsedTrueOrCreatedAtBefore(cutoff);
     }
 
-    public String createNonce(String walletAddress, String network) {
+    public String createNonce(String walletAddress, NetworkType network) {
         String nonce = generateNonce();
         TraderNonce entity = new TraderNonce();
         entity.setNonce(nonce);
@@ -47,7 +48,7 @@ public class TraderNonceService {
     }
 
     @Transactional
-    public TraderNonce consumeNonce(String nonce, String walletAddress, String network) {
+    public TraderNonce consumeNonce(String nonce, String walletAddress, NetworkType network) {
         TraderNonce entity = traderNonceRepository.findByNonce(nonce)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nonce not found"));
 

@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.auth.model.TraderNonce;
+import com.trader.shared.enums.NetworkType;
 
 @Component
 public class NonceValidator {
 
-    public void validate(TraderNonce entity, String walletAddress, String network) {
+    public void validate(TraderNonce entity, String walletAddress, NetworkType network) {
         if (entity.isUsed()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nonce already used");
         }

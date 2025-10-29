@@ -1,10 +1,11 @@
 package com.trader.auth.dto.player;
 
+import com.trader.shared.enums.NetworkType;
 
 public class ChallengeRequest {
-    
+
     private String walletAddress;
-    private String network;
+    private NetworkType network;
 
     public String getWalletAddress() {
         return walletAddress;
@@ -14,11 +15,11 @@ public class ChallengeRequest {
         this.walletAddress = walletAddress;
     }
 
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 
-    public void setNetwork(String network) {
+    public void setNetwork(NetworkType network) {
         this.network = network;
     }
 }

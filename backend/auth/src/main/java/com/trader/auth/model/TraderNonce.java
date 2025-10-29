@@ -2,6 +2,8 @@ package com.trader.auth.model;
 
 import java.time.Instant;
 
+import com.trader.shared.enums.NetworkType;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -18,8 +20,9 @@ public class TraderNonce {
     @Column(nullable = false)
     private String walletAddress;
 
-    @Column(nullable = false)
-    private String network;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 16)
+    private NetworkType network;
 
     @Column(nullable = false)
     private boolean used;
@@ -59,11 +62,11 @@ public class TraderNonce {
         this.walletAddress = walletAddress;
     }
 
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 
-    public void setNetwork(String network) {
+    public void setNetwork(NetworkType network) {
         this.network = network;
     }
 }

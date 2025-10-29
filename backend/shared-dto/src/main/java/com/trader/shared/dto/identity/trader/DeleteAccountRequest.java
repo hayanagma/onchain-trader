@@ -1,6 +1,9 @@
 package com.trader.shared.dto.identity.trader;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class DeleteAccountRequest {
+    @NotBlank
     private String confirmation;
 
     public String getConfirmation() {

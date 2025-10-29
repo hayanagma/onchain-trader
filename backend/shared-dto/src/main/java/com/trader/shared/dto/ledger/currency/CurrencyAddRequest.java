@@ -2,9 +2,14 @@ package com.trader.shared.dto.ledger.currency;
 
 import com.trader.shared.enums.NetworkType;
 
-public class CurrencyAddRequest {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
+public class CurrencyAddRequest {
+    
+    @NotNull
     private NetworkType network;
+    @NotBlank
     private String contractAddress;
 
     public NetworkType getNetwork() {
