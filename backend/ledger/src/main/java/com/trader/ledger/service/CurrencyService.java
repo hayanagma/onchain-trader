@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trader.ledger.dto.TokenMetadata;
 import com.trader.ledger.model.Currency;
 import com.trader.ledger.model.TraderCurrency;
-import com.trader.ledger.model.Wallet;
 import com.trader.ledger.repository.CurrencyRepository;
 import com.trader.ledger.repository.TraderCurrencyRepository;
 import com.trader.ledger.validation.CurrencyValidator;
@@ -90,8 +89,7 @@ public class CurrencyService {
         NetworkType network = request.getNetwork();
         String contractAddress = request.getContractAddress();
 
-        ensureSameNetwork(traderId, network);
-
+        walletService.ensureSameNetwork(traderId, network);
         currencyValidator.validateAddress(contractAddress, network);
 
         Currency currency = currencyRepository
@@ -108,7 +106,7 @@ public class CurrencyService {
                     return currencyRepository.save(c);
                 });
 
-        if (traderCurrencyRepository.existsByTraderIdAndCurrency_Id(traderId, currency.getId())) {
+        if (traderCurrencyRepository.existsByTraderIdAndCurrencyId(traderId, currency.getId())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trader already added this token");
         }
 
@@ -116,14 +114,5 @@ public class CurrencyService {
         traderCurrency.setTraderId(traderId);
         traderCurrency.setCurrency(currency);
         traderCurrencyRepository.save(traderCurrency);
-    }
-
-    private void ensureSameNetwork(Long traderId, NetworkType network) {
-        Wallet wallet = walletService.getWalletForTraderEntity(traderId);
-        if (!wallet.getNetwork().equalsIgnoreCase(network.name())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Can only add currency within trader's wallet network");
-        }
     }
 }

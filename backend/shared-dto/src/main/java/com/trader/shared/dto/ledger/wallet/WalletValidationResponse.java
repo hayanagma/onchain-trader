@@ -1,13 +1,16 @@
 package com.trader.shared.dto.ledger.wallet;
 
+import com.trader.shared.enums.NetworkType;
+
 public class WalletValidationResponse {
+
     private String address;
-    private String network;
+    private NetworkType network;
 
     public WalletValidationResponse() {
     }
 
-    public WalletValidationResponse(String address, String network) {
+    public WalletValidationResponse(String address, NetworkType network) {
         this.address = address;
         this.network = network;
     }
@@ -16,7 +19,7 @@ public class WalletValidationResponse {
         return address;
     }
 
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 }

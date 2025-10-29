@@ -44,4 +44,6 @@ public class CurrencyController {
             @RequestParam Long traderId) {
         return ResponseEntity.ok(currencyService.getVisibleCurrencies(traderId, network));
     }
+
+
 }

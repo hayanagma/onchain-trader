@@ -1,5 +1,7 @@
 package com.trader.ledger.model;
 
+import com.trader.shared.enums.NetworkType;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,8 +12,9 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
-    private String network;
+    private NetworkType network;
 
     @Column(nullable = false, length = 128)
     private String address;
@@ -19,23 +22,18 @@ public class Wallet {
     @Column(name = "trader_id", nullable = false)
     private Long traderId;
 
+    public Wallet() {
+    }
+
     public Long getId() {
         return id;
     }
 
-    public Long getTraderId() {
-        return traderId;
-    }
-
-    public void setTraderId(Long traderId) {
-        this.traderId = traderId;
-    }
-
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 
-    public void setNetwork(String network) {
+    public void setNetwork(NetworkType network) {
         this.network = network;
     }
 
@@ -45,5 +43,13 @@ public class Wallet {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Long getTraderId() {
+        return traderId;
+    }
+
+    public void setTraderId(Long traderId) {
+        this.traderId = traderId;
     }
 }

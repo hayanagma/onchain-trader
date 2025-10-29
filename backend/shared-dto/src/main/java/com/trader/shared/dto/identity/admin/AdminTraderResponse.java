@@ -1,5 +1,7 @@
 package com.trader.shared.dto.identity.admin;
 
+import java.util.List;
+
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
 public class AdminTraderResponse {
@@ -9,7 +11,7 @@ public class AdminTraderResponse {
     private boolean banned;
     private String bannedReason;
     private boolean active;
-    private WalletTraderResponse wallet;
+    private List<WalletTraderResponse> wallets;
     private boolean subscribed;
 
     public AdminTraderResponse() {
@@ -20,14 +22,14 @@ public class AdminTraderResponse {
             boolean banned,
             String bannedReason,
             boolean active,
-            WalletTraderResponse wallet,
+            List<WalletTraderResponse> wallets,
             boolean subscribed) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.active = active;
-        this.wallet = wallet;
+        this.wallets = wallets;
         this.subscribed = subscribed;
     }
 
@@ -71,12 +73,12 @@ public class AdminTraderResponse {
         this.active = active;
     }
 
-    public WalletTraderResponse getWallet() {
-        return wallet;
+    public List<WalletTraderResponse> getWallets() {
+        return wallets;
     }
 
-    public void setWallet(WalletTraderResponse wallet) {
-        this.wallet = wallet;
+    public void setWallets(List<WalletTraderResponse> wallets) {
+        this.wallets = wallets;
     }
 
     public boolean isSubscribed() {

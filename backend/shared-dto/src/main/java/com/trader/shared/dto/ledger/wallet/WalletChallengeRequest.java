@@ -5,10 +5,7 @@ import com.trader.shared.enums.NetworkType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class WalletEnsureRequest {
-
-    @NotNull
-    private Long traderId;
+public class WalletChallengeRequest {
 
     @NotBlank
     private String address;
@@ -16,24 +13,22 @@ public class WalletEnsureRequest {
     @NotNull
     private NetworkType network;
 
-    public WalletEnsureRequest() {
-    }
-
-    public WalletEnsureRequest(Long traderId, String address, NetworkType network) {
-        this.traderId = traderId;
-        this.address = address;
-        this.network = network;
-    }
-
-    public Long getTraderId() {
-        return traderId;
+    public WalletChallengeRequest() {
     }
 
     public String getAddress() {
         return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public NetworkType getNetwork() {
         return network;
+    }
+
+    public void setNetwork(NetworkType network) {
+        this.network = network;
     }
 }

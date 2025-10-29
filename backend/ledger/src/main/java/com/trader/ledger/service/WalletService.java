@@ -1,5 +1,6 @@
 package com.trader.ledger.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import com.trader.ledger.model.Wallet;
 import com.trader.ledger.repository.WalletRepository;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
+import com.trader.shared.enums.NetworkType;
 
 @Service
 public class WalletService {
@@ -20,7 +22,7 @@ public class WalletService {
         this.walletRepository = walletRepository;
     }
 
-    public Optional<WalletResponse> findByAddressAndNetwork(String address, String network) {
+    public Optional<WalletResponse> findByAddressAndNetwork(String address, NetworkType network) {
         return walletRepository.findByAddressAndNetwork(address, network)
                 .map(wallet -> new WalletResponse(
                         wallet.getId(),
@@ -29,18 +31,39 @@ public class WalletService {
                         wallet.getTraderId()));
     }
 
-    public void ensureWallet(Long traderId, String address, String network) {
+    public void ensureWallet(Long traderId, String address, NetworkType network) {
         walletRepository.findByAddressAndNetwork(address, network)
                 .orElseGet(() -> createWallet(traderId, address, network));
     }
 
-    private Wallet createWallet(Long traderId, String address, String network) {
+    public List<WalletTraderResponse> getWalletsByTraderId(Long traderId) {
+        return walletRepository.findAllByTraderId(traderId).stream()
+                .map(wallet -> new WalletTraderResponse(
+                        wallet.getAddress(),
+                        wallet.getNetwork()))
+                .toList();
+    }
+
+    public Wallet createWallet(Long traderId, String address, NetworkType network) {
+        ensureSameNetwork(traderId, network);
+
         Wallet wallet = new Wallet();
         wallet.setTraderId(traderId);
         wallet.setAddress(address);
         wallet.setNetwork(network);
-
         return walletRepository.save(wallet);
+    }
+
+    public void ensureSameNetwork(Long traderId, NetworkType network) {
+        List<Wallet> existingWallets = walletRepository.findAllByTraderId(traderId);
+        boolean hasDifferentNetwork = existingWallets.stream()
+                .anyMatch(w -> !w.getNetwork().equals(network));
+
+        if (hasDifferentNetwork) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Trader already has a wallet on a different network");
+        }
     }
 
     public WalletTraderResponse getWalletByTraderId(Long traderId) {
@@ -68,4 +91,6 @@ public class WalletService {
                         HttpStatus.NOT_FOUND,
                         "Wallet not found for traderId " + traderId));
     }
+
+    
 }

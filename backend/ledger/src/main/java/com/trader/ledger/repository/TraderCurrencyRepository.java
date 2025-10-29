@@ -6,5 +6,5 @@ import com.trader.ledger.model.TraderCurrency;
 
 
 public interface TraderCurrencyRepository extends JpaRepository<TraderCurrency, Long> {
-    boolean existsByTraderIdAndCurrency_Id(Long traderId, Long currencyId);
+    boolean existsByTraderIdAndCurrencyId(Long traderId, Long currencyId);
 }

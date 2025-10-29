@@ -8,8 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.trader.shared.dto.ledger.wallet.WalletSignatureValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationRequest;
 import com.trader.shared.dto.ledger.wallet.WalletValidationResponse;
-
-
+import com.trader.shared.enums.NetworkType;
 
 @Component
 public class WalletValidator {
@@ -25,25 +24,24 @@ public class WalletValidator {
 
     private WalletValidationResponse doValidation(
             String address,
-            String network,
+            NetworkType network,
             String nonce,
             String signature,
             boolean checkSignature) {
         String normalizedAddress = normalizeAddress(address);
-        String normalizedNetwork = normalizeNetwork(network);
 
-        validateNetwork(normalizedNetwork);
+        validateNetwork(network);
         validateTronWallet(normalizedAddress);
 
         if (checkSignature) {
-            validateSignature(normalizedAddress, normalizedNetwork, nonce, signature);
+            validateSignature(normalizedAddress, network, nonce, signature);
         }
 
-        return new WalletValidationResponse(normalizedAddress, normalizedNetwork);
+        return new WalletValidationResponse(normalizedAddress, network);
     }
 
-    public void validateNetwork(String network) {
-        if (!"TRON".equalsIgnoreCase(network)) {
+    public void validateNetwork(NetworkType network) {
+        if (network != NetworkType.TRON) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported network: " + network);
         }
     }
@@ -62,12 +60,12 @@ public class WalletValidator {
         }
     }
 
-    public void validateSignature(String walletAddress, String network, String message, String signature) {
-        if (!"TRON".equalsIgnoreCase(network)) {
+    public void validateSignature(String walletAddress, NetworkType network, String message, String signature) {
+        if (network != NetworkType.TRON) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported network: " + network);
         }
 
-        // TODO: implement actual blockchain Tron signature validation
+        // TODO: implement actual Tron signature verification
         boolean valid = true; // placeholder
 
         if (!valid) {
@@ -79,7 +77,4 @@ public class WalletValidator {
         return address == null ? null : address.trim();
     }
 
-    public String normalizeNetwork(String network) {
-        return network == null ? null : network.trim().toUpperCase();
-    }
 }

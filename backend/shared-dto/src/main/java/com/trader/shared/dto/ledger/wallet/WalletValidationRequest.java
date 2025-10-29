@@ -1,13 +1,22 @@
 package com.trader.shared.dto.ledger.wallet;
 
+import com.trader.shared.enums.NetworkType;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class WalletValidationRequest {
+
+    @NotBlank
     private String address;
-    private String network;
+
+    @NotNull
+    private NetworkType network;
 
     public WalletValidationRequest() {
     }
 
-    public WalletValidationRequest(String address, String network) {
+    public WalletValidationRequest(String address, NetworkType network) {
         this.address = address;
         this.network = network;
     }
@@ -20,11 +29,11 @@ public class WalletValidationRequest {
         this.address = address;
     }
 
-    public String getNetwork() {
+    public NetworkType getNetwork() {
         return network;
     }
 
-    public void setNetwork(String network) {
+    public void setNetwork(NetworkType network) {
         this.network = network;
     }
 }

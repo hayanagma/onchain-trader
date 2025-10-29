@@ -25,3 +25,12 @@ CREATE TABLE trader_currencies (
     CONSTRAINT fk_trader_currencies_currency
         FOREIGN KEY (currency_id) REFERENCES currencies(id)
 );
+
+CREATE TABLE wallet_nonces (
+    id BIGSERIAL PRIMARY KEY,
+    nonce VARCHAR(64) NOT NULL UNIQUE,
+    wallet_address VARCHAR(128) NOT NULL,
+    network VARCHAR(16) NOT NULL,
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);

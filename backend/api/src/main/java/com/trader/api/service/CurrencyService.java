@@ -30,7 +30,7 @@ public class CurrencyService {
 
     public Mono<List<CurrencyResponse>> getCurrenciesForCurrentTrader(NetworkType network) {
         Long traderId = traderContext.getCurrentTraderId();
-        return currencyClient.getCurrenciesByNetwork(traderId, network)
+        return currencyClient.getVisibleCurrencies(traderId, network)
                 .collectList();
     }
 }
