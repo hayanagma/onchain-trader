@@ -32,7 +32,8 @@ public class WalletService {
                         wallet.getId(),
                         wallet.getAddress(),
                         wallet.getNetwork(),
-                        wallet.getTraderId()));
+                        wallet.getTraderId(),
+                        wallet.isActive()));
     }
 
     public void ensureWallet(Long traderId, String address, NetworkType network) {
@@ -45,7 +46,8 @@ public class WalletService {
                 .map(wallet -> new WalletTraderResponse(
                         wallet.getId(),
                         wallet.getAddress(),
-                        wallet.getNetwork()))
+                        wallet.getNetwork(),
+                        wallet.isActive()))
                 .toList();
     }
 
@@ -56,6 +58,7 @@ public class WalletService {
         wallet.setTraderId(traderId);
         wallet.setAddress(address);
         wallet.setNetwork(network);
+        wallet.setActive(true);
         return walletRepository.save(wallet);
     }
 
@@ -73,7 +76,7 @@ public class WalletService {
 
     public WalletTraderResponse getWalletByTraderId(Long traderId) {
         Wallet wallet = getWalletForTraderEntity(traderId);
-        return new WalletTraderResponse(wallet.getId(), wallet.getAddress(), wallet.getNetwork());
+        return new WalletTraderResponse(wallet.getId(), wallet.getAddress(), wallet.getNetwork(), wallet.isActive());
     }
 
     public Long findTraderIdByWalletAddress(String address) {
@@ -84,20 +87,27 @@ public class WalletService {
         return wallet.getTraderId();
     }
 
+
     @Transactional
     public void cleanupTraderWallet(Long traderId) {
         List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
 
-        traderCurrencyService.removeAllForTrader(traderId);
         if (wallets.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No wallets found for trader");
         }
 
+        traderCurrencyService.removeAllForTrader(traderId);
+
         for (Wallet wallet : wallets) {
+            setWalletInactive(wallet);
             wallet.setAddress("unlinked-" + wallet.getId());
         }
 
         walletRepository.saveAll(wallets);
+    }
+
+    private void setWalletInactive(Wallet wallet) {
+        wallet.setActive(false);
     }
 
     @Transactional
@@ -105,7 +115,7 @@ public class WalletService {
         Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
 
-        wallet.setAddress("unlinked-" + wallet.getId());
+        setWalletInactive(wallet);
         walletRepository.save(wallet);
     }
 
@@ -123,5 +133,15 @@ public class WalletService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trader has no wallet"));
     }
 
+    @Transactional
+    public void reactivateWallet(Long walletId) {
+        Wallet wallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+
+        if (!wallet.isActive()) {
+            wallet.setActive(true);
+            walletRepository.save(wallet);
+        }
+    }
 
 }

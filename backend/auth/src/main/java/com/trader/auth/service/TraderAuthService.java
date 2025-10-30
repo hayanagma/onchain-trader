@@ -66,16 +66,7 @@ public class TraderAuthService {
 
         traderNonceService.consumeNonce(request.getNonce(), validated.getAddress(), validated.getNetwork());
 
-        Optional<WalletResponse> walletOpt = ledgerClient.findByAddressAndNetwork(validated.getAddress(),
-                validated.getNetwork());
-
-        TraderResponse trader;
-        if (walletOpt.isPresent()) {
-            trader = identityClient.getTrader(walletOpt.get().getTraderId());
-        } else {
-            trader = identityClient.createTrader();
-            ledgerClient.ensureWallet(trader.getId(), validated.getAddress(), validated.getNetwork());
-        }
+        TraderResponse trader = resolveTraderAndWallet(validated);
 
         Authentication authentication = authenticationManager.authenticate(
                 new WalletAuthenticationToken(validated.getAddress(), validated.getNetwork()));
@@ -83,7 +74,8 @@ public class TraderAuthService {
         Long traderId = Long.valueOf(authentication.getPrincipal().toString());
 
         if (trader.isBanned()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
                     trader.getBannedReason() != null ? trader.getBannedReason() : "Trader is banned");
         }
 
@@ -108,4 +100,24 @@ public class TraderAuthService {
             // ignore invalid token
         }
     }
+
+    private TraderResponse resolveTraderAndWallet(WalletValidationResponse validated) {
+        Optional<WalletResponse> walletOpt = ledgerClient.findByAddressAndNetwork(validated.getAddress(),
+                validated.getNetwork());
+
+        if (walletOpt.isPresent()) {
+            WalletResponse wallet = walletOpt.get();
+
+            if (!wallet.isActive() && wallet.getTraderId() != null) {
+                ledgerClient.reactivateWallet(wallet.getId());
+            }
+
+            return identityClient.getTrader(wallet.getTraderId());
+        } else {
+            TraderResponse trader = identityClient.createTrader();
+            ledgerClient.ensureWallet(trader.getId(), validated.getAddress(), validated.getNetwork());
+            return trader;
+        }
+    }
+    
 }

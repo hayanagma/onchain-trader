@@ -73,4 +73,13 @@ public class LedgerClient {
                 new WalletEnsureRequest(traderId, address, network),
                 Void.class);
     }
+
+    public void reactivateWallet(Long walletId) {
+        RestTemplateUtil.postEntity(
+                restTemplate,
+                "/wallets/reactivate?walletId={walletId}",
+                null,
+                Void.class,
+                walletId);
+    }
 }

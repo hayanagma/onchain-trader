@@ -22,7 +22,17 @@ public class Wallet {
     @Column(name = "trader_id", nullable = false)
     private Long traderId;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     public Wallet() {
+    }
+
+    public Wallet(NetworkType network, String address, Long traderId, boolean active) {
+        this.network = network;
+        this.address = address;
+        this.traderId = traderId;
+        this.active = active;
     }
 
     public Long getId() {
@@ -51,5 +61,13 @@ public class Wallet {
 
     public void setTraderId(Long traderId) {
         this.traderId = traderId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

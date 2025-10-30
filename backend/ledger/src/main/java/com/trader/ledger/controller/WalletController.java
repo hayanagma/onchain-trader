@@ -108,4 +108,10 @@ public class WalletController {
         walletService.removeTraderWallet(traderId, walletId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/reactivate")
+    public ResponseEntity<Void> reactivateWallet(@RequestParam Long walletId) {
+        walletService.reactivateWallet(walletId);
+        return ResponseEntity.ok().build();
+    }
 }
