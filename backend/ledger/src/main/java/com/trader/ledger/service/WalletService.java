@@ -54,6 +54,16 @@ public class WalletService {
     public Wallet createWallet(Long traderId, String address, NetworkType network) {
         ensureSameNetwork(traderId, network);
 
+        Optional<Wallet> existing = walletRepository.findByAddressAndNetwork(address, network);
+        if (existing.isPresent()) {
+            Wallet wallet = existing.get();
+            if (!wallet.isActive()) {
+                wallet.setActive(true);
+                return walletRepository.save(wallet);
+            }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wallet already active");
+        }
+
         Wallet wallet = new Wallet();
         wallet.setTraderId(traderId);
         wallet.setAddress(address);
@@ -87,7 +97,6 @@ public class WalletService {
         return wallet.getTraderId();
     }
 
-
     @Transactional
     public void cleanupTraderWallet(Long traderId) {
         List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
@@ -111,13 +120,18 @@ public class WalletService {
     }
 
     @Transactional
-    public void removeTraderWallet(Long traderId, Long walletId) {
-        Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
-
-        setWalletInactive(wallet);
-        walletRepository.save(wallet);
+public void removeTraderWallet(Long traderId, Long walletId) {
+    List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
+    if (wallets.size() <= 1) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove the only wallet");
     }
+
+    Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+
+    wallet.setActive(false);
+    walletRepository.save(wallet);
+}
 
     public Wallet getWalletForTraderEntity(Long traderId) {
         return walletRepository.findByTraderId(traderId)
