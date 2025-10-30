@@ -1,4 +1,4 @@
-package com.trader.ledger.verifier;
+package com.trader.ledger.verifier.token;
 
 import java.util.List;
 import java.util.Map;

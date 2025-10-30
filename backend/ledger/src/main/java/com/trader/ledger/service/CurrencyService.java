@@ -8,7 +8,7 @@ import com.trader.ledger.dto.TokenMetadata;
 import com.trader.ledger.model.Currency;
 import com.trader.ledger.repository.CurrencyRepository;
 import com.trader.ledger.validation.CurrencyValidator;
-import com.trader.ledger.verifier.BlockchainVerifierFactory;
+import com.trader.ledger.verifier.token.BlockchainVerifierFactory;
 import com.trader.shared.dto.ledger.currency.CurrencyAddRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.enums.CurrencyKind;

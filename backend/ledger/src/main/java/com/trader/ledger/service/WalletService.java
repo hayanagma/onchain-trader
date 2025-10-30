@@ -115,18 +115,18 @@ public class WalletService {
     }
 
     @Transactional
-public void removeTraderWallet(Long traderId, Long walletId) {
-    List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
-    if (wallets.size() <= 1) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove the only wallet");
+    public void removeTraderWallet(Long traderId, Long walletId) {
+        List<Wallet> wallets = walletRepository.findAllByTraderId(traderId);
+        if (wallets.size() <= 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot remove the only wallet");
+        }
+
+        Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+
+        wallet.setActive(false);
+        walletRepository.save(wallet);
     }
-
-    Wallet wallet = walletRepository.findByIdAndTraderId(walletId, traderId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
-
-    wallet.setActive(false);
-    walletRepository.save(wallet);
-}
 
     public Wallet getWalletForTraderEntity(Long traderId) {
         return walletRepository.findByTraderId(traderId)

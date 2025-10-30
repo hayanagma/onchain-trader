@@ -1,4 +1,4 @@
-package com.trader.ledger.verifier;
+package com.trader.ledger.verifier.token;
 
 import com.trader.shared.enums.NetworkType;
 

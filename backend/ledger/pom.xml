@@ -100,6 +100,11 @@
 		<artifactId>solanaj</artifactId>
 		<version>1.17.0</version>
 	</dependency>
+	<dependency>
+		<groupId>org.web3j</groupId>
+		<artifactId>crypto</artifactId>
+		<version>5.0.1</version>
+	</dependency>
 	</dependencies>
 	<build>
 		<plugins>
