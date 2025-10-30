@@ -34,17 +34,6 @@ public class WalletClient {
                                 Long.class);
         }
 
-        public Mono<WalletTraderResponse> getWalletForTrader(Long traderId) {
-                return WebClientUtil.handle(
-                                webClient.get()
-                                                .uri(uriBuilder -> uriBuilder
-                                                                .path("/wallet-by-trader")
-                                                                .queryParam("traderId", traderId)
-                                                                .build())
-                                                .retrieve(),
-                                WalletTraderResponse.class);
-        }
-
         public Flux<WalletTraderResponse> getWalletsForTrader(Long traderId) {
                 return WebClientUtil.handleFlux(
                                 webClient.get()

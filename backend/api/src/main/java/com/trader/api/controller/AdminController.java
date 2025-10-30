@@ -34,7 +34,7 @@ public class AdminController {
         this.identityClient = identityClient;
         this.currencyClient = currencyClient;
     }
-/* 
+ 
     @GetMapping("/traders")
     public Mono<ResponseEntity<List<AdminTraderResponse>>> getTraders(
             @RequestParam(required = false) String walletAddress) {
@@ -42,7 +42,7 @@ public class AdminController {
                 .collectList()
                 .map(ResponseEntity::ok);
     }
- */
+ 
     @PutMapping("/trader/ban-status")
     public Mono<ResponseEntity<Void>> updateBanStatus(@RequestBody BanRequest request) {
         return identityClient.updateBanStatus(request)

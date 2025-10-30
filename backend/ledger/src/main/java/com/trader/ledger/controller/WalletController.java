@@ -65,11 +65,6 @@ public class WalletController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/wallet-by-trader")
-    public ResponseEntity<WalletTraderResponse> getWalletForTrader(@RequestParam Long traderId) {
-        return ResponseEntity.ok(walletService.getWalletByTraderId(traderId));
-    }
-
     @GetMapping("/by-trader")
     public ResponseEntity<List<WalletTraderResponse>> getWalletsByTrader(@RequestParam Long traderId) {
         List<WalletTraderResponse> wallets = walletService.getWalletsByTraderId(traderId);

@@ -84,11 +84,6 @@ public class WalletService {
         }
     }
 
-    public WalletTraderResponse getWalletByTraderId(Long traderId) {
-        Wallet wallet = getWalletForTraderEntity(traderId);
-        return new WalletTraderResponse(wallet.getId(), wallet.getAddress(), wallet.getNetwork(), wallet.isActive());
-    }
-
     public Long findTraderIdByWalletAddress(String address) {
         Wallet wallet = walletRepository.findByAddress(address)
                 .orElseThrow(() -> new ResponseStatusException(
