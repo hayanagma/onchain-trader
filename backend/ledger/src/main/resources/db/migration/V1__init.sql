@@ -22,20 +22,16 @@ CREATE TABLE wallets (
     address VARCHAR(128) NOT NULL,
     trader_id BIGINT NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    CONSTRAINT uq_wallet_address_network UNIQUE (address, network),
-    CONSTRAINT fk_wallet_trader FOREIGN KEY (trader_id)
-        REFERENCES traders(id) ON DELETE CASCADE
+    CONSTRAINT uq_wallet_address_network UNIQUE (address, network)
 );
 
 CREATE TABLE trader_currencies (
     id BIGSERIAL PRIMARY KEY,
-    network_account_id BIGINT NOT NULL,
+    trader_id BIGINT NOT NULL,
     currency_id BIGINT NOT NULL,
-    CONSTRAINT uq_network_account_currency UNIQUE (network_account_id, currency_id),
+    CONSTRAINT uq_trader_currency UNIQUE (trader_id, currency_id),
     CONSTRAINT fk_trader_currencies_currency
-        FOREIGN KEY (currency_id) REFERENCES currencies(id) ON DELETE CASCADE,
-    CONSTRAINT fk_trader_currencies_network_account
-        FOREIGN KEY (network_account_id) REFERENCES network_accounts(id) ON DELETE CASCADE
+        FOREIGN KEY (currency_id) REFERENCES currencies(id) ON DELETE CASCADE
 );
 
 CREATE TABLE wallet_nonces (
