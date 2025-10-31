@@ -87,9 +87,9 @@ public class CurrencyService {
     @Transactional
     public void createCurrency(Long traderId, CurrencyAddRequest request) {
         NetworkType traderNetwork = walletService.getTraderNetwork(traderId);
+        currencyValidator.assertNetworkSupportsTokens(traderNetwork);
 
         String contractAddress = request.getContractAddress();
-
         currencyValidator.validateAddress(contractAddress, traderNetwork);
 
         Currency currency = currencyRepository

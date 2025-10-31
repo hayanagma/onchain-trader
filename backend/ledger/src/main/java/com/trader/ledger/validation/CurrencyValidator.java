@@ -26,4 +26,12 @@ public class CurrencyValidator {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid address format for " + network);
         }
     }
+
+    public void assertNetworkSupportsTokens(NetworkType network) {
+        if (network == NetworkType.BITCOIN) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Bitcoin does not support adding tokens");
+        }
+    }
 }

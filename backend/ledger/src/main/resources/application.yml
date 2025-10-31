@@ -37,6 +37,11 @@ solana:
   tokenlist:
     url: ${SOLANA_TOKENLIST_URL}  
 
+  eth:
+  infura:
+    rpc:
+      url: ${ETH_INFURA_RPC_URL}
+
 logging:
   level:
     org.springframework.security: DEBUG
