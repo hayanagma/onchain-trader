@@ -2,6 +2,7 @@ package com.trader.shared.dto.identity.admin;
 
 import java.util.List;
 
+import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
@@ -15,6 +16,7 @@ public class AdminTraderResponse {
     private List<WalletTraderResponse> wallets;
     private List<CurrencyResponse> currencies;
     private boolean subscribed;
+    private SubscriptionResponse subscription;
 
     public AdminTraderResponse() {
     }
@@ -26,7 +28,8 @@ public class AdminTraderResponse {
             boolean active,
             List<WalletTraderResponse> wallets,
             List<CurrencyResponse> currencies,
-            boolean subscribed) {
+            boolean subscribed,
+            SubscriptionResponse subscription) {
         this.id = id;
         this.username = username;
         this.banned = banned;
@@ -35,6 +38,7 @@ public class AdminTraderResponse {
         this.wallets = wallets;
         this.currencies = currencies;
         this.subscribed = subscribed;
+        this.subscription = subscription;
     }
 
     public Long getId() {
@@ -99,5 +103,13 @@ public class AdminTraderResponse {
 
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
+    }
+
+    public SubscriptionResponse getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(SubscriptionResponse subscription) {
+        this.subscription = subscription;
     }
 }

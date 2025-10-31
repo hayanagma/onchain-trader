@@ -9,9 +9,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.identity.model.Trader;
 import com.trader.identity.repository.TraderRepository;
+import com.trader.identity.util.RandomNameGenerator;
 import com.trader.identity.validation.TraderValidator;
 import com.trader.shared.dto.identity.admin.AdminTraderInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
+import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
 import com.trader.shared.dto.identity.trader.TraderProfileInternalResponse;
 import com.trader.shared.dto.identity.trader.TraderResponse;
@@ -23,21 +25,22 @@ import com.trader.shared.dto.identity.trader.UsernameResponse;
 public class TraderService {
 
     private final TraderRepository traderRepository;
+    private final SubscriptionService subscriptionService;
     private final RandomNameGenerator randomNameGenerator;
     private final TraderValidator traderValidator;
 
     public TraderService(TraderRepository traderRepository,
+            SubscriptionService subscriptionService,
             RandomNameGenerator randomNameGenerator,
             TraderValidator traderValidator) {
         this.traderRepository = traderRepository;
+        this.subscriptionService = subscriptionService;
         this.randomNameGenerator = randomNameGenerator;
         this.traderValidator = traderValidator;
     }
 
     public TraderResponse getTraderById(Long traderId) {
-        Trader trader = traderRepository.findById(traderId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Trader not found: " + traderId));
+        Trader trader = getTraderEntity(traderId);
         return toResponse(trader);
     }
 
@@ -52,17 +55,19 @@ public class TraderService {
     }
 
     private TraderResponse toResponse(Trader trader) {
+        SubscriptionResponse subscriptionResponse = subscriptionService.getSubscriptionForTrader(trader.getId());
         return new TraderResponse(
                 trader.getId(),
                 trader.getUsername(),
                 trader.isBanned(),
                 trader.getBannedReason(),
                 trader.getTokenVersion(),
-                trader.isSubscribed());
+                trader.isSubscribed(),
+                subscriptionResponse);
     }
 
     public int getTokenVersion(Long traderId) {
-        return getTraderById(traderId).getTokenVersion();
+        return getTraderEntity(traderId).getTokenVersion();
     }
 
     public void bumpTokenVersion(Long traderId) {
@@ -72,11 +77,14 @@ public class TraderService {
     public TraderProfileInternalResponse getTraderProfile(Long traderId) {
         Trader trader = getTraderEntity(traderId);
         UsernameChangeStatus status = traderValidator.getUsernameChangeStatus(trader);
+        SubscriptionResponse subscriptionResponse = subscriptionService.getSubscriptionForTrader(traderId);
+
         return new TraderProfileInternalResponse(
                 trader.getId(),
                 trader.getUsername(),
                 status,
-                trader.isSubscribed());
+                trader.isSubscribed(),
+                subscriptionResponse);
     }
 
     public Trader getTraderEntity(Long traderId) {
@@ -106,13 +114,15 @@ public class TraderService {
     }
 
     private AdminTraderInternalResponse toAdminTraderInternalResponse(Trader trader) {
+        SubscriptionResponse subscriptionResponse = subscriptionService.getSubscriptionForTrader(trader.getId());
         return new AdminTraderInternalResponse(
                 trader.getId(),
                 trader.getUsername(),
                 trader.isBanned(),
                 trader.getBannedReason(),
                 trader.isActive(),
-                trader.isSubscribed());
+                trader.isSubscribed(),
+                subscriptionResponse);
     }
 
     public UsernameResponse randomizeUsername(Long traderId) {

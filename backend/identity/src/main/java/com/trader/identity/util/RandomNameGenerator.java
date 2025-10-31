@@ -1,4 +1,4 @@
-package com.trader.identity.service;
+package com.trader.identity.util;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

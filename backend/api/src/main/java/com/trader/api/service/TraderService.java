@@ -50,7 +50,8 @@ public class TraderService {
                                         wallets,
                                         currencies,
                                         trader.getUsernameChangeStatus(),
-                                        trader.isSubscribed()))));
+                                        trader.isSubscribed(),
+                                        trader.getSubscription()))));
     }
 
     public Flux<AdminTraderResponse> getTraders(String walletAddress) {
@@ -71,7 +72,8 @@ public class TraderService {
                                                         trader.isActive(),
                                                         wallets,
                                                         currencies,
-                                                        trader.isSubscribed())))
+                                                        trader.isSubscribed(),
+                                                        trader.getSubscription())))
                                 .flux();
                     });
         } else {
@@ -86,7 +88,8 @@ public class TraderService {
                                             trader.isActive(),
                                             wallets,
                                             currencies,
-                                            trader.isSubscribed())));
+                                            trader.isSubscribed(),
+                                            trader.getSubscription())));
         }
     }
 

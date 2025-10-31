@@ -2,6 +2,7 @@ package com.trader.shared.dto.identity.trader;
 
 import java.util.List;
 
+import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 
@@ -12,6 +13,7 @@ public class TraderProfileResponse {
     private List<CurrencyResponse> currencies;
     private UsernameChangeStatus usernameChangeStatus;
     private boolean subscribed;
+    private SubscriptionResponse subscription;
 
     public TraderProfileResponse() {
     }
@@ -20,12 +22,14 @@ public class TraderProfileResponse {
             List<WalletTraderResponse> wallets,
             List<CurrencyResponse> currencies,
             UsernameChangeStatus usernameChangeStatus,
-            boolean subscribed) {
+            boolean subscribed,
+            SubscriptionResponse subscription) {
         this.username = username;
         this.wallets = wallets;
         this.currencies = currencies;
         this.usernameChangeStatus = usernameChangeStatus;
         this.subscribed = subscribed;
+        this.subscription = subscription;
     }
 
     public String getUsername() {
@@ -66,5 +70,13 @@ public class TraderProfileResponse {
 
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
+    }
+
+    public SubscriptionResponse getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(SubscriptionResponse subscription) {
+        this.subscription = subscription;
     }
 }

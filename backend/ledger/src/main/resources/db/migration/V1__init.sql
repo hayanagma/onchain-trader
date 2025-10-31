@@ -9,22 +9,34 @@ CREATE TABLE currencies (
     CONSTRAINT uq_currency_code_network UNIQUE (code, network)
 );
 
+CREATE TABLE network_accounts (
+    id BIGSERIAL PRIMARY KEY,
+    trader_id BIGINT NOT NULL,
+    network VARCHAR(16) NOT NULL,
+    CONSTRAINT uq_network_account_trader_network UNIQUE (trader_id, network)
+);
+
 CREATE TABLE wallets (
     id BIGSERIAL PRIMARY KEY,
     network VARCHAR(16) NOT NULL,
     address VARCHAR(128) NOT NULL,
     trader_id BIGINT NOT NULL,
+    network_account_id BIGINT NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    CONSTRAINT uq_wallet_address_network UNIQUE (address, network)
+    CONSTRAINT uq_wallet_address_network UNIQUE (address, network),
+    CONSTRAINT fk_wallet_network_account
+        FOREIGN KEY (network_account_id) REFERENCES network_accounts(id) ON DELETE CASCADE
 );
 
 CREATE TABLE trader_currencies (
     id BIGSERIAL PRIMARY KEY,
-    trader_id BIGINT NOT NULL,
+    network_account_id BIGINT NOT NULL,
     currency_id BIGINT NOT NULL,
-    CONSTRAINT uq_trader_currency UNIQUE (trader_id, currency_id),
+    CONSTRAINT uq_network_account_currency UNIQUE (network_account_id, currency_id),
     CONSTRAINT fk_trader_currencies_currency
-        FOREIGN KEY (currency_id) REFERENCES currencies(id)
+        FOREIGN KEY (currency_id) REFERENCES currencies(id) ON DELETE CASCADE,
+    CONSTRAINT fk_trader_currencies_network_account
+        FOREIGN KEY (network_account_id) REFERENCES network_accounts(id) ON DELETE CASCADE
 );
 
 CREATE TABLE wallet_nonces (

@@ -1,12 +1,16 @@
 package com.trader.shared.dto.identity.trader;
 
+import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
+
 public class TraderResponse {
+
     private Long id;
     private String username;
     private boolean banned;
     private String bannedReason;
     private int tokenVersion;
     private boolean subscribed;
+    private SubscriptionResponse subscription;
 
     public TraderResponse() {
     }
@@ -16,13 +20,15 @@ public class TraderResponse {
             boolean banned,
             String bannedReason,
             int tokenVersion,
-            boolean subscribed) {
+            boolean subscribed,
+            SubscriptionResponse subscription) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.tokenVersion = tokenVersion;
         this.subscribed = subscribed;
+        this.subscription = subscription;
     }
 
     public Long getId() {
@@ -71,5 +77,13 @@ public class TraderResponse {
 
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
+    }
+
+    public SubscriptionResponse getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(SubscriptionResponse subscription) {
+        this.subscription = subscription;
     }
 }

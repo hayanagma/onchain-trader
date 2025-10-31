@@ -13,3 +13,14 @@ CREATE TABLE admins (
     username VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     token_version INT NOT NULL DEFAULT 1);
+
+CREATE TABLE subscriptions (
+    id BIGSERIAL PRIMARY KEY,
+    trader_id BIGINT NOT NULL UNIQUE REFERENCES traders(id) ON DELETE CASCADE,
+    plan VARCHAR(50) NOT NULL,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP,
+    auto_renewal BOOLEAN NOT NULL DEFAULT FALSE,
+    renewal_period_days INT NOT NULL DEFAULT 30,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
