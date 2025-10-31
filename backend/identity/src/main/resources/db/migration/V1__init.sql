@@ -6,7 +6,7 @@ CREATE TABLE traders (
     token_version INT NOT NULL DEFAULT 1,
     last_username_change_at TIMESTAMP,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    subscribed BOOLEAN NOT NULL DEFAULT FALSE
+    subscription_plan VARCHAR(20) NOT NULL DEFAULT 'FREE'
 );
 
 CREATE TABLE admins (

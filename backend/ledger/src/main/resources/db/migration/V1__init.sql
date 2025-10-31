@@ -21,11 +21,10 @@ CREATE TABLE wallets (
     network VARCHAR(16) NOT NULL,
     address VARCHAR(128) NOT NULL,
     trader_id BIGINT NOT NULL,
-    network_account_id BIGINT NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT uq_wallet_address_network UNIQUE (address, network),
-    CONSTRAINT fk_wallet_network_account
-        FOREIGN KEY (network_account_id) REFERENCES network_accounts(id) ON DELETE CASCADE
+    CONSTRAINT fk_wallet_trader FOREIGN KEY (trader_id)
+        REFERENCES traders(id) ON DELETE CASCADE
 );
 
 CREATE TABLE trader_currencies (

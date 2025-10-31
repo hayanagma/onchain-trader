@@ -22,9 +22,6 @@ public class Wallet {
     @Column(name = "trader_id", nullable = false)
     private Long traderId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "network_account_id", nullable = false)
-    private NetworkAccount networkAccount;
 
     @Column(nullable = false)
     private boolean active = true;
@@ -32,11 +29,10 @@ public class Wallet {
     public Wallet() {
     }
 
-    public Wallet(NetworkType network, String address, Long traderId, NetworkAccount networkAccount) {
+    public Wallet(NetworkType network, String address, Long traderId) {
         this.network = network;
         this.address = address;
         this.traderId = traderId;
-        this.networkAccount = networkAccount;
     }
 
     public Long getId() {
@@ -69,14 +65,6 @@ public class Wallet {
 
     public void setTraderId(Long traderId) {
         this.traderId = traderId;
-    }
-
-    public NetworkAccount getNetworkAccount() {
-        return networkAccount;
-    }
-
-    public void setNetworkAccount(NetworkAccount networkAccount) {
-        this.networkAccount = networkAccount;
     }
 
     public boolean isActive() {

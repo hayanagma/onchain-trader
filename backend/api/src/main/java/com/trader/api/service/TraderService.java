@@ -50,7 +50,7 @@ public class TraderService {
                                         wallets,
                                         currencies,
                                         trader.getUsernameChangeStatus(),
-                                        trader.isSubscribed(),
+                                        trader.getSubscriptionPlan(),
                                         trader.getSubscription()))));
     }
 
@@ -72,7 +72,7 @@ public class TraderService {
                                                         trader.isActive(),
                                                         wallets,
                                                         currencies,
-                                                        trader.isSubscribed(),
+                                                        trader.getSubscriptionPlan(),
                                                         trader.getSubscription())))
                                 .flux();
                     });
@@ -88,7 +88,7 @@ public class TraderService {
                                             trader.isActive(),
                                             wallets,
                                             currencies,
-                                            trader.isSubscribed(),
+                                            trader.getSubscriptionPlan(),
                                             trader.getSubscription())));
         }
     }

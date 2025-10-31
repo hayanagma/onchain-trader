@@ -33,7 +33,7 @@ public class SubscriptionService {
         Subscription subscription = getOrCreateSubscription(trader);
 
         activateSubscription(subscription, request.getPlan(), request.isAutoRenewal());
-        updateTraderSubscribed(trader, true);
+        updateTraderSubscribed(trader,request.getPlan());
 
         Subscription saved = subscriptionRepository.save(subscription);
 
@@ -69,8 +69,8 @@ public class SubscriptionService {
         subscription.setActive(true);
     }
 
-    private void updateTraderSubscribed(Trader trader, boolean subscribed) {
-        trader.setSubscribed(subscribed);
+    private void updateTraderSubscribed(Trader trader, SubscriptionPlan subscriptionPlan) {
+        trader.setSubscriptionPlan(subscriptionPlan);
         traderRepository.save(trader);
     }
 

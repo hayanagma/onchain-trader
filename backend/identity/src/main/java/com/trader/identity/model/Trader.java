@@ -1,7 +1,13 @@
 package com.trader.identity.model;
+
 import java.time.Instant;
+
+import com.trader.shared.enums.SubscriptionPlan;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +40,8 @@ public class Trader {
     private boolean active = true;
 
     @Column(nullable = false)
-    private boolean subscribed = false;
+    @Enumerated(EnumType.STRING)
+    private SubscriptionPlan subscriptionPlan = SubscriptionPlan.FREE;
 
     public Trader() {
     }
@@ -99,11 +106,11 @@ public class Trader {
         this.active = active;
     }
 
-    public boolean isSubscribed() {
-        return subscribed;
+    public SubscriptionPlan getSubscriptionPlan() {
+        return subscriptionPlan;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
+    public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan;
     }
 }

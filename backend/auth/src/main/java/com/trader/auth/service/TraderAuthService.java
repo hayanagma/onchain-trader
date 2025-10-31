@@ -116,6 +116,7 @@ public class TraderAuthService {
         } else {
             TraderResponse trader = identityClient.createTrader();
             ledgerClient.ensureWallet(trader.getId(), validated.getAddress(), validated.getNetwork());
+            ledgerClient.createNetworkAccount(trader.getId(), validated.getNetwork());
             return trader;
         }
     }

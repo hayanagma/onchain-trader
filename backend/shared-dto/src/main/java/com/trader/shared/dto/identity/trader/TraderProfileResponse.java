@@ -5,6 +5,7 @@ import java.util.List;
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 public class TraderProfileResponse {
 
@@ -12,7 +13,7 @@ public class TraderProfileResponse {
     private List<WalletTraderResponse> wallets;
     private List<CurrencyResponse> currencies;
     private UsernameChangeStatus usernameChangeStatus;
-    private boolean subscribed;
+    private SubscriptionPlan subscriptionPlan;
     private SubscriptionResponse subscription;
 
     public TraderProfileResponse() {
@@ -22,13 +23,13 @@ public class TraderProfileResponse {
             List<WalletTraderResponse> wallets,
             List<CurrencyResponse> currencies,
             UsernameChangeStatus usernameChangeStatus,
-            boolean subscribed,
+            SubscriptionPlan subscriptionPlan,
             SubscriptionResponse subscription) {
         this.username = username;
         this.wallets = wallets;
         this.currencies = currencies;
         this.usernameChangeStatus = usernameChangeStatus;
-        this.subscribed = subscribed;
+        this.subscriptionPlan = subscriptionPlan;
         this.subscription = subscription;
     }
 
@@ -64,12 +65,12 @@ public class TraderProfileResponse {
         this.usernameChangeStatus = usernameChangeStatus;
     }
 
-    public boolean isSubscribed() {
-        return subscribed;
+    public SubscriptionPlan getSubscriptionPlan() {
+        return subscriptionPlan;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
+    public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan;
     }
 
     public SubscriptionResponse getSubscription() {

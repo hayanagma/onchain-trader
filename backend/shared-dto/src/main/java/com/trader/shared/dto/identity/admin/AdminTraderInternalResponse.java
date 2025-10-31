@@ -1,6 +1,7 @@
 package com.trader.shared.dto.identity.admin;
 
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 public class AdminTraderInternalResponse {
 
@@ -9,7 +10,7 @@ public class AdminTraderInternalResponse {
     private boolean banned;
     private String bannedReason;
     private boolean active;
-    private boolean subscribed;
+    private SubscriptionPlan subscriptionPlan;
     private SubscriptionResponse subscription;
 
     public AdminTraderInternalResponse() {
@@ -20,14 +21,14 @@ public class AdminTraderInternalResponse {
             boolean banned,
             String bannedReason,
             boolean active,
-            boolean subscribed,
+            SubscriptionPlan subscriptionPlan,
             SubscriptionResponse subscription) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.active = active;
-        this.subscribed = subscribed;
+        this.subscriptionPlan = subscriptionPlan;
         this.subscription = subscription;
     }
 
@@ -71,12 +72,12 @@ public class AdminTraderInternalResponse {
         this.active = active;
     }
 
-    public boolean isSubscribed() {
-        return subscribed;
+    public SubscriptionPlan getSubscriptionPlan() {
+        return subscriptionPlan;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
+    public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan;
     }
 
     public SubscriptionResponse getSubscription() {

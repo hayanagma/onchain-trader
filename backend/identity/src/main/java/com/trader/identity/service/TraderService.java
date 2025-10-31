@@ -20,6 +20,7 @@ import com.trader.shared.dto.identity.trader.TraderResponse;
 import com.trader.shared.dto.identity.trader.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.trader.UsernameChangeStatus;
 import com.trader.shared.dto.identity.trader.UsernameResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 @Service
 public class TraderService {
@@ -49,7 +50,7 @@ public class TraderService {
         trader.setUsername(randomNameGenerator.generate());
         trader.setBanned(false);
         trader.setTokenVersion(1);
-        trader.setSubscribed(false);
+        trader.setSubscriptionPlan(SubscriptionPlan.FREE);
         Trader saved = traderRepository.save(trader);
         return toResponse(saved);
     }
@@ -62,7 +63,7 @@ public class TraderService {
                 trader.isBanned(),
                 trader.getBannedReason(),
                 trader.getTokenVersion(),
-                trader.isSubscribed(),
+                trader.getSubscriptionPlan(),
                 subscriptionResponse);
     }
 
@@ -83,7 +84,7 @@ public class TraderService {
                 trader.getId(),
                 trader.getUsername(),
                 status,
-                trader.isSubscribed(),
+                trader.getSubscriptionPlan(),
                 subscriptionResponse);
     }
 
@@ -121,7 +122,7 @@ public class TraderService {
                 trader.isBanned(),
                 trader.getBannedReason(),
                 trader.isActive(),
-                trader.isSubscribed(),
+                trader.getSubscriptionPlan(),
                 subscriptionResponse);
     }
 

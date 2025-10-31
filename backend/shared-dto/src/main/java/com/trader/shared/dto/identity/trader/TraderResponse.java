@@ -1,6 +1,7 @@
 package com.trader.shared.dto.identity.trader;
 
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 public class TraderResponse {
 
@@ -9,7 +10,7 @@ public class TraderResponse {
     private boolean banned;
     private String bannedReason;
     private int tokenVersion;
-    private boolean subscribed;
+    private SubscriptionPlan subscriptionPlan;
     private SubscriptionResponse subscription;
 
     public TraderResponse() {
@@ -20,14 +21,14 @@ public class TraderResponse {
             boolean banned,
             String bannedReason,
             int tokenVersion,
-            boolean subscribed,
+            SubscriptionPlan subscriptionPlan,
             SubscriptionResponse subscription) {
         this.id = id;
         this.username = username;
         this.banned = banned;
         this.bannedReason = bannedReason;
         this.tokenVersion = tokenVersion;
-        this.subscribed = subscribed;
+        this.subscriptionPlan = subscriptionPlan;
         this.subscription = subscription;
     }
 
@@ -71,12 +72,12 @@ public class TraderResponse {
         this.tokenVersion = tokenVersion;
     }
 
-    public boolean isSubscribed() {
-        return subscribed;
+    public SubscriptionPlan getSubscriptionPlan() {
+        return subscriptionPlan;
     }
 
-    public void setSubscribed(boolean subscribed) {
-        this.subscribed = subscribed;
+    public void setSubscriptionPlan(SubscriptionPlan subscriptionPlan) {
+        this.subscriptionPlan = subscriptionPlan;
     }
 
     public SubscriptionResponse getSubscription() {
