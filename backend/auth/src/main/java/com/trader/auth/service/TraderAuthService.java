@@ -102,7 +102,8 @@ public class TraderAuthService {
     }
 
     private TraderResponse resolveTraderAndWallet(WalletValidationResponse validated) {
-        Optional<WalletResponse> walletOpt = ledgerClient.findByAddressAndNetwork(validated.getAddress(),
+        Optional<WalletResponse> walletOpt = ledgerClient.findByAddressAndNetwork(
+                validated.getAddress(),
                 validated.getNetwork());
 
         if (walletOpt.isPresent()) {
@@ -116,9 +117,11 @@ public class TraderAuthService {
         } else {
             TraderResponse trader = identityClient.createTrader();
             ledgerClient.ensureWallet(trader.getId(), validated.getAddress(), validated.getNetwork());
-            ledgerClient.createNetworkAccount(trader.getId(), validated.getNetwork());
+
+           
+            ledgerClient.initializeNetworkAccounts(trader.getId());
+
             return trader;
         }
     }
-    
 }

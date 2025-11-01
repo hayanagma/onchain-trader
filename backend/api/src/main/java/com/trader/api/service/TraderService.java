@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.trader.api.client.AuthClient;
 import com.trader.api.client.IdentityClient;
 import com.trader.api.client.ledger.CurrencyClient;
+import com.trader.api.client.ledger.NetworkAccountClient;
 import com.trader.api.client.ledger.WalletClient;
 import com.trader.api.security.TraderContext;
 import com.trader.shared.dto.identity.admin.AdminTraderResponse;
@@ -24,17 +25,19 @@ public class TraderService {
     private final TraderContext traderContext;
     private final AuthClient authClient;
     private final CurrencyClient currencyClient;
+    private final NetworkAccountClient networkAccountClient;
 
     public TraderService(IdentityClient identityClient,
             WalletClient walletClient,
             TraderContext traderContext,
             AuthClient authClient,
-            CurrencyClient currencyClient) {
+            CurrencyClient currencyClient, NetworkAccountClient networkAccountClient) {
         this.identityClient = identityClient;
         this.walletClient = walletClient;
         this.traderContext = traderContext;
         this.authClient = authClient;
         this.currencyClient = currencyClient;
+        this.networkAccountClient = networkAccountClient;
     }
 
     public Mono<TraderProfileResponse> getTraderProfile() {
@@ -44,54 +47,62 @@ public class TraderService {
                 .collectList()
                 .flatMap(wallets -> currencyClient.getVisibleCurrencies(traderId)
                         .collectList()
-                        .flatMap(currencies -> identityClient.getTraderProfile(traderId)
-                                .map(trader -> new TraderProfileResponse(
-                                        trader.getUsername(),
-                                        wallets,
-                                        currencies,
-                                        trader.getUsernameChangeStatus(),
-                                        trader.getSubscriptionPlan(),
-                                        trader.getSubscription()))));
+                        .flatMap(currencies -> networkAccountClient.getNetworkAccountsByTrader(traderId)
+                                .collectList()
+                                .flatMap(networkAccounts -> identityClient.getTraderProfile(traderId)
+                                        .map(trader -> new TraderProfileResponse(
+                                                trader.getId(),
+                                                trader.getUsername(),
+                                                wallets,
+                                                currencies,
+                                                networkAccounts,
+                                                trader.getUsernameChangeStatus(),
+                                                trader.getSubscriptionPlan(),
+                                                trader.getSubscription())))));
     }
 
-    public Flux<AdminTraderResponse> getTraders(String walletAddress) {
-        if (walletAddress != null && !walletAddress.isBlank()) {
-            return walletClient.getTraderIdByWalletAddress(walletAddress)
-                    .flatMapMany(traderId -> {
-                        if (traderId == null) {
-                            return Flux.empty();
-                        }
-                        return identityClient.getTrader(traderId)
-                                .flatMap(trader -> walletClient.getWalletsForTrader(trader.getId()).collectList()
-                                        .zipWith(currencyClient.getVisibleCurrencies(trader.getId()).collectList(),
-                                                (wallets, currencies) -> new AdminTraderResponse(
-                                                        trader.getId(),
-                                                        trader.getUsername(),
-                                                        trader.isBanned(),
-                                                        trader.getBannedReason(),
-                                                        trader.isActive(),
-                                                        wallets,
-                                                        currencies,
-                                                        trader.getSubscriptionPlan(),
-                                                        trader.getSubscription())))
-                                .flux();
-                    });
-        } else {
-            return identityClient.getTraders()
-                    .flatMap(trader -> walletClient.getWalletsForTrader(trader.getId()).collectList()
-                            .zipWith(currencyClient.getVisibleCurrencies(trader.getId()).collectList(),
-                                    (wallets, currencies) -> new AdminTraderResponse(
-                                            trader.getId(),
-                                            trader.getUsername(),
-                                            trader.isBanned(),
-                                            trader.getBannedReason(),
-                                            trader.isActive(),
-                                            wallets,
-                                            currencies,
-                                            trader.getSubscriptionPlan(),
-                                            trader.getSubscription())));
-        }
+public Flux<AdminTraderResponse> getTraders(String walletAddress) {
+    if (walletAddress != null && !walletAddress.isBlank()) {
+        return walletClient.getTraderIdByWalletAddress(walletAddress)
+                .flatMapMany(traderId -> {
+                    if (traderId == null) {
+                        return Flux.empty();
+                    }
+                    return identityClient.getTrader(traderId)
+                            .flatMap(trader -> walletClient.getWalletsForTrader(trader.getId()).collectList()
+                                    .flatMap(wallets -> currencyClient.getVisibleCurrencies(trader.getId()).collectList()
+                                            .flatMap(currencies -> networkAccountClient.getNetworkAccountsByTrader(trader.getId()).collectList()
+                                                    .map(networkAccounts -> new AdminTraderResponse(
+                                                            trader.getId(),
+                                                            trader.getUsername(),
+                                                            trader.isBanned(),
+                                                            trader.getBannedReason(),
+                                                            trader.isActive(),
+                                                            wallets,
+                                                            currencies,
+                                                            networkAccounts,
+                                                            trader.getSubscriptionPlan(),
+                                                            trader.getSubscription())))))
+                            .flux();
+                });
+    } else {
+        return identityClient.getTraders()
+                .flatMap(trader -> walletClient.getWalletsForTrader(trader.getId()).collectList()
+                        .flatMap(wallets -> currencyClient.getVisibleCurrencies(trader.getId()).collectList()
+                                .flatMap(currencies -> networkAccountClient.getNetworkAccountsByTrader(trader.getId()).collectList()
+                                        .map(networkAccounts -> new AdminTraderResponse(
+                                                trader.getId(),
+                                                trader.getUsername(),
+                                                trader.isBanned(),
+                                                trader.getBannedReason(),
+                                                trader.isActive(),
+                                                wallets,
+                                                currencies,
+                                                networkAccounts,
+                                                trader.getSubscriptionPlan(),
+                                                trader.getSubscription())))));
     }
+}
 
     public Mono<UsernameResponse> randomizeUsername() {
         Long traderId = traderContext.getCurrentTraderId();

@@ -4,14 +4,17 @@ import java.util.List;
 
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
+import com.trader.shared.dto.ledger.networkaccount.NetworkAccountResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 import com.trader.shared.enums.SubscriptionPlan;
 
 public class TraderProfileResponse {
 
+    private Long id;
     private String username;
     private List<WalletTraderResponse> wallets;
     private List<CurrencyResponse> currencies;
+    private List<NetworkAccountResponse> networkAccounts;
     private UsernameChangeStatus usernameChangeStatus;
     private SubscriptionPlan subscriptionPlan;
     private SubscriptionResponse subscription;
@@ -19,18 +22,30 @@ public class TraderProfileResponse {
     public TraderProfileResponse() {
     }
 
-    public TraderProfileResponse(String username,
+    public TraderProfileResponse(Long id,
+            String username,
             List<WalletTraderResponse> wallets,
             List<CurrencyResponse> currencies,
+            List<NetworkAccountResponse> networkAccounts,
             UsernameChangeStatus usernameChangeStatus,
             SubscriptionPlan subscriptionPlan,
             SubscriptionResponse subscription) {
+        this.id = id;
         this.username = username;
         this.wallets = wallets;
         this.currencies = currencies;
+        this.networkAccounts = networkAccounts;
         this.usernameChangeStatus = usernameChangeStatus;
         this.subscriptionPlan = subscriptionPlan;
         this.subscription = subscription;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -55,6 +70,14 @@ public class TraderProfileResponse {
 
     public void setCurrencies(List<CurrencyResponse> currencies) {
         this.currencies = currencies;
+    }
+
+    public List<NetworkAccountResponse> getNetworkAccounts() {
+        return networkAccounts;
+    }
+
+    public void setNetworkAccounts(List<NetworkAccountResponse> networkAccounts) {
+        this.networkAccounts = networkAccounts;
     }
 
     public UsernameChangeStatus getUsernameChangeStatus() {

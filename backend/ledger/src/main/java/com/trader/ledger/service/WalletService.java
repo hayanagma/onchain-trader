@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.ledger.model.Wallet;
 import com.trader.ledger.repository.WalletRepository;
-import com.trader.shared.dto.ledger.networkaccount.NetworkAccountCreateRequest;
+
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 import com.trader.shared.enums.NetworkType;
@@ -21,12 +21,10 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final TraderCurrencyService traderCurrencyService;
-    private final NetworkAccountService networkAccountService;
 
-    public WalletService(WalletRepository walletRepository, TraderCurrencyService traderCurrencyService, NetworkAccountService networkAccountService) {
+    public WalletService(WalletRepository walletRepository, TraderCurrencyService traderCurrencyService) {
         this.walletRepository = walletRepository;
         this.traderCurrencyService = traderCurrencyService;
-        this.networkAccountService = networkAccountService;
     }
 
     public Optional<WalletResponse> findByAddressAndNetwork(String address, NetworkType network) {
@@ -56,9 +54,6 @@ public class WalletService {
 
     public Wallet createWallet(Long traderId, String address, NetworkType network) {
     ensureSameNetwork(traderId, network);
-
-    networkAccountService.createNetworkAccount(
-            new NetworkAccountCreateRequest(traderId, network));
 
     Optional<Wallet> existing = walletRepository.findByAddressAndNetwork(address, network);
     if (existing.isPresent()) {

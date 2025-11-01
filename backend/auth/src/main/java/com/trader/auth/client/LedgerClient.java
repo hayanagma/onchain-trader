@@ -8,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.trader.auth.util.RestTemplateUtil;
-import com.trader.shared.dto.ledger.networkaccount.NetworkAccountCreateRequest;
 import com.trader.shared.dto.ledger.wallet.WalletEnsureRequest;
 import com.trader.shared.dto.ledger.wallet.WalletResponse;
 import com.trader.shared.dto.ledger.wallet.WalletSignatureValidationRequest;
@@ -84,11 +83,11 @@ public class LedgerClient {
                 walletId);
     }
 
-    public void createNetworkAccount(Long traderId, NetworkType network) {
+    public void initializeNetworkAccounts(Long traderId) {
         RestTemplateUtil.postEntity(
                 restTemplate,
-                "/network-accounts",
-                new NetworkAccountCreateRequest(traderId, network),
+                "/network-accounts/initialize?traderId=" + traderId,
+                null,
                 Void.class);
     }
 }

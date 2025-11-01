@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
+import com.trader.shared.dto.ledger.networkaccount.NetworkAccountResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
 import com.trader.shared.enums.SubscriptionPlan;
 
@@ -16,6 +17,7 @@ public class AdminTraderResponse {
     private boolean active;
     private List<WalletTraderResponse> wallets;
     private List<CurrencyResponse> currencies;
+    private List<NetworkAccountResponse> networkAccounts;
     private SubscriptionPlan subscriptionPlan;
     private SubscriptionResponse subscription;
 
@@ -29,6 +31,7 @@ public class AdminTraderResponse {
             boolean active,
             List<WalletTraderResponse> wallets,
             List<CurrencyResponse> currencies,
+            List<NetworkAccountResponse> networkAccounts,
             SubscriptionPlan subscriptionPlan,
             SubscriptionResponse subscription) {
         this.id = id;
@@ -38,6 +41,7 @@ public class AdminTraderResponse {
         this.active = active;
         this.wallets = wallets;
         this.currencies = currencies;
+        this.networkAccounts = networkAccounts;
         this.subscriptionPlan = subscriptionPlan;
         this.subscription = subscription;
     }
@@ -96,6 +100,14 @@ public class AdminTraderResponse {
 
     public void setCurrencies(List<CurrencyResponse> currencies) {
         this.currencies = currencies;
+    }
+
+    public List<NetworkAccountResponse> getNetworkAccounts() {
+        return networkAccounts;
+    }
+
+    public void setNetworkAccounts(List<NetworkAccountResponse> networkAccounts) {
+        this.networkAccounts = networkAccounts;
     }
 
     public SubscriptionPlan getSubscriptionPlan() {
