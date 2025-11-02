@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.identity.service.SubscriptionService;
 import com.trader.identity.service.TraderService;
-import com.trader.shared.dto.identity.subscription.SubscriptionRequest;
+import com.trader.shared.dto.identity.subscription.SubscriptionCreateRequest;
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
 import com.trader.shared.dto.identity.trader.TraderProfileInternalResponse;
@@ -70,10 +70,16 @@ public class TraderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/subscribe")
-    public ResponseEntity<SubscriptionResponse> subscribe(
-            @PathVariable Long id,
-            @RequestBody SubscriptionRequest request) {
-        return ResponseEntity.ok(subscriptionService.subscribe(id, request));
+    @PostMapping("/subscriptions")
+    public ResponseEntity<Void> createSubscription(@RequestBody SubscriptionCreateRequest request) {
+        subscriptionService.createSubscription(request);
+        return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/subscriptions/{traderId}")
+    public ResponseEntity<SubscriptionResponse> getSubscriptionByTraderId(@PathVariable Long traderId) {
+        SubscriptionResponse response = subscriptionService.getSubscriptionByTraderId(traderId);
+        return ResponseEntity.ok(response);
+    }
+
 }

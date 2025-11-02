@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.trader.api.util.WebClientUtil;
 import com.trader.shared.dto.identity.admin.AdminTraderInternalResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
-import com.trader.shared.dto.identity.subscription.SubscriptionRequest;
+import com.trader.shared.dto.identity.subscription.SubscriptionCreateRequest;
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
 import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
 import com.trader.shared.dto.identity.trader.TraderProfileInternalResponse;
@@ -93,11 +93,21 @@ public class IdentityClient {
                                                 .retrieve());
         }
 
-        public Mono<SubscriptionResponse> subscribeTrader(SubscriptionRequest request, Long traderId) {
+        
+    public Mono<Void> createSubscription(SubscriptionCreateRequest request) {
+        return WebClientUtil.handleVoid(
+                webClient.post()
+                        .uri("/traders/subscriptions")
+                        .bodyValue(request)
+                        .retrieve());
+    }
+
+       public Mono<SubscriptionResponse> getSubscriptionByTraderId(Long traderId) {
                 return WebClientUtil.handle(
-                                webClient.post()
-                                                .uri("/traders/{id}/subscribe", traderId)
-                                                .bodyValue(request)
+                                webClient.get()
+                                                .uri(uriBuilder -> uriBuilder
+                                                                .path("/traders/subscriptions/{traderId}")
+                                                                .build(traderId))
                                                 .retrieve(),
                                 SubscriptionResponse.class);
         }

@@ -1,5 +1,7 @@
 package com.trader.api.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trader.api.client.ledger.LedgerClient;
 import com.trader.api.service.TraderService;
 import com.trader.shared.dto.identity.trader.DeleteAccountRequest;
 import com.trader.shared.dto.identity.trader.TraderProfileResponse;
 import com.trader.shared.dto.identity.trader.UpdateUsernameRequest;
 import com.trader.shared.dto.identity.trader.UsernameResponse;
+import com.trader.shared.dto.ledger.paymentcurrency.PaymentCurrencyResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -21,9 +25,11 @@ import reactor.core.publisher.Mono;
 public class TraderController {
 
     private final TraderService traderService;
+    private final LedgerClient ledgerClient;
 
-    public TraderController(TraderService traderService) {
+    public TraderController(TraderService traderService, LedgerClient ledgerClient) {
         this.traderService = traderService;
+        this.ledgerClient = ledgerClient;
     }
 
     @GetMapping("/profile")
@@ -54,5 +60,12 @@ public class TraderController {
     public Mono<ResponseEntity<Void>> deleteAccount(@RequestBody DeleteAccountRequest request) {
         return traderService.deleteAccount(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @GetMapping("/payment-currencies")
+    public Mono<ResponseEntity<List<PaymentCurrencyResponse>>> getAllPaymentCurrencies() {
+        return ledgerClient.getAllPaymentCurrencies()
+                .collectList()
+                .map(ResponseEntity::ok);
     }
 }

@@ -2,12 +2,28 @@ package com.trader.shared.dto.identity.subscription;
 
 import com.trader.shared.enums.SubscriptionPlan;
 
-import jakarta.validation.constraints.NotNull;
+public class SubscriptionCreateRequest {
 
-public class SubscriptionRequest {
-    @NotNull
+    private Long traderId;
     private SubscriptionPlan plan;
     private boolean autoRenewal;
+
+    public SubscriptionCreateRequest() {
+    }
+
+    public SubscriptionCreateRequest(Long traderId, SubscriptionPlan plan, boolean autoRenewal) {
+        this.traderId = traderId;
+        this.plan = plan;
+        this.autoRenewal = autoRenewal;
+    }
+
+    public Long getTraderId() {
+        return traderId;
+    }
+
+    public void setTraderId(Long traderId) {
+        this.traderId = traderId;
+    }
 
     public SubscriptionPlan getPlan() {
         return plan;

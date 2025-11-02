@@ -28,6 +28,12 @@ public class SubscriptionResponse {
         this.endDate = endDate;
     }
 
+    public static SubscriptionResponse inactive() {
+        SubscriptionResponse response = new SubscriptionResponse();
+        response.setActive(false);
+        return response;
+    }
+
     public SubscriptionPlan getPlan() {
         return plan;
     }

@@ -42,3 +42,31 @@ CREATE TABLE wallet_nonces (
     used BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE payment_currencies (
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(32) NOT NULL,
+    name VARCHAR(64) NOT NULL,
+    network VARCHAR(16) NOT NULL,
+    decimals INT NOT NULL,
+    kind VARCHAR(16) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    contract_address VARCHAR(128),
+    CONSTRAINT uq_payment_currency_code_network UNIQUE (code, network)
+);
+
+CREATE TABLE subscription_payments (
+    id BIGSERIAL PRIMARY KEY,
+    trader_id BIGINT NOT NULL,
+    plan VARCHAR(32) NOT NULL,
+    amount NUMERIC(38, 8) NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    payment_currency_code VARCHAR(32) NOT NULL,
+    network VARCHAR(16) NOT NULL,
+    deposit_address VARCHAR(128) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    transaction_hash VARCHAR(128),
+    qr_code_url VARCHAR(255),
+    auto_renewal BOOLEAN NOT NULL
+);
