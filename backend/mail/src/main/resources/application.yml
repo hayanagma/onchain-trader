@@ -1,0 +1,44 @@
+server:
+  port: 8086
+
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.default_schema: mail
+
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    createSchemas: true
+    schemas: mail
+    table: flyway_mail_history
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  mail:
+    from: ${APP_MAIL_FROM}
+    support-to: ${APP_SUPPORT_MAIL_TO}
+    contact-to: ${APP_CONTACT_MAIL_TO}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
