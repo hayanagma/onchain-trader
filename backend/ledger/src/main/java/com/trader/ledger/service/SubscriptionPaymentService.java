@@ -53,7 +53,6 @@ public class SubscriptionPaymentService {
         payment.setAmount(BigDecimal.valueOf(1337));
         payment.setPaymentCurrencyCode(code);
         payment.setNetwork(network);
-        payment.setAutoRenewal(request.getAutoRenewal());
 
         String depositAddress = depositAddressService.generateAddress(code, traderId);
         payment.setDepositAddress(depositAddress);
@@ -82,17 +81,22 @@ public class SubscriptionPaymentService {
         SubscriptionPayment payment = subscriptionPaymentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("SubscriptionPayment not found: " + id));
 
-        // temporary mock confirmation
+        Instant now = Instant.now();
+
         if (payment.getStatus() == PaymentStatus.PENDING) {
-            payment.setStatus(PaymentStatus.CONFIRMED);
+            if (now.isAfter(payment.getExpiresAt())) {
+                payment.setStatus(PaymentStatus.EXPIRED);
+            } else {
+                // temporary mock confirmation until blockchain integration
+                payment.setStatus(PaymentStatus.CONFIRMED);
+            }
             subscriptionPaymentRepository.save(payment);
         }
 
         return new SubscriptionPaymentStatusResponse(
                 payment.getId(),
                 payment.getStatus(),
-                payment.getPlan(),
-                payment.isAutoRenewal());
+                payment.getPlan());
     }
 
     private String generateQrUrl(String currencyCode, String address, BigDecimal amount) {

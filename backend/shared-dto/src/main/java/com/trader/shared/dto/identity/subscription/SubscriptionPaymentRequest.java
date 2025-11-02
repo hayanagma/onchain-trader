@@ -17,9 +17,6 @@ public class SubscriptionPaymentRequest {
     @NotNull
     private PaymentNetworkType network;
 
-    @NotNull
-    private Boolean autoRenewal;
-
     public SubscriptionPaymentRequest() {
     }
 
@@ -45,13 +42,5 @@ public class SubscriptionPaymentRequest {
 
     public void setNetwork(PaymentNetworkType network) {
         this.network = network;
-    }
-
-    public Boolean getAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(Boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
     }
 }

@@ -67,6 +67,5 @@ CREATE TABLE subscription_payments (
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     transaction_hash VARCHAR(128),
-    qr_code_url VARCHAR(255),
-    auto_renewal BOOLEAN NOT NULL
+    qr_code_url VARCHAR(255)
 );

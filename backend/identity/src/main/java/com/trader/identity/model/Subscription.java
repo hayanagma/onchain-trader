@@ -27,12 +27,6 @@ public class Subscription {
     @Column(name = "end_date")
     private Instant endDate;
 
-    @Column(name = "auto_renewal", nullable = false)
-    private boolean autoRenewal = false;
-
-    @Column(name = "renewal_period_days", nullable = false)
-    private int renewalPeriodDays = 30;
-
     @Column(nullable = false)
     private boolean active = true;
 
@@ -74,22 +68,6 @@ public class Subscription {
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
-    }
-
-    public boolean isAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
-    }
-
-    public int getRenewalPeriodDays() {
-        return renewalPeriodDays;
-    }
-
-    public void setRenewalPeriodDays(int renewalPeriodDays) {
-        this.renewalPeriodDays = renewalPeriodDays;
     }
 
     public boolean isActive() {

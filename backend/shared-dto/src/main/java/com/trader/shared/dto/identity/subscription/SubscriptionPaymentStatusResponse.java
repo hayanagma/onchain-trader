@@ -8,17 +8,14 @@ public class SubscriptionPaymentStatusResponse {
     private Long id;
     private PaymentStatus status;
     private SubscriptionPlan plan;
-    private boolean autoRenewal;
 
     public SubscriptionPaymentStatusResponse() {
     }
 
-    public SubscriptionPaymentStatusResponse(Long id, PaymentStatus status, SubscriptionPlan plan,
-            boolean autoRenewal) {
+    public SubscriptionPaymentStatusResponse(Long id, PaymentStatus status, SubscriptionPlan plan) {
         this.id = id;
         this.status = status;
         this.plan = plan;
-        this.autoRenewal = autoRenewal;
     }
 
     public Long getId() {
@@ -43,13 +40,5 @@ public class SubscriptionPaymentStatusResponse {
 
     public void setPlan(SubscriptionPlan plan) {
         this.plan = plan;
-    }
-
-    public boolean isAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
     }
 }

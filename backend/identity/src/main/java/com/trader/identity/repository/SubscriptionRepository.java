@@ -15,6 +15,4 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     Optional<Subscription> findByTraderId(Long traderId);
 
     List<Subscription> findAllByActiveTrueAndEndDateBefore(Instant now);
-
-    List<Subscription> findAllByAutoRenewalTrueAndEndDateBefore(Instant now);
 }

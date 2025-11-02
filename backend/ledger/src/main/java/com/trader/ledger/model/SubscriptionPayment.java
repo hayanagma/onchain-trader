@@ -53,10 +53,6 @@ public class SubscriptionPayment {
     @Column(length = 255)
     private String qrCodeUrl;
 
-    @Column(nullable = false)
-    private boolean autoRenewal;
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -152,13 +148,5 @@ public class SubscriptionPayment {
 
     public void setQrCodeUrl(String qrCodeUrl) {
         this.qrCodeUrl = qrCodeUrl;
-    }
-
-    public boolean isAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
     }
 }

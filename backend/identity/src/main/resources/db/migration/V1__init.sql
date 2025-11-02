@@ -20,7 +20,5 @@ CREATE TABLE subscriptions (
     plan VARCHAR(50) NOT NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP,
-    auto_renewal BOOLEAN NOT NULL DEFAULT FALSE,
-    renewal_period_days INT NOT NULL DEFAULT 30,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );

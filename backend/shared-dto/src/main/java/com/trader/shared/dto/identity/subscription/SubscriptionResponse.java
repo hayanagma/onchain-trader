@@ -8,7 +8,6 @@ public class SubscriptionResponse {
 
     private SubscriptionPlan plan;
     private boolean active;
-    private boolean autoRenewal;
     private Instant startDate;
     private Instant endDate;
 
@@ -18,12 +17,10 @@ public class SubscriptionResponse {
     public SubscriptionResponse(
             SubscriptionPlan plan,
             boolean active,
-            boolean autoRenewal,
             Instant startDate,
             Instant endDate) {
         this.plan = plan;
         this.active = active;
-        this.autoRenewal = autoRenewal;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -48,14 +45,6 @@ public class SubscriptionResponse {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public boolean isAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
     }
 
     public Instant getStartDate() {

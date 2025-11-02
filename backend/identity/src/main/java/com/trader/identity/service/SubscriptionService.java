@@ -2,7 +2,9 @@ package com.trader.identity.service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.trader.identity.model.Subscription;
@@ -31,7 +33,6 @@ public class SubscriptionService {
         Subscription subscription = new Subscription();
         subscription.setTrader(trader);
         subscription.setPlan(request.getPlan());
-        subscription.setAutoRenewal(request.isAutoRenewal());
         subscription.setStartDate(Instant.now());
         subscription.setEndDate(Instant.now().plus(Duration.ofDays(30)));
         subscription.setActive(true);
@@ -51,7 +52,6 @@ public class SubscriptionService {
         return new SubscriptionResponse(
                 subscription.getPlan(),
                 subscription.isActive(),
-                subscription.isAutoRenewal(),
                 subscription.getStartDate(),
                 subscription.getEndDate());
     }
@@ -61,35 +61,19 @@ public class SubscriptionService {
                 .map(subscription -> new SubscriptionResponse(
                         subscription.getPlan(),
                         subscription.isActive(),
-                        subscription.isAutoRenewal(),
                         subscription.getStartDate(),
                         subscription.getEndDate()))
                 .orElse(null);
     }
 
-    /*
-     * @Scheduled(cron = "0 0 * * * *")
-     * public void checkExpirations() {
-     * Instant now = Instant.now();
-     * List<Subscription> expired =
-     * subscriptionRepository.findAllByActiveTrueAndEndDateBefore(now);
-     * for (Subscription sub : expired) {
-     * sub.setActive(false);
-     * }
-     * subscriptionRepository.saveAll(expired);
-     * }
-     * 
-     * @Scheduled(cron = "0 0 * * * *")
-     * public void renewSubscriptions() {
-     * Instant now = Instant.now();
-     * List<Subscription> renewables =
-     * subscriptionRepository.findAllByAutoRenewalTrueAndEndDateBefore(now);
-     * for (Subscription sub : renewables) {
-     * sub.setStartDate(now);
-     * sub.setEndDate(now.plus(Duration.ofDays(sub.getRenewalPeriodDays())));
-     * sub.setActive(true);
-     * }
-     * subscriptionRepository.saveAll(renewables);
-     * }
-     */
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkExpirations() {
+        Instant now = Instant.now();
+        List<Subscription> expired = subscriptionRepository.findAllByActiveTrueAndEndDateBefore(now);
+        for (Subscription sub : expired) {
+            sub.setActive(false);
+        }
+        subscriptionRepository.saveAll(expired);
+    }
+
 }

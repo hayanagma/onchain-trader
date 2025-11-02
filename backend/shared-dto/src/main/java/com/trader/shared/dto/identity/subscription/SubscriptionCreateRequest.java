@@ -6,15 +6,13 @@ public class SubscriptionCreateRequest {
 
     private Long traderId;
     private SubscriptionPlan plan;
-    private boolean autoRenewal;
 
     public SubscriptionCreateRequest() {
     }
 
-    public SubscriptionCreateRequest(Long traderId, SubscriptionPlan plan, boolean autoRenewal) {
+    public SubscriptionCreateRequest(Long traderId, SubscriptionPlan plan) {
         this.traderId = traderId;
-        this.plan = plan;
-        this.autoRenewal = autoRenewal;
+        this.plan = plan;;
     }
 
     public Long getTraderId() {
@@ -31,13 +29,5 @@ public class SubscriptionCreateRequest {
 
     public void setPlan(SubscriptionPlan plan) {
         this.plan = plan;
-    }
-
-    public boolean isAutoRenewal() {
-        return autoRenewal;
-    }
-
-    public void setAutoRenewal(boolean autoRenewal) {
-        this.autoRenewal = autoRenewal;
     }
 }

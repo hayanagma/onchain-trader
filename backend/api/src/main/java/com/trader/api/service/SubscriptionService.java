@@ -42,8 +42,7 @@ public class SubscriptionService {
                     if (payment.getStatus() == PaymentStatus.CONFIRMED) {
                         SubscriptionCreateRequest subscriptionRequest = new SubscriptionCreateRequest(
                                 traderId,
-                                payment.getPlan(),
-                                payment.isAutoRenewal());
+                                payment.getPlan());
                         return identityClient.createSubscription(
                                 subscriptionRequest)
                                 .thenReturn(new SubscriptionStatusResponse("CONFIRMED"));
