@@ -14,7 +14,7 @@ const connectAndLogin = async () => {
     const { nonce } = await userAuth.challenge(walletAddress.value, network.value)
     const signature = '0xDUMMY_SIGNATURE' // replace with real wallet signature
     await userAuth.login(walletAddress.value, network.value, nonce, signature)
-    await router.push('/dashboard')
+    await router.push('/trader/dashboard')
   } catch (err) {
     console.error(err)
   }

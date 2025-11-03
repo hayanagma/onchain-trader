@@ -1,14 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useApi } from '~/composables/useApi'
+import { ref, onMounted } from "vue";
+import { useApi } from "~/composables/useApi";
 
-const profile = ref(null)
+const profile = ref(null);
 
 onMounted(async () => {
-  const api = useApi()
-  const { data } = await api.get('/trader/profile')
-  profile.value = data
-})
+  const api = useApi();
+  const { data } = await api.get("/trader/profile");
+  profile.value = data;
+});
 </script>
 
 <template>

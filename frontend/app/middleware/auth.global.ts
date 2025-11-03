@@ -6,12 +6,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const userAuth = useUserAuthStore()
 
   // Public pages
-  const publicPages = [
-    '/',
-    '/login',
-  ]
+  const publicPages = ['/', '/login']
   if (publicPages.includes(to.path)) return
- 
+
   // Admin protected routes
   if (to.path.startsWith('/admin')) {
     if (!adminAuth.isLoggedIn) {
@@ -25,9 +22,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
       return navigateTo('/admin')
     }
   }
- 
-  // Player protected routes
-  if (to.path.startsWith('/dashboard') || to.path.startsWith('/trader')) {
+
+  // Trader protected routes (everything under /trader)
+  if (to.path.startsWith('/trader')) {
     if (!userAuth.isLoggedIn) {
       try {
         await userAuth.refresh()
