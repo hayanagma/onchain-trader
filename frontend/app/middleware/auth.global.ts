@@ -1,8 +1,8 @@
-//import { useAdminAuthStore } from '~/stores/adminAuth'
+import { useAdminAuthStore } from '~/stores/adminAuth'
 import { useUserAuthStore } from '~/stores/userAuth'
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  //const adminAuth = useAdminAuthStore()
+  const adminAuth = useAdminAuthStore()
   const userAuth = useUserAuthStore()
 
   // Public pages
@@ -11,7 +11,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     '/login',
   ]
   if (publicPages.includes(to.path)) return
-/* 
+ 
   // Admin protected routes
   if (to.path.startsWith('/admin')) {
     if (!adminAuth.isLoggedIn) {
@@ -25,9 +25,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
       return navigateTo('/admin')
     }
   }
- */
+ 
   // Player protected routes
-  if (to.path.startsWith('/dashboard') || to.path.startsWith('/player')) {
+  if (to.path.startsWith('/dashboard') || to.path.startsWith('/trader')) {
     if (!userAuth.isLoggedIn) {
       try {
         await userAuth.refresh()

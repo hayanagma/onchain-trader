@@ -1,12 +1,12 @@
 <script setup>
-const config = useRuntimeConfig()
-const apiBase = config.public.apiBase
+import { ref, onMounted } from 'vue'
+import { useApi } from '~/composables/useApi'
+
 const profile = ref(null)
 
 onMounted(async () => {
-  const data = await $fetch(`${apiBase}/player/profile`, {
-    credentials: 'include'
-  })
+  const api = useApi()
+  const { data } = await api.get('/trader/profile')
   profile.value = data
 })
 </script>
