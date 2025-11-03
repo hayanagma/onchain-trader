@@ -1,7 +1,7 @@
 # Onchain Trader
 
 A modular, on-chain trading bot platform built with **Java Spring Boot microservices** and a **modern Nuxt frontend**.  
-Currently under active development — expect frequent changes.
+Currently under active development (expect frequent updates and changes).
 
 ---
 
