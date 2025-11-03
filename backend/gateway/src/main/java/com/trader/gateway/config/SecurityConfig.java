@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers("/api/auth/**", "/actuator/health").permitAll()
+                        .pathMatchers("/api/auth/**", "/api/public/**", "/actuator/health").permitAll()
                         .pathMatchers("/api/admin/**").hasRole("ADMIN")
                         .pathMatchers("/api/trader/**").hasRole("TRADER")
                         .anyExchange().authenticated())
