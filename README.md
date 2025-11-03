@@ -60,7 +60,7 @@ Additional networks will be integrated as payment gateways evolve.
 | `identity` | Handles trader accounts, wallet verification, and nonce challenges |
 | `ledger` | Tracks balances, payments, and subscription transactions |
 | `trader` | Core trading logic, execution, and network integrations |
-| `mail` | Newsletter, contact form, and support messages |
+| `mail` | Handles newsletters, contact, support, and subscription mail notifications |
 
 ---
 
@@ -68,6 +68,7 @@ Additional networks will be integrated as payment gateways evolve.
 
 - Supports on-chain payments across multiple blockchain networks  
 - Uses the `ledger` microservice for payment tracking and accounting  
+- Integrates with the `mail` service for subscription confirmations and newsletters  
 - Subscription tiers: **Free**, **Pro**, **Premium**  
 - Payment confirmation via polling and automatic expiration  
 - Integrated networks: **BTC**, **ETH**, **SOL**, **TRX**, **LTC**, **XMR**
@@ -118,6 +119,7 @@ docker compose up --build
 
 ## 🧭 Roadmap
 
+- [x] Subscription and mail functions implemented  
 - [x] Multi-network subscription payments  
 - [x] Wallet signature-based authentication  
 - [x] Internal ledger and payment tracking  
