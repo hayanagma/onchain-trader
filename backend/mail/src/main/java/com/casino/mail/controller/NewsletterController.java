@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.casino.mail.service.NewsletterService;
@@ -19,7 +19,6 @@ public class NewsletterController {
 
     private final NewsletterService newsletterService;
 
-
     public NewsletterController(NewsletterService newsletterService) {
         this.newsletterService = newsletterService;
     }
@@ -31,8 +30,8 @@ public class NewsletterController {
     }
 
     @PostMapping("/unsubscribe")
-    public ResponseEntity<Void> unsubscribe(@RequestBody NewsletterSubscribeRequest request) {
-        newsletterService.unsubscribe(request);
+    public ResponseEntity<Void> unsubscribe(@RequestParam String token) {
+        newsletterService.unsubscribe(token);
         return ResponseEntity.ok().build();
     }
 

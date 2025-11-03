@@ -1,4 +1,3 @@
-
 <template>
   <section class="max-w-lg mx-auto p-6">
     <h2 class="text-2xl font-semibold mb-4">{{ title }}</h2>
@@ -57,11 +56,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useApi } from '~/composables/useApi'
 
 const props = defineProps<{
   endpoint: string
   title?: string
 }>()
+
+const api = useApi()
 
 const form = ref({
   from: '',
@@ -79,10 +81,7 @@ const submitForm = async () => {
   error.value = false
 
   try {
-    await $fetch(props.endpoint, {
-      method: 'POST',
-      body: form.value
-    })
+    await api.post(props.endpoint, form.value)
     success.value = true
     form.value = { from: '', subject: '', message: '' }
   } catch {

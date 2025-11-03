@@ -8,7 +8,7 @@
     </nuxt-link>
 
     <mailForm
-      endpoint="http://localhost:8080/api/public/mail/contact"
+      endpoint="/public/mail/contact"
       title="Contact Us"
     />
 

@@ -28,6 +28,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useApi } from '~/composables/useApi'
+
+const api = useApi()
 
 const email = ref('')
 const loading = ref(false)
@@ -40,10 +43,7 @@ const subscribe = async () => {
   error.value = false
 
   try {
-    await $fetch('http://localhost:8080/api/public/newsletter/subscribe', {
-      method: 'POST',
-      body: { email: email.value }
-    })
+    await api.post('/public/newsletter/subscribe', { email: email.value })
     success.value = true
     email.value = ''
   } catch {

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trader.api.client.mail.MailClient;
@@ -21,7 +22,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/api/public")
 public class MailController {
-    
+
     private final MailClient mailClient;
     private final NewsletterClient newsletterClient;
     private final UpdateClient updateClient;
@@ -50,8 +51,8 @@ public class MailController {
     }
 
     @PostMapping("/newsletter/unsubscribe")
-    public Mono<ResponseEntity<Void>> unsubscribe(@RequestBody NewsletterSubscribeRequest request) {
-        return newsletterClient.unsubscribe(request)
+    public Mono<ResponseEntity<Void>> unsubscribe(@RequestParam String token) {
+        return newsletterClient.unsubscribe(token)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 
