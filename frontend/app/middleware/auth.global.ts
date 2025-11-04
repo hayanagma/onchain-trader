@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const userAuth = useUserAuthStore()
 
   // Public pages
-  const publicPages = ['/', '/login']
+  const publicPages = ['/', '/login', '/admin/login']
   if (publicPages.includes(to.path)) return
 
   // Admin protected routes
