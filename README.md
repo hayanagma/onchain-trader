@@ -15,7 +15,7 @@ No centralized custody. No API keys. All logic is verifiable on-chain.
 ## ⚙️ Tech Stack
 
 - **Backend:** Java 21, Spring Boot 3.4  
-- **Frontend:** Nuxt 4, TypeScript, Tailwind  
+- **Frontend:** Nuxt 4, Vue 3, TypeScript, Tailwind  
 - **Database:** PostgreSQL  
 - **Cache:** Redis  
 - **Containerization:** Docker, Docker Compose  
