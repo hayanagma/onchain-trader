@@ -8,7 +8,6 @@ interface WalletTraderResponse {
   network: string
   active: boolean
 }
-
 interface CurrencyResponse {
   id: number
   code: string
@@ -18,20 +17,17 @@ interface CurrencyResponse {
   kind: string
   contractAddress: string | null
 }
-
 interface NetworkAccountResponse {
   id: number
   traderId: number
   network: string
 }
-
 interface SubscriptionResponse {
   plan: string
   active: boolean
   startDate: string
   endDate: string
 }
-
 interface AdminTraderResponse {
   id: number
   username: string
@@ -56,6 +52,20 @@ const loadTraders = async () => {
   traders.value = res.data
 }
 
+const updateBanStatus = async (trader: AdminTraderResponse, banned: boolean) => {
+  try {
+    const reason = banned ? prompt('Enter ban reason:') || '' : ''
+    await api.put('/admin/trader/ban-status', {
+      traderId: trader.id,
+      banned,
+      reason
+    })
+    await loadTraders()
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 onMounted(loadTraders)
 onActivated(loadTraders)
 </script>
@@ -74,22 +84,41 @@ onActivated(loadTraders)
     </div>
 
     <div v-for="t in traders" :key="t.id" class="border rounded-lg p-4 mb-4">
-      <h2 class="text-xl font-semibold mb-2">
-        {{ t.username }}
-        <span v-if="t.banned" class="text-red-600">(Banned)</span>
-      </h2>
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xl font-semibold">
+          {{ t.username }}
+          <span v-if="t.banned" class="text-red-600">(Banned)</span>
+        </h2>
+        <button
+          @click="updateBanStatus(t, !t.banned)"
+          class="px-3 py-1 border rounded"
+          :class="t.banned ? 'bg-green-200' : 'bg-red-200'"
+        >
+          {{ t.banned ? 'Unban' : 'Ban' }}
+        </button>
+      </div>
 
       <p><strong>ID:</strong> {{ t.id }}</p>
       <p><strong>Active:</strong> {{ t.active }}</p>
+
+      <p v-if="t.banned" class="text-red-600">
+        <strong>Banned:</strong> Yes
+      </p>
+      <p v-else>
+        <strong>Banned:</strong> No
+      </p>
+
       <p v-if="t.bannedReason"><strong>Banned Reason:</strong> {{ t.bannedReason }}</p>
 
       <p><strong>Subscription Plan:</strong> {{ t.subscriptionPlan || 'None' }}</p>
 
       <div v-if="t.subscription" class="mb-2">
-        <p><strong>Subscription:</strong> {{ t.subscription.plan }} (Active: {{ t.subscription.active }})</p>
+        <p>
+          <strong>Subscription:</strong> {{ t.subscription.plan }}
+          (Active: {{ t.subscription.active }})
+        </p>
         <p class="text-sm text-gray-600">
-          Start: {{ t.subscription.startDate }} |
-          End: {{ t.subscription.endDate }}
+          Start: {{ t.subscription.startDate }} | End: {{ t.subscription.endDate }}
         </p>
       </div>
       <p v-else><strong>Subscription:</strong> N/A</p>
