@@ -13,6 +13,7 @@ import com.trader.identity.repository.SubscriptionRepository;
 import com.trader.identity.repository.TraderRepository;
 import com.trader.shared.dto.identity.subscription.SubscriptionCreateRequest;
 import com.trader.shared.dto.identity.subscription.SubscriptionResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -37,6 +38,8 @@ public class SubscriptionService {
         subscription.setEndDate(Instant.now().plus(Duration.ofDays(30)));
         subscription.setActive(true);
 
+        trader.setSubscriptionPlan(request.getPlan());
+        traderRepository.save(trader);
         subscriptionRepository.save(subscription);
     }
 
@@ -72,8 +75,10 @@ public class SubscriptionService {
         List<Subscription> expired = subscriptionRepository.findAllByActiveTrueAndEndDateBefore(now);
         for (Subscription sub : expired) {
             sub.setActive(false);
+            Trader trader = sub.getTrader();
+            trader.setSubscriptionPlan(SubscriptionPlan.FREE);
+            traderRepository.save(trader);
         }
         subscriptionRepository.saveAll(expired);
     }
-
 }

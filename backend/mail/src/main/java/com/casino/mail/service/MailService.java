@@ -26,6 +26,9 @@ public class MailService {
     private final String supportMail;
     private final String contactMail;
 
+    @Value("${FRONTEND_BASE_URL}")
+    private String frontendBaseUrl;
+
     public MailService(
             JavaMailSender mailSender,
             MailValidator mailValidator,
@@ -96,9 +99,15 @@ public class MailService {
         mailSender.send(message);
     }
 
-    public void sendNewsletterSubscribed(String email) {
-        sendSimpleMail(email, "Subscription confirmed",
-                "You’ve successfully subscribed to our newsletter.");
+    public void sendNewsletterSubscribed(String email, String unsubscribeToken) {
+        String unsubscribeLink = frontendBaseUrl + "/unsubscribe?token=" + unsubscribeToken;
+        String message = """
+                You’ve successfully subscribed to our newsletter.
+
+                If you wish to unsubscribe, click the link below:
+                """ + unsubscribeLink;
+
+        sendSimpleMail(email, "Subscription confirmed", message);
     }
 
     public void sendNewsletterUnsubscribed(String email) {

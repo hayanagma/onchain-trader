@@ -1,6 +1,7 @@
 CREATE TABLE newsletter_subscriber (
     id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE
+    email VARCHAR(255) NOT NULL UNIQUE,
+    unsubscribe_token VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE updates (

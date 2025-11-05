@@ -11,7 +11,7 @@ COPY . .
 RUN mvn -f mail/pom.xml clean package -DskipTests
 
 # Runtime stage
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 COPY --from=builder /app/mail/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

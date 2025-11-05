@@ -2,6 +2,7 @@ package com.casino.mail.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import com.trader.shared.dto.mail.newsletter.NewsletterSubscribeRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 
 @Service
 public class NewsletterService {
@@ -33,7 +33,7 @@ public class NewsletterService {
 
     public void subscribe(NewsletterSubscribeRequest request) {
         String email = request.getEmail();
-        mailValidator.isValid(email); 
+        mailValidator.isValid(email);
 
         if (repository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already subscribed");
@@ -41,18 +41,19 @@ public class NewsletterService {
 
         NewsletterSubscriber subscriber = new NewsletterSubscriber();
         subscriber.setEmail(email);
+        subscriber.setUnsubscribeToken(UUID.randomUUID().toString());
         repository.save(subscriber);
-        mailService.sendNewsletterSubscribed(email);
+
+        mailService.sendNewsletterSubscribed(email, subscriber.getUnsubscribeToken());
     }
 
     @Transactional
-    public void unsubscribe(@Valid NewsletterSubscribeRequest request) {
-        if (!repository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not subscribed");
-        }
+    public void unsubscribe(String token) {
+        NewsletterSubscriber subscriber = repository.findByUnsubscribeToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid or expired token"));
 
-        repository.deleteByEmail(request.getEmail());
-        mailService.sendNewsletterUnsubscribed(request.getEmail());
+        repository.delete(subscriber);
+        mailService.sendNewsletterUnsubscribed(subscriber.getEmail());
     }
 
     @Transactional
