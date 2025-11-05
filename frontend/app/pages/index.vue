@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import SiteHeader from '~/components/layout/SiteHeader.vue'
 import MailForm from '~/components/form/MailForm.vue'
-import NewsletterSubscribe from '~/components/widget/NewsletterSubscribe.vue'
 import ConnectWalletModal from '~/components/modal/ConnectWalletModal.vue'
 import SiteFooter from '~/components/layout/SiteFooter.vue'
 
@@ -12,7 +11,6 @@ const showModal = ref(false)
 <template>
   <SiteHeader @open-connect="showModal = true" />
 
-  <!-- unified connect flow -->
   <ConnectWalletModal v-if="showModal" mode="create" @close="showModal = false" />
 
   <section class="bg-white lg:grid lg:h-screen lg:place-content-center dark:bg-gray-900">
@@ -43,6 +41,5 @@ const showModal = ref(false)
   </section>
 
   <MailForm endpoint="/public/mail/contact" title="Contact Us" />
-  <NewsletterSubscribe />
   <SiteFooter />
 </template>
