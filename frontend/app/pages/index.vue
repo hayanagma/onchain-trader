@@ -1,19 +1,57 @@
 <template>
-  <div class="p-4">
-    <h1 class="text-2xl font-bold mb-2">On-chain Trader</h1>
-    <p class="mb-4">Welcome to your On-chain Trader.</p>
+  <SiteHeader @open-connect="showModal = true" />
+  <ConnectWalletModal v-if="showModal" @close="showModal = false" />
 
-    <nuxt-link to="/login" class="text-blue-500 underline mb-6 block">
-      Go to Login
-    </nuxt-link>
+  <section
+    class="bg-white lg:grid lg:h-screen lg:place-content-center dark:bg-gray-900"
+  >
+    <div
+      class="mx-auto w-screen max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32"
+    >
+      <div class="mx-auto max-w-prose text-center">
+        <h1
+          class="text-4xl font-bold text-gray-900 sm:text-5xl dark:text-white"
+        >
+          Understand user flow and
+          <strong class="text-indigo-600">increase</strong>
+          conversions
+        </h1>
 
-    <mailForm
-      endpoint="/public/mail/contact"
-      title="Contact Us"
-    />
+        <p
+          class="mt-4 text-base text-pretty text-gray-700 sm:text-lg/relaxed dark:text-gray-200"
+        >
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque, nisi.
+          Natus, provident accusamus impedit minima harum corporis iusto.
+        </p>
 
-    <newsletterSubscribe />
-  </div>
+        <div class="mt-4 flex justify-center gap-4 sm:mt-6">
+          <a
+            href="#"
+            class="inline-block rounded border border-indigo-600 bg-indigo-600 px-5 py-3 font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+          >
+            Get Started
+          </a>
+
+          <a
+            href="#"
+            class="inline-block rounded border border-gray-200 px-5 py-3 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+          >
+            Learn More
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <MailForm endpoint="/public/mail/contact" title="Contact Us" />
+  <NewsletterSubscribe />
 </template>
 
-
+<script setup lang="ts">
+import { ref } from 'vue'
+import SiteHeader from "~/components/layout/SiteHeader.vue";
+import MailForm from "~/components/form/MailForm.vue";
+import NewsletterSubscribe from "~/components/widget/NewsletterSubscribe.vue";
+import ConnectWalletModal from "~/components/modal/ConnectWalletModal.vue";
+const showModal = ref(false)
+</script>
