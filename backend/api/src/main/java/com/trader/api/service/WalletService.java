@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.trader.api.client.IdentityClient;
 import com.trader.api.client.ledger.WalletClient;
 import com.trader.api.security.TraderContext;
@@ -35,12 +34,7 @@ public class WalletService {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.createChallenge(traderId, request);
         }
-/* 
-        public Mono<Void> verifyAndAddWallet(WalletAddRequest request) {
-                Long traderId = traderContext.getCurrentTraderId();
-                return walletClient.verifyAndAddWallet(traderId, request);
-        }
- */
+
         public Mono<List<WalletTraderResponse>> getWalletsForCurrentTrader() {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.getWalletsForTrader(traderId).collectList();

@@ -1,5 +1,7 @@
 package com.casino.mail.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.casino.mail.service.NewsletterService;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
 import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscribeRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
@@ -46,4 +49,8 @@ public class NewsletterController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<NewsletterResponse>> getAllNewsletters() {
+        return ResponseEntity.ok(newsletterService.getAllNewsletters());
+    }
 }

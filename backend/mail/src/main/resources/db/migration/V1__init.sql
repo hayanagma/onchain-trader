@@ -14,3 +14,11 @@ CREATE TABLE updates (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
+
+CREATE TABLE newsletters (
+    id BIGSERIAL PRIMARY KEY,
+    subject VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    recipient_count INT NOT NULL,
+    sent_at TIMESTAMP NOT NULL
+);

@@ -20,6 +20,7 @@ import com.trader.shared.dto.identity.admin.AdminTraderResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.dto.ledger.paymentcurrency.PaymentCurrencyResponse;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
 import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
 import com.trader.shared.dto.mail.update.UpdateCreate;
@@ -82,6 +83,12 @@ public class AdminController {
     @GetMapping("/newsletters/subscribers")
     public Mono<ResponseEntity<List<NewsletterSubscriberResponse>>> getAllSubscribers() {
         return newsletterClient.getAllSubscribers()
+                .map(ResponseEntity::ok);
+    }
+
+    @GetMapping("/newsletters")
+    public Mono<ResponseEntity<List<NewsletterResponse>>> getAllNewsletters() {
+        return newsletterClient.getAllNewsletters()
                 .map(ResponseEntity::ok);
     }
 

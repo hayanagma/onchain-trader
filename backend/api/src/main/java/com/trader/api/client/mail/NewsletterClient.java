@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.trader.api.util.WebClientUtil;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
 import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscribeRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
@@ -57,5 +58,12 @@ public class NewsletterClient {
                                                 .bodyValue(request)
                                                 .retrieve(),
                                 Void.class);
+        }
+
+        public Mono<List<NewsletterResponse>> getAllNewsletters() {
+                return webClient.get()
+                                .retrieve()
+                                .bodyToFlux(NewsletterResponse.class)
+                                .collectList();
         }
 }

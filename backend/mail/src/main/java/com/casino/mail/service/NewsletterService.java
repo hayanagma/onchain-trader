@@ -1,5 +1,6 @@
 package com.casino.mail.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,24 +9,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.casino.mail.model.Newsletter;
 import com.casino.mail.model.NewsletterSubscriber;
+import com.casino.mail.repository.NewsletterRepository;
 import com.casino.mail.repository.NewsletterSubscriberRepository;
 import com.casino.mail.validation.MailValidator;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
 import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscribeRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
+
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class NewsletterService {
 
+    private final NewsletterRepository newsletterRepository;
     private final NewsletterSubscriberRepository repository;
     private final MailService mailService;
     private final MailValidator mailValidator;
 
     public NewsletterService(NewsletterSubscriberRepository repository, MailService mailService,
-            MailValidator mailValidator) {
+            MailValidator mailValidator, NewsletterRepository newsletterRepository) {
+        this.newsletterRepository = newsletterRepository;
         this.repository = repository;
         this.mailService = mailService;
         this.mailValidator = mailValidator;
@@ -63,6 +70,13 @@ public class NewsletterService {
                 .map(NewsletterSubscriber::getEmail)
                 .toList();
 
+        Newsletter newsletter = new Newsletter();
+        newsletter.setSubject(request.getSubject());
+        newsletter.setContent(request.getContent());
+        newsletter.setRecipientCount(recipients.size());
+        newsletter.setSentAt(Instant.now());
+        newsletterRepository.save(newsletter);
+
         mailService.sendNewsletter(request, recipients);
     }
 
@@ -84,4 +98,20 @@ public class NewsletterService {
         return new NewsletterSubscriberResponse(count, emails);
     }
 
+    public List<NewsletterResponse> getAllNewsletters() {
+        return newsletterRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private NewsletterResponse toResponse(Newsletter newsletter) {
+        NewsletterResponse response = new NewsletterResponse();
+        response.setId(newsletter.getId());
+        response.setSubject(newsletter.getSubject());
+        response.setContent(newsletter.getContent());
+        response.setRecipientCount(newsletter.getRecipientCount());
+        response.setSentAt(newsletter.getSentAt());
+        return response;
+    }
 }
