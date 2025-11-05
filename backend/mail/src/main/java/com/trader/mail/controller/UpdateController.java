@@ -1,4 +1,4 @@
-package com.casino.mail.controller;
+package com.trader.mail.controller;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.casino.mail.service.UpdateService;
+import com.trader.mail.service.UpdateService;
 import com.trader.shared.dto.mail.update.UpdateCreate;
 import com.trader.shared.dto.mail.update.UpdateEditRequest;
 import com.trader.shared.dto.mail.update.UpdateResponse;

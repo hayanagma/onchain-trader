@@ -2,6 +2,7 @@ package com.trader.identity.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,13 @@ public class AdminService {
 
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String adminMail;
 
-    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder,
+            @Value("${ADMIN_MAIL}") String adminMail) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
+        this.adminMail = adminMail;
     }
 
     public void createOrUpdate(String username, String rawPassword) {
@@ -27,15 +31,21 @@ public class AdminService {
                 .ifPresentOrElse(
                         existing -> {
                             existing.setPassword(passwordEncoder.encode(rawPassword));
+                            existing.setMail(adminMail);
                             adminRepository.save(existing);
                         },
                         () -> {
                             Admin admin = new Admin();
                             admin.setUsername(username);
                             admin.setPassword(passwordEncoder.encode(rawPassword));
+                            admin.setMail(adminMail);
                             admin.setTokenVersion(1);
                             adminRepository.save(admin);
                         });
+    }
+
+    public String getAdminMail(String username) {
+        return getAdminEntity(username).getMail();
     }
 
     public int getTokenVersion(String username) {

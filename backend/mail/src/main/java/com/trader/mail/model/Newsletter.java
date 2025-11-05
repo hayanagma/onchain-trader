@@ -1,4 +1,4 @@
-package com.casino.mail.model;
+package com.trader.mail.model;
 
 import java.time.Instant;
 

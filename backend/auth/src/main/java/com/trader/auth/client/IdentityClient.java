@@ -38,6 +38,14 @@ public class IdentityClient {
         }
     }
 
+    public String getAdminMail(String username) {
+        return RestTemplateUtil.get(
+                restTemplate,
+                "/admin/{username}/mail",
+                String.class,
+                username);
+    }
+
     public TraderResponse getTrader(Long traderId) {
         return RestTemplateUtil.get(
                 restTemplate,

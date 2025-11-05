@@ -1,4 +1,4 @@
-package com.casino.mail.controller;
+package com.trader.mail.controller;
 
 import java.util.Map;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.casino.mail.service.MailService;
+import com.trader.mail.service.MailService;
 import com.trader.shared.dto.mail.MailRequest;
 
 import jakarta.validation.Valid;

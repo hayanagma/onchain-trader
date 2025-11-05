@@ -1,4 +1,4 @@
-package com.casino.mail.validation;
+package com.trader.mail.validation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

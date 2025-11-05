@@ -34,6 +34,12 @@ public class AdminController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{username}/mail")
+    public ResponseEntity<String> getMail(@PathVariable String username) {
+        String mail = adminService.getAdminMail(username);
+        return ResponseEntity.ok(mail);
+    }
+
     @PutMapping("/traders/ban-status")
     public ResponseEntity<Void> updateBanStatus(@RequestBody BanRequest request) {
         traderService.setBanStatus(request);

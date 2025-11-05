@@ -12,8 +12,9 @@ CREATE TABLE traders (
 CREATE TABLE admins (
     username VARCHAR(255) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
-    token_version INT NOT NULL DEFAULT 1);
-
+    mail VARCHAR(255) NOT NULL,
+    token_version INT NOT NULL DEFAULT 1
+);
 CREATE TABLE subscriptions (
     id BIGSERIAL PRIMARY KEY,
     trader_id BIGINT NOT NULL UNIQUE REFERENCES traders(id) ON DELETE CASCADE,

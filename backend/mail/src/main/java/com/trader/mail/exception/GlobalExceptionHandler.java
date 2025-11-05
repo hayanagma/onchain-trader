@@ -1,4 +1,4 @@
-package com.casino.mail.exception;
+package com.trader.mail.exception;
 
 import java.time.Instant;
 import java.util.HashMap;

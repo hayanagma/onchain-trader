@@ -1,11 +1,11 @@
-package com.casino.mail.repository;
+package com.trader.mail.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.casino.mail.model.NewsletterSubscriber;
+import com.trader.mail.model.NewsletterSubscriber;
 
 @Repository
 public interface NewsletterSubscriberRepository extends JpaRepository<NewsletterSubscriber, Long> {

@@ -1,4 +1,4 @@
-package com.casino.mail.service;
+package com.trader.mail.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.casino.mail.model.AppUpdate;
-import com.casino.mail.repository.AppUpdateRepository;
+import com.trader.mail.model.AppUpdate;
+import com.trader.mail.repository.AppUpdateRepository;
 import com.trader.shared.dto.mail.update.UpdateCreate;
 import com.trader.shared.dto.mail.update.UpdateEditRequest;
 import com.trader.shared.dto.mail.update.UpdateResponse;
