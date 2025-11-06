@@ -2,32 +2,10 @@
 import { ref, onMounted, onActivated } from 'vue'
 import { useApi } from '~/composables/useApi'
 
-interface WalletTraderResponse {
-  id: number
-  address: string
-  network: string
-  active: boolean
-}
-interface CurrencyResponse {
-  id: number
-  code: string
-  name: string
-  network: string
-  decimals: number
-  kind: string
-  contractAddress: string | null
-}
-interface NetworkAccountResponse {
-  id: number
-  traderId: number
-  network: string
-}
-interface SubscriptionResponse {
-  plan: string
-  active: boolean
-  startDate: string
-  endDate: string
-}
+interface WalletTraderResponse { id: number; address: string; network: string; active: boolean }
+interface CurrencyResponse { id: number; code: string; name: string; network: string; decimals: number; kind: string; contractAddress: string | null }
+interface NetworkAccountResponse { id: number; traderId: number; network: string }
+interface SubscriptionResponse { plan: string; active: boolean; startDate: string; endDate: string }
 interface AdminTraderResponse {
   id: number
   username: string
@@ -53,17 +31,21 @@ const loadTraders = async () => {
 }
 
 const updateBanStatus = async (trader: AdminTraderResponse, banned: boolean) => {
-  try {
-    const reason = banned ? prompt('Enter ban reason:') || '' : ''
-    await api.put('/admin/trader/ban-status', {
-      traderId: trader.id,
-      banned,
-      reason
-    })
-    await loadTraders()
-  } catch (err) {
-    console.error(err)
-  }
+  const reason = banned ? prompt('Enter ban reason:') || '' : ''
+  await api.put('/admin/trader/ban-status', { traderId: trader.id, banned, reason })
+  await loadTraders()
+}
+
+const createSubscription = async (trader: AdminTraderResponse) => {
+  if (!confirm(`Are you sure you want to create a subscription for ${trader.username}?`)) return
+  await api.post('/admin/subscriptions', { traderId: trader.id, plan: 'PREMIUM' })
+  await loadTraders()
+}
+
+const deleteSubscription = async (trader: AdminTraderResponse) => {
+  if (!confirm(`Are you sure you want to delete the subscription for ${trader.username}?`)) return
+  await api.post(`/admin/subscriptions/${trader.id}`)
+  await loadTraders()
 }
 
 onMounted(loadTraders)
@@ -75,11 +57,7 @@ onActivated(loadTraders)
     <h1 class="text-2xl font-bold mb-4">Traders</h1>
 
     <div class="flex mb-4">
-      <input
-        v-model="walletAddress"
-        placeholder="Filter by wallet"
-        class="border p-2 mr-2"
-      />
+      <input v-model="walletAddress" placeholder="Filter by wallet" class="border p-2 mr-2" />
       <button @click="loadTraders" class="border p-2">Search</button>
     </div>
 
@@ -89,39 +67,34 @@ onActivated(loadTraders)
           {{ t.username }}
           <span v-if="t.banned" class="text-red-600">(Banned)</span>
         </h2>
-        <button
-          @click="updateBanStatus(t, !t.banned)"
-          class="px-3 py-1 border rounded"
-          :class="t.banned ? 'bg-green-200' : 'bg-red-200'"
-        >
+        <button @click="updateBanStatus(t, !t.banned)" class="px-3 py-1 border rounded"
+          :class="t.banned ? 'bg-green-200' : 'bg-red-200'">
           {{ t.banned ? 'Unban' : 'Ban' }}
         </button>
       </div>
 
       <p><strong>ID:</strong> {{ t.id }}</p>
       <p><strong>Active:</strong> {{ t.active }}</p>
-
-      <p v-if="t.banned" class="text-red-600">
-        <strong>Banned:</strong> Yes
-      </p>
-      <p v-else>
-        <strong>Banned:</strong> No
-      </p>
-
+      <p><strong>Banned:</strong> {{ t.banned ? 'Yes' : 'No' }}</p>
       <p v-if="t.bannedReason"><strong>Banned Reason:</strong> {{ t.bannedReason }}</p>
 
       <p><strong>Subscription Plan:</strong> {{ t.subscriptionPlan || 'None' }}</p>
-
       <div v-if="t.subscription" class="mb-2">
-        <p>
-          <strong>Subscription:</strong> {{ t.subscription.plan }}
-          (Active: {{ t.subscription.active }})
-        </p>
+        <p><strong>Subscription:</strong> {{ t.subscription.plan }} (Active: {{ t.subscription.active }})</p>
         <p class="text-sm text-gray-600">
           Start: {{ t.subscription.startDate }} | End: {{ t.subscription.endDate }}
         </p>
       </div>
       <p v-else><strong>Subscription:</strong> N/A</p>
+
+      <div class="flex gap-2 mt-2">
+        <button @click="createSubscription(t)" class="border px-3 py-1 bg-blue-200 rounded">
+          Create Subscription
+        </button>
+        <button @click="deleteSubscription(t)" class="border px-3 py-1 bg-red-200 rounded">
+          Delete Subscription
+        </button>
+      </div>
 
       <div class="mt-4">
         <h3 class="font-bold">Wallets</h3>
