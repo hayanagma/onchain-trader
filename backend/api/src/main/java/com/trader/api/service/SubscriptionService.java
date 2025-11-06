@@ -2,7 +2,7 @@ package com.trader.api.service;
 
 import org.springframework.stereotype.Service;
 
-import com.trader.api.client.IdentityClient;
+import com.trader.api.client.identity.TraderClient;
 import com.trader.api.client.ledger.LedgerClient;
 import com.trader.api.security.TraderContext;
 import com.trader.shared.dto.identity.subscription.SubscriptionCreateRequest;
@@ -17,14 +17,14 @@ import reactor.core.publisher.Mono;
 @Service
 public class SubscriptionService {
 
-    private final IdentityClient identityClient;
     private final TraderContext traderContext;
     private final LedgerClient ledgerClient;
+    private final TraderClient traderClient;
 
-    public SubscriptionService(IdentityClient identityClient, TraderContext traderContext, LedgerClient ledgerClient) {
-        this.identityClient = identityClient;
+    public SubscriptionService(TraderContext traderContext, LedgerClient ledgerClient, TraderClient traderClient) {
         this.traderContext = traderContext;
         this.ledgerClient = ledgerClient;
+        this.traderClient = traderClient;
     }
 
     public Mono<SubscriptionPaymentResponse> subscriptionPayment(SubscriptionPaymentRequest request) {
@@ -43,7 +43,7 @@ public class SubscriptionService {
                         SubscriptionCreateRequest subscriptionRequest = new SubscriptionCreateRequest(
                                 traderId,
                                 payment.getPlan());
-                        return identityClient.createSubscription(
+                        return traderClient.createSubscription(
                                 subscriptionRequest)
                                 .thenReturn(new SubscriptionStatusResponse("CONFIRMED"));
                     }
@@ -53,6 +53,7 @@ public class SubscriptionService {
 
     public Mono<SubscriptionResponse> getPlayerSubscription() {
         Long traderId = traderContext.getCurrentTraderId();
-        return identityClient.getSubscriptionByTraderId(traderId);
+        return traderClient.getSubscriptionByTraderId(traderId);
     }
+
 }

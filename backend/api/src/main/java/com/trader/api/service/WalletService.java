@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.trader.api.client.IdentityClient;
+import com.trader.api.client.identity.TraderClient;
 import com.trader.api.client.ledger.WalletClient;
 import com.trader.api.security.TraderContext;
 import com.trader.shared.dto.ledger.wallet.WalletAddRequest;
@@ -22,12 +22,13 @@ public class WalletService {
 
         private final WalletClient walletClient;
         private final TraderContext traderContext;
-        private final IdentityClient identityClient;
+        private final TraderClient traderClient;
 
-        public WalletService(WalletClient walletClient, TraderContext traderContext, IdentityClient identityClient) {
+        public WalletService(WalletClient walletClient, TraderContext traderContext, TraderClient traderClient) {
                 this.walletClient = walletClient;
                 this.traderContext = traderContext;
-                this.identityClient = identityClient;
+                this.traderClient = traderClient;
+ 
         }
 
         public Mono<WalletChallengeResponse> createChallenge(WalletChallengeRequest request) {
@@ -48,7 +49,7 @@ public class WalletService {
         public Mono<Void> verifyAndAddWallet(WalletAddRequest request) {
                 Long traderId = traderContext.getCurrentTraderId();
 
-                return identityClient.getTrader(traderId)
+                return traderClient.getTraderProfile(traderId)
                                 .flatMap(trader -> {
                                         if (trader.getSubscriptionPlan() == SubscriptionPlan.FREE) {
                                                 return Mono.<Void>error(new ResponseStatusException(
