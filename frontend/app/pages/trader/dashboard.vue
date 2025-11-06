@@ -1,15 +1,15 @@
 <template>
-  <div class="p-4">
-    <h1 class="text-2xl font-bold">Dashboard</h1>
-    <p>Welcome to your dashboard.</p>
-
-    <nuxt-link to="/trader/profile" class="text-blue-500 underline">
-      Go to Profile
-    </nuxt-link>
-    <br />
-    <nuxt-link to="/trader/support" class="text-blue-500 underline">
-      Go to Support
-    </nuxt-link>
-    <newsletterSubscribe />
+  <div class="flex h-screen">
+    <TraderSideMenu />
+    <div class="flex-1 p-8 overflow-y-auto">
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <p>Welcome to your dashboard.</p>
+      <NewsletterSubscribe class="mt-8" />
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
+import NewsletterSubscribe from '~/components/widget/NewsletterSubscribe.vue'
+</script>
