@@ -102,6 +102,8 @@ public class TraderService {
         traderRepository.save(trader);
     }
 
+    
+
     public List<AdminTraderInternalResponse> getTraders() {
         return traderRepository.findAll()
                 .stream()
@@ -142,6 +144,7 @@ public class TraderService {
         trader.setLastUsernameChangeAt(Instant.now());
         traderRepository.save(trader);
     }
+
 
     public UsernameResponse getUsername(Long traderId) {
         Trader trader = getTraderEntity(traderId);

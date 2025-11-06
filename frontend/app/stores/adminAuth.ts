@@ -9,9 +9,17 @@ export const useAdminAuthStore = defineStore('adminAuth', () => {
     token.value = jwt
   }
 
-  async function login(username: string, password: string) {
+  // Step 1: request code (email with 2FA code)
+  async function requestCode(username: string, password: string) {
     const api = useApi()
-    const res = await api.post('/auth/admin/login', { username, password })
+    await api.post('/auth/admin/login', { username, password })
+    // no token yet — only triggers email
+  }
+
+  // Step 2: verify code and receive JWT
+  async function verifyCode(adminId: string, code: string) {
+    const api = useApi()
+    const res = await api.post('/auth/admin/verify', { adminId, code })
     setToken(res.data.accessToken)
   }
 
@@ -27,5 +35,13 @@ export const useAdminAuthStore = defineStore('adminAuth', () => {
     await api.post('/auth/admin/logout')
   }
 
-  return { token, isLoggedIn, setToken, login, refresh, logout }
+  return {
+    token,
+    isLoggedIn,
+    setToken,
+    requestCode,
+    verifyCode,
+    refresh,
+    logout
+  }
 })
