@@ -47,7 +47,7 @@
             Message sent successfully.
           </p>
           <p v-if="error" class="text-red-500 text-center text-sm mt-4">
-            Failed to send message. Try again later.
+            Couldn’t send your message. Please try again.
           </p>
         </form>
       </div>
@@ -85,8 +85,14 @@ const submitForm = async () => {
     await api.post(props.endpoint, form.value)
     success.value = true
     form.value = { from: '', subject: '', message: '' }
-  } catch {
+  } catch (err: any) {
     error.value = true
+    console.error(err.response?.data || err)
+    try {
+      await api.get('/trader/subscription') // backend sync if needed
+    } catch (syncErr) {
+      console.error('Failed to refresh after error', syncErr)
+    }
   } finally {
     loading.value = false
   }

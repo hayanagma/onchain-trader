@@ -1,3 +1,29 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useApi } from '~/composables/useApi'
+
+const api = useApi()
+
+const email = ref('')
+const loading = ref(false)
+const message = ref('')
+
+const subscribe = async () => {
+  loading.value = true
+  message.value = 'Subscribing...'
+
+  try {
+    await api.post('/public/newsletter/subscribe', { email: email.value })
+    message.value = 'Subscribed successfully.'
+    email.value = ''
+  } catch (err: any) {
+    message.value = 'Failed to subscribe. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
 <template>
   <section class="bg-gray-100 dark:bg-gray-900">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -25,40 +51,10 @@
         </button>
       </form>
 
-      <p v-if="success" class="text-green-500 text-center text-sm mt-4">
-        Subscribed successfully.
-      </p>
-      <p v-if="error" class="text-red-500 text-center text-sm mt-4">
-        Failed to subscribe. Try again later.
+      <p v-if="message" class="text-center text-sm mt-4"
+        :class="message.includes('success') ? 'text-green-500' : 'text-red-500'">
+        {{ message }}
       </p>
     </div>
   </section>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useApi } from '~/composables/useApi'
-
-const api = useApi()
-
-const email = ref('')
-const loading = ref(false)
-const success = ref(false)
-const error = ref(false)
-
-const subscribe = async () => {
-  loading.value = true
-  success.value = false
-  error.value = false
-
-  try {
-    await api.post('/public/newsletter/subscribe', { email: email.value })
-    success.value = true
-    email.value = ''
-  } catch {
-    error.value = true
-  } finally {
-    loading.value = false
-  }
-}
-</script>

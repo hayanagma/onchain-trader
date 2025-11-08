@@ -1,3 +1,50 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useApi } from '~/composables/useApi'
+
+const emit = defineEmits(['close'])
+const api = useApi()
+
+const walletAddress = ref('')
+const network = ref('')
+const message = ref('')
+const loading = ref(false)
+
+const handleAddWallet = async () => {
+    loading.value = true
+    message.value = 'Requesting challenge...'
+
+    try {
+        const { data: challenge } = await api.post('/trader/wallet/challenge', {
+            address: walletAddress.value,
+            network: network.value,
+        })
+
+        const signature = '0xDUMMY_SIGNATURE'
+
+        message.value = 'Verifying wallet...'
+        await api.post('/trader/wallet/verify', {
+            address: walletAddress.value,
+            network: network.value,
+            nonce: challenge.nonce,
+            signature,
+        })
+
+        message.value = 'Wallet successfully added.'
+        setTimeout(() => {
+            message.value = ''
+            walletAddress.value = ''
+            network.value = ''
+            emit('close')
+        }, 1200)
+    } catch (err: any) {
+        message.value = 'Failed to connect wallet. Make sure the network is correct and try again.'
+    } finally {
+        loading.value = false
+    }
+}
+</script>
+
 <template>
     <div class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
         <div
@@ -35,9 +82,9 @@
                         class="px-4 py-2 bg-gray-300/70 dark:bg-gray-700/60 text-gray-900 dark:text-gray-100 rounded-md hover:bg-gray-400/70 dark:hover:bg-gray-600 transition">
                         Cancel
                     </button>
-                    <button type="submit"
-                        class="px-5 py-2 bg-teal-600/80 hover:bg-teal-700 text-white rounded-md shadow-lg hover:shadow-teal-500/30 transition focus:ring-2 focus:ring-teal-400 focus:outline-none">
-                        Add Wallet
+                    <button type="submit" :disabled="loading"
+                        class="px-5 py-2 bg-teal-600/80 hover:bg-teal-700 text-white rounded-md shadow-lg hover:shadow-teal-500/30 transition focus:ring-2 focus:ring-teal-400 focus:outline-none disabled:opacity-50">
+                        {{ loading ? 'Processing...' : 'Add Wallet' }}
                     </button>
                 </div>
             </form>
@@ -46,50 +93,3 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useApi } from '~/composables/useApi'
-
-const emit = defineEmits(['close'])
-const api = useApi()
-const walletAddress = ref('')
-const network = ref('')
-const message = ref('')
-
-const handleAddWallet = async () => {
-    try {
-        message.value = 'Requesting challenge...'
-        const { data: challenge } = await api.post('/trader/wallet/challenge', {
-            address: walletAddress.value,
-            network: network.value
-        })
-
-        // Simulated signing; replace later with actual wallet signature
-        const signature = '0xDUMMY_SIGNATURE'
-
-        message.value = 'Verifying wallet...'
-        await api.post('/trader/wallet/verify', {
-            address: walletAddress.value,
-            network: network.value,
-            nonce: challenge.nonce,
-            signature
-        })
-
-        message.value = 'Wallet successfully added.'
-        setTimeout(() => {
-            message.value = ''
-            walletAddress.value = ''
-            network.value = ''
-            emit('close')
-        }, 1200)
-    } catch (err: any) {
-        if (err.response) {
-            console.error(err.response.data)
-            message.value = err.response.data.message || `Error ${err.response.status}`
-        } else {
-            message.value = 'Request failed.'
-        }
-    }
-}
-</script>

@@ -14,42 +14,13 @@ const selectedNetwork = ref('')
 const autoRenewal = ref(true)
 const payment = ref<Record<string, any> | null>(null)
 const loading = ref(false)
+const message = ref('')
 const statusInterval = ref<number | null>(null)
 
 const plans = [
-    {
-        name: 'FREE',
-        desc: 'Basic access to the trading bot with limited automation.',
-        features: [
-            '1 connected wallet',
-            'Manual trade execution only',
-            'No multi-network support',
-            'Limited trading signals'
-        ],
-        selectable: false
-    },
-    {
-        name: 'PRO',
-        desc: 'Full bot automation and cross-network trading support.',
-        features: [
-            'Up to 5 wallets connected',
-            'Automated trades on supported DEXs',
-            'Multi-network support (TRON, ETH, SOL, etc.)',
-            'Basic analytics dashboard'
-        ],
-        selectable: true
-    },
-    {
-        name: 'PREMIUM',
-        desc: 'Unlimited automation, priority execution, and private strategies.',
-        features: [
-            'Unlimited wallets and networks',
-            'Advanced trading algorithms',
-            'Private strategy creation and backtesting',
-            'Priority API access and alerts'
-        ],
-        selectable: true
-    }
+    { name: 'FREE', desc: 'Basic access to the trading bot with limited automation.', features: ['1 connected wallet', 'Manual trade execution only', 'No multi-network support', 'Limited trading signals'], selectable: false },
+    { name: 'PRO', desc: 'Full bot automation and cross-network trading support.', features: ['Up to 5 wallets connected', 'Automated trades on supported DEXs', 'Multi-network support (TRON, ETH, SOL, etc.)', 'Basic analytics dashboard'], selectable: true },
+    { name: 'PREMIUM', desc: 'Unlimited automation, priority execution, and private strategies.', features: ['Unlimited wallets and networks', 'Advanced trading algorithms', 'Private strategy creation and backtesting', 'Priority API access and alerts'], selectable: true }
 ]
 
 const currencies = [
@@ -72,8 +43,14 @@ const chooseCurrency = (currency: string, network: string) => {
 }
 
 const confirmPlan = async () => {
-    if (!selectedPlan.value || !selectedCurrency.value) return
+    if (!selectedPlan.value || !selectedCurrency.value) {
+        message.value = 'Please select both plan and currency.'
+        return
+    }
+
     loading.value = true
+    message.value = 'Creating payment request...'
+
     try {
         const { data } = await api.post('/trader/subscription/payment', {
             plan: selectedPlan.value,
@@ -83,9 +60,10 @@ const confirmPlan = async () => {
         })
         payment.value = data
         step.value = 'summary'
+        message.value = ''
         startPollingStatus(data.id)
-    } catch (err) {
-        console.error(err)
+    } catch (err: any) {
+        message.value = err.response?.data?.message || 'Failed to create payment. Try again later.'
         await safeRefreshSubscription()
     } finally {
         loading.value = false
@@ -102,15 +80,17 @@ const startPollingStatus = (paymentId: number) => {
             if (data.status === 'CONFIRMED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
+                message.value = 'Payment confirmed. Redirecting...'
                 await router.push('/trader/profile')
             }
 
             if (data.status === 'EXPIRED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
+                message.value = 'Payment expired. Please try again.'
             }
-        } catch (err) {
-            console.error(err)
+        } catch (err: any) {
+            message.value = 'Failed to check payment status.'
             await safeRefreshSubscription()
         }
     }, 25000)
@@ -211,6 +191,8 @@ onUnmounted(stopPollingStatus)
                         </p>
                     </div>
                 </section>
+
+                <p v-if="message" class="text-center text-sm mt-4 text-gray-300">{{ message }}</p>
             </div>
         </main>
     </div>

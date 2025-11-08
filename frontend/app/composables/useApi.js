@@ -11,11 +11,10 @@ export const useApi = () => {
     withCredentials: true,
   })
 
-  // use shared Pinia instances
   const adminAuth = useAdminAuthStore()
   const userAuth = useUserAuthStore()
 
-  // attach Authorization headers
+  // Attach Authorization dynamically
   api.interceptors.request.use((req) => {
     if (!req.url) return req
 
@@ -28,11 +27,13 @@ export const useApi = () => {
     return req
   })
 
-  // auto-refresh on 401
+  // Global response handler with token refresh
   api.interceptors.response.use(
     (res) => res,
     async (error) => {
       const originalRequest = error.config
+
+      // Refresh logic on expired session
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
         try {
@@ -59,6 +60,9 @@ export const useApi = () => {
           return Promise.reject(error)
         }
       }
+
+      // Log errors internally, not to UI
+      console.error('API Error:', error.response?.data || error)
       return Promise.reject(error)
     }
   )

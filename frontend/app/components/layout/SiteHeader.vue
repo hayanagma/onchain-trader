@@ -1,3 +1,16 @@
+<script setup lang="ts">
+const navItems = [
+  { label: 'About', to: '/' },
+  { label: 'Careers', to: '/' },
+  { label: 'History', to: '/' },
+  { label: 'Services', to: '/' },
+  { label: 'Projects', to: '/' },
+  { label: 'Blog', to: '/' },
+]
+
+const toggleMenu = () => { }
+</script>
+
 <template>
   <header class="bg-white dark:bg-gray-900">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -54,16 +67,3 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-const navItems = [
-  { label: 'About', to: '/' },
-  { label: 'Careers', to: '/' },
-  { label: 'History', to: '/' },
-  { label: 'Services', to: '/' },
-  { label: 'Projects', to: '/' },
-  { label: 'Blog', to: '/' },
-]
-
-const toggleMenu = () => {}
-</script>
