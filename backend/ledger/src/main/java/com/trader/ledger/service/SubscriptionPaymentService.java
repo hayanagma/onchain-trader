@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.trader.ledger.model.SubscriptionPayment;
 import com.trader.ledger.repository.SubscriptionPaymentRepository;
+import com.trader.ledger.util.QrCodeGenerator;
 import com.trader.ledger.validation.SubscriptionPaymentValidator;
 import com.trader.shared.dto.identity.subscription.SubscriptionPaymentRequest;
 import com.trader.shared.dto.identity.subscription.SubscriptionPaymentResponse;
@@ -37,13 +38,10 @@ public class SubscriptionPaymentService {
 
     @Transactional
     public SubscriptionPaymentResponse createSubscriptionPayment(Long traderId, SubscriptionPaymentRequest request) {
-        // validate payment currency
-
         String code = subscriptionPaymentValidator.normalizeCurrency(request.getPaymentCurrencyCode());
         PaymentNetworkType network = request.getNetwork();
 
         subscriptionPaymentValidator.validateSubscriptionPayment(code, network);
-
         paymentCurrencyService.validatePaymentCurrency(code, network);
 
         SubscriptionPayment payment = new SubscriptionPayment();
@@ -57,8 +55,9 @@ public class SubscriptionPaymentService {
         String depositAddress = depositAddressService.generateAddress(code, traderId);
         payment.setDepositAddress(depositAddress);
 
-        String qrCodeUrl = generateQrUrl(code, depositAddress, payment.getAmount());
-        payment.setQrCodeUrl(qrCodeUrl);
+        String paymentUri = generateQrUrl(code, depositAddress, payment.getAmount());
+        String qrImageBase64 = QrCodeGenerator.generateBase64(paymentUri);
+        payment.setQrCodeUrl(qrImageBase64);
 
         Instant now = Instant.now();
         payment.setCreatedAt(now);
@@ -74,9 +73,9 @@ public class SubscriptionPaymentService {
                 saved.getAmount(),
                 saved.getQrCodeUrl(),
                 saved.getCreatedAt(),
-                saved.getExpiresAt());
+                saved.getExpiresAt(),
+                saved.getNetwork());
     }
-
     public SubscriptionPaymentStatusResponse getSubscriptionPaymentStatus(Long id) {
         SubscriptionPayment payment = subscriptionPaymentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("SubscriptionPayment not found: " + id));
