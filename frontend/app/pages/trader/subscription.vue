@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
+import { useRouter } from '#app'
 import { useApi } from '~/composables/useApi'
 import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
 
 const api = useApi()
+const router = useRouter()
 
 const step = ref<'plan' | 'currency' | 'summary'>('plan')
 const selectedPlan = ref('')
@@ -12,6 +14,7 @@ const selectedNetwork = ref('')
 const autoRenewal = ref(true)
 const payment = ref<Record<string, any> | null>(null)
 const loading = ref(false)
+const statusInterval = ref<number | null>(null)
 
 const plans = [
     {
@@ -80,12 +83,56 @@ const confirmPlan = async () => {
         })
         payment.value = data
         step.value = 'summary'
+        startPollingStatus(data.id)
     } catch (err) {
         console.error(err)
+        await safeRefreshSubscription()
     } finally {
         loading.value = false
     }
 }
+
+const startPollingStatus = (paymentId: number) => {
+    stopPollingStatus()
+    statusInterval.value = window.setInterval(async () => {
+        try {
+            const { data } = await api.get(`/trader/subscription/status/${paymentId}`)
+            payment.value = data
+
+            if (data.status === 'CONFIRMED') {
+                stopPollingStatus()
+                await safeRefreshSubscription()
+                await router.push('/trader/profile')
+            }
+
+            if (data.status === 'EXPIRED') {
+                stopPollingStatus()
+                await safeRefreshSubscription()
+            }
+        } catch (err) {
+            console.error(err)
+            await safeRefreshSubscription()
+        }
+    }, 25000)
+}
+
+const stopPollingStatus = () => {
+    if (statusInterval.value) {
+        clearInterval(statusInterval.value)
+        statusInterval.value = null
+    }
+}
+
+const safeRefreshSubscription = async () => {
+    try {
+        const { data } = await api.get('/trader/subscription')
+        if (data) payment.value = data
+    } catch (e) {
+        console.error('Failed to refresh subscription', e)
+    }
+}
+
+onUnmounted(stopPollingStatus)
 </script>
 
 <template>

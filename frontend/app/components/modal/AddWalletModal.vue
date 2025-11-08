@@ -83,9 +83,13 @@ const handleAddWallet = async () => {
             network.value = ''
             emit('close')
         }, 1200)
-    } catch (err) {
-        console.error(err)
-        message.value = 'Failed to add wallet.'
+    } catch (err: any) {
+        if (err.response) {
+            console.error(err.response.data)
+            message.value = err.response.data.message || `Error ${err.response.status}`
+        } else {
+            message.value = 'Request failed.'
+        }
     }
 }
 </script>
