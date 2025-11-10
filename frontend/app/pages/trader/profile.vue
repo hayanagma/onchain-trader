@@ -2,10 +2,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useTraderStore } from '~/stores/trader'
 import { useNetworkStore } from '~/stores/network'
-import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
 import AddWalletModal from '~/components/modal/AddWalletModal.vue'
 import AddCurrencyModal from '~/components/modal/AddCurrencyModal.vue'
 import UpdateUsernameModal from '~/components/modal/UpdateUsernameModal.vue'
+
+definePageMeta({ layout: 'trader' })
 
 interface Wallet {
   id: number
@@ -65,7 +66,6 @@ onMounted(async () => {
 
 <template>
   <div class="flex h-screen bg-gray-950 text-gray-100">
-    <TraderSideMenu />
 
     <main class="flex-1 flex flex-col items-center p-8 overflow-y-auto">
       <div class="w-full max-w-3xl space-y-8">

@@ -1,27 +1,20 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useApi } from '~/composables/useApi'
+import { useUserAuthStore } from '~/stores/userAuth'
 
-const api = useApi()
-const router = useRouter()
+const userAuth = useUserAuthStore()
 
-const logout = async () => {
-    try {
-        await api.post('/auth/trader/logout')
-        await router.push('/')
-    } catch (err: any) {
-        console.error(err.response?.data?.message || 'Logout failed.')
-    }
+async function handleLogout() {
+    await userAuth.logout()
+    window.location.href = '/'
 }
 </script>
 
 <template>
-    <div class="w-16 flex flex-col justify-between border-e border-gray-100 bg-white">
+    <div
+        class="fixed top-0 left-0 h-screen w-16 flex flex-col justify-between border-e border-gray-100 bg-white shadow-lg z-50">
         <div>
             <div class="inline-flex size-16 items-center justify-center">
-                <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
-                    L
-                </span>
+                <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">L</span>
             </div>
 
             <div class="border-t border-gray-100">
@@ -44,7 +37,7 @@ const logout = async () => {
                     <ul class="space-y-1 border-t border-gray-100 pt-4">
                         <li>
                             <nuxt-link to="/trader/profile"
-                                class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                                class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -59,8 +52,7 @@ const logout = async () => {
 
                         <li>
                             <nuxt-link to="/trader/subscription"
-                                class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                                <!-- credit card icon -->
+                                class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -77,11 +69,9 @@ const logout = async () => {
             </div>
         </div>
 
-        <!-- Support + Logout -->
         <div class="border-t border-gray-100 p-4 flex flex-col gap-2">
             <nuxt-link to="/trader/support"
                 class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition">
-                <!-- chat bubble icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -93,7 +83,7 @@ const logout = async () => {
                 </span>
             </nuxt-link>
 
-            <button @click="logout"
+            <button @click="handleLogout"
                 class="group relative flex justify-center rounded-sm px-2 py-1.5 text-gray-500 hover:bg-red-50 hover:text-red-600 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">

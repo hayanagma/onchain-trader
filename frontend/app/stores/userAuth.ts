@@ -35,9 +35,15 @@ export const useUserAuthStore = defineStore('userAuth', () => {
     const api = useApi()
     try {
       await api.post('/auth/trader/logout')
-    } finally {
+    } catch {}
+    finally {
       token.value = null
       networkStore.clear()
+      delete api.defaults.headers.common['Authorization']
+
+      if (typeof document !== 'undefined') {
+        document.cookie = 'refreshToken=; Max-Age=0; path=/; secure; sameSite=Strict'
+      }
     }
   }
 

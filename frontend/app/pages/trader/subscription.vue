@@ -4,6 +4,8 @@ import { useRouter } from '#app'
 import { useApi } from '~/composables/useApi'
 import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
 
+definePageMeta({ layout: 'trader' })
+
 const api = useApi()
 const router = useRouter()
 
@@ -132,7 +134,6 @@ onUnmounted(stopPollingStatus)
 
 <template>
     <div class="flex h-screen bg-gray-950 text-gray-100">
-        <TraderSideMenu />
 
         <main class="flex-1 p-10 overflow-y-auto flex justify-center">
             <div class="w-full max-w-5xl space-y-6">

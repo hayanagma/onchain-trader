@@ -34,7 +34,7 @@ watch(
 </script>
 
 <template>
-    <div class="absolute top-4 right-6">
+    <div class="absolute top-4 right-6 z-50">
         <button @click="showNetworks = !showNetworks"
             class="flex items-center gap-2 bg-gray-900/70 hover:bg-gray-800 text-white text-sm px-3 py-1.5 rounded-md transition">
             <img :src="`/icons/${networkStore.current.toLowerCase()}.svg`" class="w-4 h-4" />
@@ -47,7 +47,7 @@ watch(
         </button>
 
         <div v-if="showNetworks"
-            class="absolute right-0 mt-2 bg-gray-900 text-white text-xs border border-gray-700 rounded-md shadow-lg w-36">
+            class="absolute right-0 mt-2 bg-gray-900 text-white text-xs border border-gray-700 rounded-md shadow-lg w-36 z-50">
             <button v-for="n in networks" :key="n" @click="selectNetwork(n)"
                 class="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-gray-800">
                 <img :src="`/icons/${n.toLowerCase()}.svg`" class="w-4 h-4" />

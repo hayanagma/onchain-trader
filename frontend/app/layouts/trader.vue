@@ -1,7 +1,7 @@
 <template>
     <div class="relative min-h-screen bg-gray-950 text-gray-100 flex">
         <TraderSideMenu />
-        <main class="flex-1 relative">
+        <main class="flex-1 relative ml-16">
             <NetworkSelector />
             <slot />
         </main>

@@ -7,6 +7,9 @@ export const useNetworkStore = defineStore('network', {
   actions: {
     setNetwork(network: string) {
       this.current = network
+    },
+    clear() {
+      this.current = ''
     }
   }
 })
