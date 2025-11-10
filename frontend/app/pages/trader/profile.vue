@@ -5,6 +5,7 @@ import { useNetworkStore } from '~/stores/network'
 import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
 import AddWalletModal from '~/components/modal/AddWalletModal.vue'
 import AddCurrencyModal from '~/components/modal/AddCurrencyModal.vue'
+import UpdateUsernameModal from '~/components/modal/UpdateUsernameModal.vue'
 
 interface Wallet {
   id: number
@@ -42,6 +43,7 @@ const networkStore = useNetworkStore()
 
 const showAddWalletModal = ref(false)
 const showAddCurrencyModal = ref(false)
+const showUpdateUsernameModal = ref(false)
 const showAddress = ref<Record<number, boolean>>({})
 
 const toggleAddress = (id: number) => {
@@ -76,7 +78,13 @@ onMounted(async () => {
                 {{ traderStore.trader?.username?.[0]?.toUpperCase() || 'T' }}
               </div>
               <div>
-                <h2 class="text-2xl font-semibold">{{ traderStore.trader?.username || 'Unknown' }}</h2>
+                <h2 class="text-2xl font-semibold flex items-center gap-3">
+                  {{ traderStore.trader?.username || 'Unknown' }}
+                  <button @click="showUpdateUsernameModal = true"
+                    class="text-xs px-2 py-1 border border-gray-700 rounded hover:bg-gray-800 text-indigo-400">
+                    Edit
+                  </button>
+                </h2>
                 <p class="text-gray-400 text-sm">Trader ID: {{ traderStore.trader?.id || '—' }}</p>
               </div>
             </div>
@@ -195,5 +203,7 @@ onMounted(async () => {
     <AddWalletModal v-if="showAddWalletModal" @close="showAddWalletModal = false; traderStore.fetchTrader()" />
     <AddCurrencyModal v-if="showAddCurrencyModal" @close="showAddCurrencyModal = false"
       @success="traderStore.fetchTrader()" />
+    <UpdateUsernameModal v-if="showUpdateUsernameModal" @close="showUpdateUsernameModal = false"
+      @updated="traderStore.fetchTrader()" />
   </div>
 </template>

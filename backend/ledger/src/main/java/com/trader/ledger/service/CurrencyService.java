@@ -22,17 +22,15 @@ public class CurrencyService {
     private final CurrencyRepository currencyRepository;
     private final BlockchainVerifierFactory blockchainVerifierFactory;
     private final CurrencyValidator currencyValidator;
-    private final WalletService walletService;
     private final TraderCurrencyService traderCurrencyService;
 
     public CurrencyService(CurrencyRepository currencyRepository,
             BlockchainVerifierFactory blockchainVerifierFactory,
-            CurrencyValidator currencyValidator, WalletService walletService,
+            CurrencyValidator currencyValidator,
             TraderCurrencyService traderCurrencyService) {
         this.currencyRepository = currencyRepository;
         this.blockchainVerifierFactory = blockchainVerifierFactory;
         this.currencyValidator = currencyValidator;
-        this.walletService = walletService;
         this.traderCurrencyService = traderCurrencyService;
     }
 
