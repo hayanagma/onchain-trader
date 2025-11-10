@@ -52,7 +52,6 @@ const planLevel = (plan: string | null) => {
 const selectPlan = (plan: string) => {
     const selected = plans.find(p => p.name === plan)
     if (!selected) return
-    // block selecting same or lower tier
     if (planLevel(plan) <= planLevel(currentPlan.value)) return
     selectedPlan.value = plan
     step.value = 'currency'
@@ -134,7 +133,6 @@ onUnmounted(stopPollingStatus)
 
 <template>
     <div class="flex h-screen bg-gray-950 text-gray-100">
-
         <main class="flex-1 p-10 overflow-y-auto flex justify-center">
             <div class="w-full max-w-5xl space-y-6">
                 <h1 class="text-3xl font-bold text-center">Subscription Plans</h1>
@@ -153,9 +151,8 @@ onUnmounted(stopPollingStatus)
                                 </ul>
                             </div>
 
-                            <button :disabled="!plan.selectable ||
-                                planLevel(plan.name) <= planLevel(currentPlan)
-                                " @click="plan.selectable && selectPlan(plan.name)"
+                            <button :disabled="!plan.selectable || planLevel(plan.name) <= planLevel(currentPlan)"
+                                @click="plan.selectable && selectPlan(plan.name)"
                                 class="mt-6 w-full rounded-sm px-4 py-2 text-sm font-medium transition" :class="[
                                     plan.name === currentPlan
                                         ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
@@ -175,19 +172,22 @@ onUnmounted(stopPollingStatus)
 
                 <!-- Step 2: Currency Selection -->
                 <section v-if="step === 'currency'" class="space-y-4">
-                    <h2 class="text-xl font-semibold">Choose Payment Currency</h2>
-                    <div class="space-y-3">
+                    <h2 class="text-xl font-semibold mb-4">Choose Payment Currency</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <div v-for="c in currencies" :key="c.code" @click="chooseCurrency(c.code, c.network)"
-                            class="cursor-pointer bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-indigo-600 transition"
+                            class="cursor-pointer bg-gray-900 border border-gray-800 rounded-lg p-4 flex items-center gap-4 hover:border-indigo-600 transition"
                             :class="selectedCurrency === c.code ? 'border-indigo-600' : ''">
-                            <h3 class="text-lg font-bold text-indigo-400">{{ c.code }}</h3>
-                            <p class="text-gray-400 text-sm">Network: {{ c.network }}</p>
+                            <img :src="`/icons/${c.network.toLowerCase()}.svg`" class="w-8 h-8" />
+                            <div>
+                                <h3 class="text-lg font-bold text-indigo-400">{{ c.code }}</h3>
+                                <p class="text-gray-400 text-xs">Network: {{ c.network }}</p>
+                            </div>
                         </div>
                     </div>
 
                     <button @click="confirmPlan" :disabled="!selectedCurrency || loading"
                         class="mt-6 w-full rounded-sm bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50">
-                        {{ loading ? 'Processing...' : 'Confirm Subscription' }}
+                        {{ loading ? 'Processing...' : 'Confirm Currency' }}
                     </button>
                 </section>
 

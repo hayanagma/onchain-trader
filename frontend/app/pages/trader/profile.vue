@@ -2,9 +2,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useTraderStore } from '~/stores/trader'
 import { useNetworkStore } from '~/stores/network'
+import { useApi } from '~/composables/useApi'
 import AddWalletModal from '~/components/modal/AddWalletModal.vue'
 import AddCurrencyModal from '~/components/modal/AddCurrencyModal.vue'
 import UpdateUsernameModal from '~/components/modal/UpdateUsernameModal.vue'
+import DeactivateWalletModal from '~/components/modal/DeactivateWalletModal.vue'
 
 definePageMeta({ layout: 'trader' })
 
@@ -41,10 +43,13 @@ interface Trader {
 
 const traderStore = useTraderStore()
 const networkStore = useNetworkStore()
+const api = useApi()
 
 const showAddWalletModal = ref(false)
 const showAddCurrencyModal = ref(false)
 const showUpdateUsernameModal = ref(false)
+const showDeactivateModal = ref(false)
+const walletToDeactivate = ref<number | null>(null)
 const showAddress = ref<Record<number, boolean>>({})
 
 const toggleAddress = (id: number) => {
@@ -59,6 +64,11 @@ const activeCurrencies = computed<Currency[]>(() =>
   traderStore.trader?.currencies?.filter((c) => c.network === networkStore.current) || []
 )
 
+const openDeactivateModal = (id: number) => {
+  walletToDeactivate.value = id
+  showDeactivateModal.value = true
+}
+
 onMounted(async () => {
   if (!traderStore.trader) await traderStore.fetchTrader()
 })
@@ -66,7 +76,6 @@ onMounted(async () => {
 
 <template>
   <div class="flex h-screen bg-gray-950 text-gray-100">
-
     <main class="flex-1 flex flex-col items-center p-8 overflow-y-auto">
       <div class="w-full max-w-3xl space-y-8">
 
@@ -123,10 +132,23 @@ onMounted(async () => {
                   {{ showAddress[wallet.id] ? 'Hide' : 'View' }} address
                 </button>
               </div>
-              <span :class="wallet.active ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'"
-                class="text-xs px-2 py-1 rounded-full">
-                {{ wallet.active ? 'Active' : 'Inactive' }}
-              </span>
+
+              <div class="flex items-center gap-2">
+                <span :class="wallet.active ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'"
+                  class="text-xs px-2 py-1 rounded-full">
+                  {{ wallet.active ? 'Active' : 'Inactive' }}
+                </span>
+
+                <button v-if="wallet.active" @click="openDeactivateModal(wallet.id)"
+                  :disabled="activeWallets.filter(w => w.active).length <= 1"
+                  class="text-xs border rounded px-2 py-1 transition" :class="[
+                    activeWallets.filter(w => w.active).length <= 1
+                      ? 'text-gray-500 border-gray-700 cursor-not-allowed opacity-50'
+                      : 'text-yellow-400 border-yellow-500/30 hover:text-yellow-500'
+                  ]">
+                  Deactivate
+                </button>
+              </div>
             </div>
           </div>
 
@@ -205,5 +227,7 @@ onMounted(async () => {
       @success="traderStore.fetchTrader()" />
     <UpdateUsernameModal v-if="showUpdateUsernameModal" @close="showUpdateUsernameModal = false"
       @updated="traderStore.fetchTrader()" />
+    <DeactivateWalletModal v-if="showDeactivateModal" :walletId="walletToDeactivate"
+      @close="showDeactivateModal = false" @updated="traderStore.fetchTrader()" />
   </div>
 </template>

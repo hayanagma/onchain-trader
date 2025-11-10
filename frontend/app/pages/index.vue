@@ -4,6 +4,7 @@ import SiteHeader from '~/components/layout/SiteHeader.vue'
 import MailForm from '~/components/form/MailForm.vue'
 import ConnectWalletModal from '~/components/modal/ConnectWalletModal.vue'
 import SiteFooter from '~/components/layout/SiteFooter.vue'
+import CoinBanner from '~/components/widget/CoinBanner.vue'
 
 const showModal = ref(false)
 </script>
@@ -13,6 +14,7 @@ const showModal = ref(false)
 
   <ConnectWalletModal v-if="showModal" mode="create" @close="showModal = false" />
 
+  <!-- Hero Section -->
   <section class="bg-white lg:grid lg:h-screen lg:place-content-center dark:bg-gray-900">
     <div class="mx-auto w-screen max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-32">
       <div class="mx-auto max-w-prose text-center">
@@ -40,6 +42,16 @@ const showModal = ref(false)
     </div>
   </section>
 
-  <MailForm endpoint="/public/mail/contact" title="Contact Us" />
+  <!-- Coin Banner -->
+  <section>
+    <CoinBanner />
+  </section>
+
+  <!-- Contact Form -->
+  <section>
+    <MailForm endpoint="/public/mail/contact" title="Contact Us" />
+  </section>
+
+  <!-- Footer -->
   <SiteFooter />
 </template>
