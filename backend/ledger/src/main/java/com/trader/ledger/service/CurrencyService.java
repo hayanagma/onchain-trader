@@ -70,9 +70,7 @@ public class CurrencyService {
     }
 
     public List<CurrencyResponse> getVisibleCurrencies(Long traderId) {
-        NetworkType traderNetwork = walletService.getTraderNetwork(traderId);
-
-        return currencyRepository.findVisibleByTraderAndNetwork(traderId, traderNetwork).stream()
+        return currencyRepository.findVisibleByTrader(traderId).stream()
                 .map(currency -> new CurrencyResponse(
                         currency.getId(),
                         currency.getCode(),
@@ -86,31 +84,29 @@ public class CurrencyService {
 
     @Transactional
     public void createCurrency(Long traderId, CurrencyAddRequest request) {
-        NetworkType traderNetwork = walletService.getTraderNetwork(traderId);
-        currencyValidator.assertNetworkSupportsTokens(traderNetwork);
+        NetworkType network = request.getNetwork();
 
-        String contractAddress = request.getContractAddress();
-        currencyValidator.validateAddress(contractAddress, traderNetwork);
+        currencyValidator.assertNetworkSupportsTokens(network);
+        currencyValidator.validateAddress(request.getContractAddress(), network);
 
         Currency currency = currencyRepository
-                .findByContractAddressAndNetwork(contractAddress, traderNetwork)
+                .findByContractAddressAndNetwork(request.getContractAddress(), network)
                 .orElseGet(() -> {
                     TokenMetadata metadata = blockchainVerifierFactory
-                            .getVerifier(traderNetwork)
-                            .verify(contractAddress);
+                            .getVerifier(network)
+                            .verify(request.getContractAddress());
                     Currency c = new Currency();
                     c.setCode(metadata.getSymbol());
                     c.setName((metadata.getName() != null && !metadata.getName().isBlank())
                             ? metadata.getName()
                             : metadata.getSymbol());
-                    c.setNetwork(traderNetwork);
+                    c.setNetwork(network);
                     c.setDecimals(metadata.getDecimals());
                     c.setKind(CurrencyKind.TOKEN);
-                    c.setContractAddress(contractAddress);
+                    c.setContractAddress(request.getContractAddress());
                     return currencyRepository.save(c);
                 });
 
         traderCurrencyService.linkTraderToCurrency(traderId, currency);
     }
-
 }

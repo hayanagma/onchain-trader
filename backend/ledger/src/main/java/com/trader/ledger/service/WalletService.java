@@ -53,36 +53,22 @@ public class WalletService {
     }
 
     public Wallet createWallet(Long traderId, String address, NetworkType network) {
-    ensureSameNetwork(traderId, network);
-
-    Optional<Wallet> existing = walletRepository.findByAddressAndNetwork(address, network);
-    if (existing.isPresent()) {
-        Wallet wallet = existing.get();
-        if (!wallet.isActive()) {
-            wallet.setActive(true);
-            return walletRepository.save(wallet);
+        Optional<Wallet> existing = walletRepository.findByAddressAndNetwork(address, network);
+        if (existing.isPresent()) {
+            Wallet wallet = existing.get();
+            if (!wallet.isActive()) {
+                wallet.setActive(true);
+                return walletRepository.save(wallet);
+            }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wallet already active");
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wallet already active");
-    }
 
-    Wallet newWallet = new Wallet();
-    newWallet.setTraderId(traderId);
-    newWallet.setAddress(address);
-    newWallet.setNetwork(network);
-    newWallet.setActive(true);
-    return walletRepository.save(newWallet);
-}
-
-    public void ensureSameNetwork(Long traderId, NetworkType network) {
-        List<Wallet> existingWallets = walletRepository.findAllByTraderId(traderId);
-        boolean hasDifferentNetwork = existingWallets.stream()
-                .anyMatch(w -> !w.getNetwork().equals(network));
-
-        if (hasDifferentNetwork) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Trader already has a wallet on a different network");
-        }
+        Wallet newWallet = new Wallet();
+        newWallet.setTraderId(traderId);
+        newWallet.setAddress(address);
+        newWallet.setNetwork(network);
+        newWallet.setActive(true);
+        return walletRepository.save(newWallet);
     }
 
     public Long findTraderIdByWalletAddress(String address) {

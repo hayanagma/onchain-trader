@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from '#app'
 import { useApi } from '~/composables/useApi'
 import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
@@ -15,12 +15,13 @@ const autoRenewal = ref(true)
 const payment = ref<Record<string, any> | null>(null)
 const loading = ref(false)
 const message = ref('')
+const currentPlan = ref<string | null>(null)
 const statusInterval = ref<number | null>(null)
 
 const plans = [
-    { name: 'FREE', desc: 'Basic access to the trading bot with limited automation.', features: ['1 connected wallet', 'Manual trade execution only', 'No multi-network support', 'Limited trading signals'], selectable: false },
-    { name: 'PRO', desc: 'Full bot automation and cross-network trading support.', features: ['Up to 5 wallets connected', 'Automated trades on supported DEXs', 'Multi-network support (TRON, ETH, SOL, etc.)', 'Basic analytics dashboard'], selectable: true },
-    { name: 'PREMIUM', desc: 'Unlimited automation, priority execution, and private strategies.', features: ['Unlimited wallets and networks', 'Advanced trading algorithms', 'Private strategy creation and backtesting', 'Priority API access and alerts'], selectable: true }
+    { name: 'FREE', desc: 'Basic access to the trading bot with limited automation.', level: 0, features: ['1 connected wallet', 'Manual trade execution only', 'No multi-network support', 'Limited trading signals'], selectable: false },
+    { name: 'PRO', desc: 'Full bot automation and cross-network trading support.', level: 1, features: ['Up to 5 wallets connected', 'Automated trades on supported DEXs', 'Multi-network support (TRON, ETH, SOL, etc.)', 'Basic analytics dashboard'], selectable: true },
+    { name: 'PREMIUM', desc: 'Unlimited automation, priority execution, and private strategies.', level: 2, features: ['Unlimited wallets and networks', 'Advanced trading algorithms', 'Private strategy creation and backtesting', 'Priority API access and alerts'], selectable: true }
 ]
 
 const currencies = [
@@ -32,7 +33,25 @@ const currencies = [
     { code: 'LTC', network: 'LITECOIN' }
 ]
 
+onMounted(async () => {
+    try {
+        const { data } = await api.get('/trader/subscription')
+        currentPlan.value = data?.plan || null
+    } catch (err) {
+        console.error('Failed to load current plan', err)
+    }
+})
+
+const planLevel = (plan: string | null) => {
+    const found = plans.find(p => p.name === plan)
+    return found ? found.level : -1
+}
+
 const selectPlan = (plan: string) => {
+    const selected = plans.find(p => p.name === plan)
+    if (!selected) return
+    // block selecting same or lower tier
+    if (planLevel(plan) <= planLevel(currentPlan.value)) return
     selectedPlan.value = plan
     step.value = 'currency'
 }
@@ -47,10 +66,8 @@ const confirmPlan = async () => {
         message.value = 'Please select both plan and currency.'
         return
     }
-
     loading.value = true
     message.value = 'Creating payment request...'
-
     try {
         const { data } = await api.post('/trader/subscription/payment', {
             plan: selectedPlan.value,
@@ -76,20 +93,18 @@ const startPollingStatus = (paymentId: number) => {
         try {
             const { data } = await api.get(`/trader/subscription/status/${paymentId}`)
             payment.value = data
-
             if (data.status === 'CONFIRMED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
                 message.value = 'Payment confirmed. Redirecting...'
                 await router.push('/trader/profile')
             }
-
             if (data.status === 'EXPIRED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
                 message.value = 'Payment expired. Please try again.'
             }
-        } catch (err: any) {
+        } catch {
             message.value = 'Failed to check payment status.'
             await safeRefreshSubscription()
         }
@@ -136,11 +151,22 @@ onUnmounted(stopPollingStatus)
                                     <li v-for="feature in plan.features" :key="feature">• {{ feature }}</li>
                                 </ul>
                             </div>
-                            <button :disabled="!plan.selectable" @click="plan.selectable && selectPlan(plan.name)"
-                                class="mt-6 w-full rounded-sm px-4 py-2 text-sm font-medium transition" :class="plan.selectable
-                                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'">
-                                {{ plan.selectable ? 'Choose Plan' : 'Unavailable' }}
+
+                            <button :disabled="!plan.selectable ||
+                                planLevel(plan.name) <= planLevel(currentPlan)
+                                " @click="plan.selectable && selectPlan(plan.name)"
+                                class="mt-6 w-full rounded-sm px-4 py-2 text-sm font-medium transition" :class="[
+                                    plan.name === currentPlan
+                                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                        : planLevel(plan.name) <= planLevel(currentPlan)
+                                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                            : plan.selectable
+                                                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                                ]">
+                                <template v-if="plan.name === currentPlan">Current Plan</template>
+                                <template v-else-if="planLevel(plan.name) > planLevel(currentPlan)">Upgrade</template>
+                                <template v-else>Unavailable</template>
                             </button>
                         </div>
                     </div>

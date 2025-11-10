@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { useNetworkStore } from '~/stores/network'
 
 const emit = defineEmits(['close'])
 const api = useApi()
+const networkStore = useNetworkStore()
 
 const walletAddress = ref('')
-const network = ref('')
+const network = ref(networkStore.current)
 const message = ref('')
 const loading = ref(false)
 
@@ -34,11 +36,11 @@ const handleAddWallet = async () => {
         setTimeout(() => {
             message.value = ''
             walletAddress.value = ''
-            network.value = ''
             emit('close')
         }, 1200)
-    } catch (err: any) {
-        message.value = 'Failed to connect wallet. Make sure the network is correct and try again.'
+    } catch {
+        message.value =
+            'Failed to connect wallet. Make sure the network is correct and try again.'
     } finally {
         loading.value = false
     }
@@ -67,14 +69,8 @@ const handleAddWallet = async () => {
                     <label class="block text-sm font-medium mb-2 text-gray-800 dark:text-gray-200">
                         Network
                     </label>
-                    <select v-model="network" required
-                        class="w-full rounded-md bg-white/70 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:outline-none">
-                        <option value="">Select network</option>
-                        <option value="BITCOIN">Bitcoin</option>
-                        <option value="TRON">TRON</option>
-                        <option value="SOLANA">Solana</option>
-                        <option value="ETHEREUM">Ethereum</option>
-                    </select>
+                    <input type="text" v-model="network" readonly
+                        class="w-full rounded-md bg-white/70 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-900 dark:text-gray-100" />
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2">
@@ -84,12 +80,14 @@ const handleAddWallet = async () => {
                     </button>
                     <button type="submit" :disabled="loading"
                         class="px-5 py-2 bg-teal-600/80 hover:bg-teal-700 text-white rounded-md shadow-lg hover:shadow-teal-500/30 transition focus:ring-2 focus:ring-teal-400 focus:outline-none disabled:opacity-50">
-                        {{ loading ? 'Processing...' : 'Add Wallet' }}
+                        {{ loading ? 'Processing...' : 'Connect Wallet' }}
                     </button>
                 </div>
             </form>
 
-            <p v-if="message" class="text-sm text-center mt-4 text-gray-300">{{ message }}</p>
+            <p v-if="message" class="text-sm text-center mt-4 text-gray-300">
+                {{ message }}
+            </p>
         </div>
     </div>
 </template>
