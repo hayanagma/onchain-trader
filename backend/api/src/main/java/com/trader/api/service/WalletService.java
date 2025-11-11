@@ -2,14 +2,18 @@ package com.trader.api.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.trader.api.client.identity.TraderClient;
 import com.trader.api.client.ledger.WalletClient;
 import com.trader.api.security.TraderContext;
 import com.trader.shared.dto.ledger.wallet.WalletAddRequest;
 import com.trader.shared.dto.ledger.wallet.WalletChallengeRequest;
 import com.trader.shared.dto.ledger.wallet.WalletChallengeResponse;
 import com.trader.shared.dto.ledger.wallet.WalletTraderResponse;
+import com.trader.shared.enums.SubscriptionPlan;
 
 import reactor.core.publisher.Mono;
 
@@ -18,20 +22,18 @@ public class WalletService {
 
         private final WalletClient walletClient;
         private final TraderContext traderContext;
+        private final TraderClient traderClient;
 
-        public WalletService(WalletClient walletClient, TraderContext traderContext) {
+        public WalletService(WalletClient walletClient, TraderContext traderContext, TraderClient traderClient) {
                 this.walletClient = walletClient;
                 this.traderContext = traderContext;
+                this.traderClient = traderClient;
+ 
         }
 
         public Mono<WalletChallengeResponse> createChallenge(WalletChallengeRequest request) {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.createChallenge(traderId, request);
-        }
-
-        public Mono<Void> verifyAndAddWallet(WalletAddRequest request) {
-                Long traderId = traderContext.getCurrentTraderId();
-                return walletClient.verifyAndAddWallet(traderId, request);
         }
 
         public Mono<List<WalletTraderResponse>> getWalletsForCurrentTrader() {
@@ -42,5 +44,20 @@ public class WalletService {
         public Mono<Void> removeWalletForCurrentTrader(Long walletId) {
                 Long traderId = traderContext.getCurrentTraderId();
                 return walletClient.removeWallet(traderId, walletId);
+        }
+
+        public Mono<Void> verifyAndAddWallet(WalletAddRequest request) {
+                Long traderId = traderContext.getCurrentTraderId();
+
+                return traderClient.getTraderProfile(traderId)
+                                .flatMap(trader -> {
+                                        if (trader.getSubscriptionPlan() == SubscriptionPlan.FREE) {
+                                                return Mono.<Void>error(new ResponseStatusException(
+                                                                HttpStatus.BAD_REQUEST,
+                                                                "You need a subscription plan to add multiple wallets."));
+                                        }
+
+                                        return walletClient.verifyAndAddWallet(traderId, request);
+                                });
         }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trader.auth.dto.AuthResult;
 import com.trader.auth.dto.LoginResponse;
 import com.trader.auth.dto.admin.AdminLoginRequest;
+import com.trader.auth.dto.admin.AdminVerifyRequest;
 import com.trader.auth.security.JwtCookieProvider;
 import com.trader.auth.security.RefreshTokenCookie;
 import com.trader.auth.service.AdminAuthService;
@@ -30,11 +31,19 @@ public class AdminAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody AdminLoginRequest request) {
+    public ResponseEntity<AuthResult> login(@RequestBody AdminLoginRequest request) {
         AuthResult result = adminAuthService.login(request);
+        return ResponseEntity.ok(result);
+    }
 
-        ResponseCookie cookie = jwtCookieProvider.createRefreshCookie(result.getRefreshToken(),
+    @PostMapping("/verify")
+    public ResponseEntity<LoginResponse> verify(@RequestBody AdminVerifyRequest request) {
+        AuthResult result = adminAuthService.verify(request);
+
+        ResponseCookie cookie = jwtCookieProvider.createRefreshCookie(
+                result.getRefreshToken(),
                 RefreshTokenCookie.ADMIN);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new LoginResponse(result.getAccessToken()));

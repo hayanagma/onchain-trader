@@ -1,0 +1,117 @@
+package com.trader.mail.service;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.trader.mail.model.Newsletter;
+import com.trader.mail.model.NewsletterSubscriber;
+import com.trader.mail.repository.NewsletterRepository;
+import com.trader.mail.repository.NewsletterSubscriberRepository;
+import com.trader.mail.validation.MailValidator;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
+import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
+import com.trader.shared.dto.mail.newsletter.NewsletterSubscribeRequest;
+import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
+
+
+import jakarta.transaction.Transactional;
+
+@Service
+public class NewsletterService {
+
+    private final NewsletterRepository newsletterRepository;
+    private final NewsletterSubscriberRepository repository;
+    private final MailService mailService;
+    private final MailValidator mailValidator;
+
+    public NewsletterService(NewsletterSubscriberRepository repository, MailService mailService,
+            MailValidator mailValidator, NewsletterRepository newsletterRepository) {
+        this.newsletterRepository = newsletterRepository;
+        this.repository = repository;
+        this.mailService = mailService;
+        this.mailValidator = mailValidator;
+    }
+
+    public void subscribe(NewsletterSubscribeRequest request) {
+        String email = request.getEmail();
+        mailValidator.isValid(email);
+
+        if (repository.existsByEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already subscribed");
+        }
+
+        NewsletterSubscriber subscriber = new NewsletterSubscriber();
+        subscriber.setEmail(email);
+        subscriber.setUnsubscribeToken(UUID.randomUUID().toString());
+        repository.save(subscriber);
+
+        mailService.sendNewsletterSubscribed(email, subscriber.getUnsubscribeToken());
+    }
+
+    @Transactional
+    public void unsubscribe(String token) {
+        NewsletterSubscriber subscriber = repository.findByUnsubscribeToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid or expired token"));
+
+        repository.delete(subscriber);
+        mailService.sendNewsletterUnsubscribed(subscriber.getEmail());
+    }
+
+    @Transactional
+    public void sendNewsletterToAll(NewsletterSendRequest request) {
+        List<String> recipients = repository.findAll()
+                .stream()
+                .map(NewsletterSubscriber::getEmail)
+                .toList();
+
+        Newsletter newsletter = new Newsletter();
+        newsletter.setSubject(request.getSubject());
+        newsletter.setContent(request.getContent());
+        newsletter.setRecipientCount(recipients.size());
+        newsletter.setSentAt(Instant.now());
+        newsletterRepository.save(newsletter);
+
+        mailService.sendNewsletter(request, recipients);
+    }
+
+    public Optional<NewsletterSubscriber> findByEmail(String email) {
+        return repository.findAll()
+                .stream()
+                .filter(s -> s.getEmail().equalsIgnoreCase(email))
+                .findFirst();
+    }
+
+    public NewsletterSubscriberResponse getAllSubscribers() {
+        List<String> emails = repository.findAll()
+                .stream()
+                .map(NewsletterSubscriber::getEmail)
+                .toList();
+
+        long count = emails.size();
+
+        return new NewsletterSubscriberResponse(count, emails);
+    }
+
+    public List<NewsletterResponse> getAllNewsletters() {
+        return newsletterRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private NewsletterResponse toResponse(Newsletter newsletter) {
+        NewsletterResponse response = new NewsletterResponse();
+        response.setId(newsletter.getId());
+        response.setSubject(newsletter.getSubject());
+        response.setContent(newsletter.getContent());
+        response.setRecipientCount(newsletter.getRecipientCount());
+        response.setSentAt(newsletter.getSentAt());
+        return response;
+    }
+}

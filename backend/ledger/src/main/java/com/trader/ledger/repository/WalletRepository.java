@@ -22,4 +22,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Optional<Wallet> findByIdAndTraderId(Long id, Long traderId);
 
+    long countByTraderId(Long traderId);
+
 }

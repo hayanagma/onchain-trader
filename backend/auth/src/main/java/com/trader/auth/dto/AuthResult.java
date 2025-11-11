@@ -5,6 +5,10 @@ public class AuthResult {
     private final String accessToken;
     private final String refreshToken;
 
+    public static AuthResult pending() {
+        return new AuthResult(null, null);
+    }
+    
     public AuthResult(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;

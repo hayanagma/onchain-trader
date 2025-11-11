@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { useNetworkStore } from '~/stores/network'
 
 export const useUserAuthStore = defineStore('userAuth', () => {
   const token = ref<string | null>(null)
   const isLoggedIn = computed(() => !!token.value)
+  const networkStore = useNetworkStore()
 
   function setToken(jwt: string | null) {
     token.value = jwt
@@ -19,6 +22,7 @@ export const useUserAuthStore = defineStore('userAuth', () => {
     const api = useApi()
     const res = await api.post('/auth/trader/login', { walletAddress, network, nonce, signature })
     setToken(res.data.accessToken)
+    networkStore.setNetwork(network)
   }
 
   async function refresh() {
@@ -28,9 +32,19 @@ export const useUserAuthStore = defineStore('userAuth', () => {
   }
 
   async function logout() {
-    token.value = null
     const api = useApi()
-    await api.post('/auth/trader/logout')
+    try {
+      await api.post('/auth/trader/logout')
+    } catch {}
+    finally {
+      token.value = null
+      networkStore.clear()
+      delete api.defaults.headers.common['Authorization']
+
+      if (typeof document !== 'undefined') {
+        document.cookie = 'refreshToken=; Max-Age=0; path=/; secure; sameSite=Strict'
+      }
+    }
   }
 
   return { token, isLoggedIn, setToken, challenge, login, refresh, logout }

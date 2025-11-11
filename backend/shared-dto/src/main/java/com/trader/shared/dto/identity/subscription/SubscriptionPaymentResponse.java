@@ -3,6 +3,7 @@ package com.trader.shared.dto.identity.subscription;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import com.trader.shared.enums.PaymentNetworkType;
 import com.trader.shared.enums.PaymentStatus;
 
 public class SubscriptionPaymentResponse {
@@ -15,6 +16,7 @@ public class SubscriptionPaymentResponse {
     private String qrCodeUrl;
     private Instant createdAt;
     private Instant expiresAt;
+    private PaymentNetworkType network;
 
     public SubscriptionPaymentResponse() {
     }
@@ -26,7 +28,8 @@ public class SubscriptionPaymentResponse {
             BigDecimal amount,
             String qrCodeUrl,
             Instant createdAt,
-            Instant expiresAt) {
+            Instant expiresAt,
+            PaymentNetworkType network) {
         this.id = id;
         this.paymentCurrencyCode = paymentCurrencyCode;
         this.depositAddress = depositAddress;
@@ -35,6 +38,7 @@ public class SubscriptionPaymentResponse {
         this.qrCodeUrl = qrCodeUrl;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
+        this.network = network;
     }
 
     public Long getId() {
@@ -99,5 +103,13 @@ public class SubscriptionPaymentResponse {
 
     public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public PaymentNetworkType getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(PaymentNetworkType network) {
+        this.network = network;
     }
 }

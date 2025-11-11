@@ -50,9 +50,8 @@ public class SubscriptionPayment {
     @Column(length = 128)
     private String transactionHash;
 
-    @Column(length = 255)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String qrCodeUrl;
-
 
     public Long getId() {
         return id;

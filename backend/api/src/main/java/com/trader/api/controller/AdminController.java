@@ -3,6 +3,7 @@ package com.trader.api.controller;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trader.api.client.IdentityClient;
+import com.trader.api.client.identity.AdminClient;
 import com.trader.api.client.ledger.CurrencyClient;
 import com.trader.api.client.ledger.LedgerClient;
 import com.trader.api.client.mail.NewsletterClient;
@@ -18,8 +19,10 @@ import com.trader.api.client.mail.UpdateClient;
 import com.trader.api.service.TraderService;
 import com.trader.shared.dto.identity.admin.AdminTraderResponse;
 import com.trader.shared.dto.identity.admin.BanRequest;
+import com.trader.shared.dto.identity.subscription.SubscriptionCreateRequest;
 import com.trader.shared.dto.ledger.currency.CurrencyResponse;
 import com.trader.shared.dto.ledger.paymentcurrency.PaymentCurrencyResponse;
+import com.trader.shared.dto.mail.newsletter.NewsletterResponse;
 import com.trader.shared.dto.mail.newsletter.NewsletterSendRequest;
 import com.trader.shared.dto.mail.newsletter.NewsletterSubscriberResponse;
 import com.trader.shared.dto.mail.update.UpdateCreate;
@@ -32,23 +35,22 @@ import reactor.core.publisher.Mono;
 public class AdminController {
 
     private final TraderService traderService;
-    private final IdentityClient identityClient;
     private final CurrencyClient currencyClient;
     private final LedgerClient ledgerClient;
     private final NewsletterClient newsletterClient;
     private final UpdateClient updateClient;
+    private final AdminClient adminClient;
 
     public AdminController(
             TraderService traderService,
-            IdentityClient identityClient,
             CurrencyClient currencyClient, LedgerClient ledgerClient, NewsletterClient newsletterClient,
-            UpdateClient updateClient) {
+            UpdateClient updateClient, AdminClient adminClient) {
         this.traderService = traderService;
-        this.identityClient = identityClient;
         this.currencyClient = currencyClient;
         this.ledgerClient = ledgerClient;
         this.newsletterClient = newsletterClient;
         this.updateClient = updateClient;
+        this.adminClient = adminClient;
     }
 
     @GetMapping("/traders")
@@ -61,7 +63,7 @@ public class AdminController {
 
     @PutMapping("/trader/ban-status")
     public Mono<ResponseEntity<Void>> updateBanStatus(@RequestBody BanRequest request) {
-        return identityClient.updateBanStatus(request)
+        return adminClient.updateBanStatus(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
     }
 
@@ -85,6 +87,12 @@ public class AdminController {
                 .map(ResponseEntity::ok);
     }
 
+    @GetMapping("/newsletters")
+    public Mono<ResponseEntity<List<NewsletterResponse>>> getAllNewsletters() {
+        return newsletterClient.getAllNewsletters()
+                .map(ResponseEntity::ok);
+    }
+
     @PostMapping("/newsletters/send")
     public Mono<ResponseEntity<Void>> sendNewsletter(@RequestBody NewsletterSendRequest request) {
         return newsletterClient.sendNewsletter(request)
@@ -101,5 +109,17 @@ public class AdminController {
     public Mono<ResponseEntity<Void>> updateUpdate(@RequestBody UpdateEditRequest request) {
         return updateClient.editUpdate(request)
                 .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @PostMapping("/subscriptions")
+    public Mono<ResponseEntity<Void>> createSubscription(@RequestBody SubscriptionCreateRequest request) {
+        return adminClient.createSubscription(request)
+                .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @PostMapping("/subscriptions/{traderId}")
+    public Mono<ResponseEntity<Void>> deleteSubscription(@PathVariable Long traderId) {
+        return adminClient.deleteSubscription(traderId)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }
