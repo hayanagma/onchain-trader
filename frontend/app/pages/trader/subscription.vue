@@ -93,12 +93,24 @@ const startPollingStatus = (paymentId: number) => {
         try {
             const { data } = await api.get(`/trader/subscription/status/${paymentId}`)
             payment.value = data
+
             if (data.status === 'CONFIRMED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
+
+                // ADD THIS BLOCK ↓↓↓
+                try {
+                    const { useTraderStore } = await import('~/stores/trader')
+                    const traderStore = useTraderStore()
+                    await traderStore.fetchTrader()
+                } catch (e) {
+                    console.error('Failed to refresh trader store', e)
+                }
+
                 message.value = 'Payment confirmed. Redirecting...'
                 await router.push('/trader/profile')
             }
+
             if (data.status === 'EXPIRED') {
                 stopPollingStatus()
                 await safeRefreshSubscription()
@@ -118,10 +130,14 @@ const stopPollingStatus = () => {
     }
 }
 
+// FIXED: update currentPlan after fulfillment
 const safeRefreshSubscription = async () => {
     try {
         const { data } = await api.get('/trader/subscription')
-        if (data) payment.value = data
+        if (data) {
+            payment.value = data
+            currentPlan.value = data.plan || null
+        }
     } catch (e) {
         console.error('Failed to refresh subscription', e)
     }
@@ -133,10 +149,61 @@ onUnmounted(stopPollingStatus)
 <template>
     <div class="flex h-screen bg-gray-950 text-gray-100">
         <main class="flex-1 p-10 overflow-y-auto flex justify-center">
-            <div class="w-full max-w-5xl space-y-6">
+            <div class="w-full max-w-5xl space-y-10">
                 <h1 class="text-3xl font-bold text-center">Subscription Plans</h1>
 
-                <!-- Step 1: Plan Selection -->
+                <!-- Steps -->
+                <div>
+                    <h2 class="sr-only">Steps</h2>
+                    <div
+                        class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200 dark:after:bg-gray-700">
+                        <ol class="grid grid-cols-3 text-sm font-medium text-gray-600 dark:text-gray-300">
+                            <li class="relative flex justify-start"
+                                :class="step === 'plan' || step === 'currency' || step === 'summary' ? 'text-blue-500' : 'text-gray-400'">
+                                <span class="absolute start-0 -bottom-7 rounded-full"
+                                    :class="step === 'plan' || step === 'currency' || step === 'summary' ? 'bg-blue-500 text-white' : 'bg-gray-500 text-white'">
+                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                <span class="hidden sm:block"> Plan </span>
+                            </li>
+
+                            <li class="relative flex justify-center"
+                                :class="step === 'currency' || step === 'summary' ? 'text-blue-500' : 'text-gray-400'">
+                                <span class="absolute -bottom-7 left-1/2 -translate-x-1/2 rounded-full"
+                                    :class="step === 'currency' || step === 'summary' ? 'bg-blue-500 text-white' : 'bg-gray-500 text-white'">
+                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                <span class="hidden sm:block"> Currency </span>
+                            </li>
+
+                            <li class="relative flex justify-end"
+                                :class="step === 'summary' ? 'text-blue-500' : 'text-gray-400'">
+                                <span class="absolute end-0 -bottom-7 rounded-full"
+                                    :class="step === 'summary' ? 'bg-blue-500 text-white' : 'bg-gray-500 text-white'">
+                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                <span class="hidden sm:block"> Payment </span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Rest unchanged -->
                 <section v-if="step === 'plan'">
                     <h2 class="text-xl font-semibold text-center mb-6">Select a Plan</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -169,7 +236,6 @@ onUnmounted(stopPollingStatus)
                     </div>
                 </section>
 
-                <!-- Step 2: Currency Selection -->
                 <section v-if="step === 'currency'" class="space-y-4">
                     <h2 class="text-xl font-semibold mb-4">Choose Payment Currency</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -190,11 +256,9 @@ onUnmounted(stopPollingStatus)
                     </button>
                 </section>
 
-                <!-- Step 3: Summary -->
                 <section v-if="step === 'summary' && payment"
                     class="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
                     <h2 class="text-xl font-semibold text-indigo-400">Payment Summary</h2>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-sm">
                         <p><strong>Plan:</strong> {{ payment.plan || selectedPlan }}</p>
                         <p><strong>Currency:</strong> {{ payment.paymentCurrencyCode }}</p>
