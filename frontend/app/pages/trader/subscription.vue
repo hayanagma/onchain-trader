@@ -98,7 +98,6 @@ const startPollingStatus = (paymentId: number) => {
                 stopPollingStatus()
                 await safeRefreshSubscription()
 
-                // ADD THIS BLOCK ↓↓↓
                 try {
                     const { useTraderStore } = await import('~/stores/trader')
                     const traderStore = useTraderStore()
@@ -130,7 +129,6 @@ const stopPollingStatus = () => {
     }
 }
 
-// FIXED: update currentPlan after fulfillment
 const safeRefreshSubscription = async () => {
     try {
         const { data } = await api.get('/trader/subscription')
@@ -203,7 +201,6 @@ onUnmounted(stopPollingStatus)
                     </div>
                 </div>
 
-                <!-- Rest unchanged -->
                 <section v-if="step === 'plan'">
                     <h2 class="text-xl font-semibold text-center mb-6">Select a Plan</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
