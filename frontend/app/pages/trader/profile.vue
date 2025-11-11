@@ -35,15 +35,6 @@ interface Subscription {
   endDate: string
 }
 
-interface Trader {
-  id: number
-  username: string
-  banned: boolean
-  wallets: Wallet[]
-  currencies: Currency[]
-  subscription?: Subscription
-}
-
 const traderStore = useTraderStore()
 const networkStore = useNetworkStore()
 const api = useApi()
@@ -71,6 +62,13 @@ const activeCurrencies = computed<Currency[]>(() =>
   traderStore.trader?.currencies?.filter((c: Currency) => c.network === networkStore.current) || []
 )
 
+const hasActivePaidPlan = computed(() => {
+  const sub = traderStore.trader?.subscription
+  if (!sub) return false
+  if (!sub.active) return false
+  return sub.plan !== 'FREE'
+})
+
 const openDeactivateModal = (id: number) => {
   walletToDeactivate.value = id
   showDeactivateModal.value = true
@@ -92,7 +90,7 @@ onMounted(async () => {
       <div class="w-full max-w-3xl space-y-8">
 
         <!-- Header -->
-        <section class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow">
+        <section class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="h-14 w-14 flex items-center justify-center rounded-full bg-indigo-600 text-xl font-bold">
@@ -116,20 +114,50 @@ onMounted(async () => {
             </span>
           </div>
 
-          <!-- Delete account button -->
-          <div class="mt-4 text-right">
+          <!-- Delete account -->
+          <div class="text-right">
             <button @click="showDeleteAccountModal = true" class="text-xs text-red-500 hover:text-red-400 underline">
               Delete account
             </button>
           </div>
         </section>
 
+        <!-- Subscription -->
+        <section v-if="traderStore.trader?.subscription"
+          class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow">
+          <h3 class="text-lg font-semibold mb-4">Subscription</h3>
+          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-sm">
+            <div>
+              <dt class="text-gray-400">Plan</dt>
+              <dd class="text-gray-200">{{ traderStore.trader.subscription.plan }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-400">Status</dt>
+              <dd :class="traderStore.trader.subscription.active ? 'text-green-400' : 'text-red-400'">
+                {{ traderStore.trader.subscription.active ? 'Active' : 'Inactive' }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-gray-400">Start</dt>
+              <dd class="text-gray-200">{{ new Date(traderStore.trader.subscription.startDate).toLocaleString() }}</dd>
+            </div>
+            <div>
+              <dt class="text-gray-400">End</dt>
+              <dd class="text-gray-200">{{ new Date(traderStore.trader.subscription.endDate).toLocaleString() }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <p v-else class="text-gray-500 text-center mt-10">No active subscription.</p>
+
         <!-- Wallets -->
         <section class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold">{{ networkStore.current }} Wallets</h3>
-            <button @click="showAddWalletModal = true"
-              class="rounded-sm bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition">
+            <button @click="showAddWalletModal = true" :disabled="!hasActivePaidPlan"
+              class="rounded-sm px-4 py-2 text-sm font-medium transition" :class="hasActivePaidPlan
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                : 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-50'">
               Connect Wallet
             </button>
           </div>
@@ -210,38 +238,6 @@ onMounted(async () => {
             No currencies for this network.
           </p>
         </section>
-
-        <!-- Subscription -->
-        <section v-if="traderStore.trader?.subscription"
-          class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow">
-          <h3 class="text-lg font-semibold mb-4 border-b border-gray-800 pb-2">Subscription</h3>
-          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-sm">
-            <div>
-              <dt class="text-gray-400">Plan</dt>
-              <dd class="text-gray-200">{{ traderStore.trader.subscription.plan }}</dd>
-            </div>
-            <div>
-              <dt class="text-gray-400">Status</dt>
-              <dd :class="traderStore.trader.subscription.active ? 'text-green-400' : 'text-red-400'">
-                {{ traderStore.trader.subscription.active ? 'Active' : 'Inactive' }}
-              </dd>
-            </div>
-            <div>
-              <dt class="text-gray-400">Start</dt>
-              <dd class="text-gray-200">{{ new Date(traderStore.trader.subscription.startDate).toLocaleString() }}</dd>
-            </div>
-            <div>
-              <dt class="text-gray-400">End</dt>
-              <dd class="text-gray-200">{{ new Date(traderStore.trader.subscription.endDate).toLocaleString() }}</dd>
-            </div>
-          </dl>
-        </section>
-
-        <p v-else class="text-gray-500 text-center mt-10">No active subscription.</p>
-        <nuxt-link to="/trader/subscription"
-          class="mt-4 inline-block rounded-sm bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition">
-          Manage Subscription
-        </nuxt-link>
       </div>
     </main>
 

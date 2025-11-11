@@ -24,7 +24,7 @@ const subscribe = async () => {
 </script>
 
 <template>
-  <section class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 py-10">
+  <section class="flex items-center justify-center py-10">
     <div
       class="w-full max-w-sm px-6 py-6 bg-white/10 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md text-center">
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">
