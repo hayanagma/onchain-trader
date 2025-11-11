@@ -7,6 +7,7 @@ import AddWalletModal from '~/components/modal/AddWalletModal.vue'
 import AddCurrencyModal from '~/components/modal/AddCurrencyModal.vue'
 import UpdateUsernameModal from '~/components/modal/UpdateUsernameModal.vue'
 import DeactivateWalletModal from '~/components/modal/DeactivateWalletModal.vue'
+import DeleteCurrencyModal from '~/components/modal/DeleteCurrencyModal.vue'
 
 definePageMeta({ layout: 'trader' })
 
@@ -18,6 +19,7 @@ interface Wallet {
 }
 
 interface Currency {
+  id: number
   code: string
   name: string
   network: string
@@ -49,7 +51,10 @@ const showAddWalletModal = ref(false)
 const showAddCurrencyModal = ref(false)
 const showUpdateUsernameModal = ref(false)
 const showDeactivateModal = ref(false)
+const showDeleteCurrencyModal = ref(false)
+
 const walletToDeactivate = ref<number | null>(null)
+const currencyToDelete = ref<number | null>(null)
 const showAddress = ref<Record<number, boolean>>({})
 
 const toggleAddress = (id: number) => {
@@ -57,16 +62,21 @@ const toggleAddress = (id: number) => {
 }
 
 const activeWallets = computed<Wallet[]>(() =>
-  traderStore.trader?.wallets?.filter((w) => w.network === networkStore.current) || []
+  traderStore.trader?.wallets?.filter((w: Wallet) => w.network === networkStore.current) || []
 )
 
 const activeCurrencies = computed<Currency[]>(() =>
-  traderStore.trader?.currencies?.filter((c) => c.network === networkStore.current) || []
+  traderStore.trader?.currencies?.filter((c: Currency) => c.network === networkStore.current) || []
 )
 
 const openDeactivateModal = (id: number) => {
   walletToDeactivate.value = id
   showDeactivateModal.value = true
+}
+
+const openDeleteCurrencyModal = (currency: Currency) => {
+  currencyToDelete.value = currency.id
+  showDeleteCurrencyModal.value = true
 }
 
 onMounted(async () => {
@@ -141,11 +151,9 @@ onMounted(async () => {
 
                 <button v-if="wallet.active" @click="openDeactivateModal(wallet.id)"
                   :disabled="activeWallets.filter(w => w.active).length <= 1"
-                  class="text-xs border rounded px-2 py-1 transition" :class="[
-                    activeWallets.filter(w => w.active).length <= 1
-                      ? 'text-gray-500 border-gray-700 cursor-not-allowed opacity-50'
-                      : 'text-yellow-400 border-yellow-500/30 hover:text-yellow-500'
-                  ]">
+                  class="text-xs border rounded px-2 py-1 transition" :class="[activeWallets.filter(w => w.active).length <= 1
+                    ? 'text-gray-500 border-gray-700 cursor-not-allowed opacity-50'
+                    : 'text-yellow-400 border-yellow-500/30 hover:text-yellow-500']">
                   Deactivate
                 </button>
               </div>
@@ -168,14 +176,20 @@ onMounted(async () => {
           </div>
 
           <div v-if="activeCurrencies.length">
-            <div v-for="currency in activeCurrencies" :key="currency.code"
+            <div v-for="currency in activeCurrencies" :key="currency.id"
               class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-2">
               <div class="flex justify-between items-center">
                 <div>
                   <p class="font-semibold text-gray-200">{{ currency.code }}</p>
                   <p class="text-sm text-gray-400">{{ currency.name }}</p>
                 </div>
-                <span class="text-xs text-gray-500">{{ currency.kind }}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-gray-500">{{ currency.kind }}</span>
+                  <button v-if="currency.kind !== 'NATIVE'" @click="openDeleteCurrencyModal(currency)"
+                    class="text-xs border border-red-500/30 text-red-400 hover:text-red-500 rounded px-2 py-1 transition">
+                    Delete
+                  </button>
+                </div>
               </div>
               <p v-if="currency.contractAddress" class="text-xs text-gray-500 mt-1">
                 {{ currency.contractAddress }}
@@ -229,5 +243,7 @@ onMounted(async () => {
       @updated="traderStore.fetchTrader()" />
     <DeactivateWalletModal v-if="showDeactivateModal" :walletId="walletToDeactivate"
       @close="showDeactivateModal = false" @updated="traderStore.fetchTrader()" />
+    <DeleteCurrencyModal v-if="showDeleteCurrencyModal" :currency-id="currencyToDelete"
+      @close="showDeleteCurrencyModal = false" @updated="traderStore.fetchTrader()" />
   </div>
 </template>

@@ -47,6 +47,63 @@ const showModal = ref(false)
     <CoinBanner />
   </section>
 
+  <section class="bg-gray-950 border-t border-gray-800 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-4xl font-bold text-white sm:text-5xl">Features for growth</h2>
+        <p class="mt-4 text-lg text-gray-400">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis tenetur, nemo quam
+          voluptas sunt impedit dolorem asperiores aliquid doloribus fugit.
+        </p>
+      </div>
+
+      <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/70 p-6 hover:bg-gray-900 transition">
+          <div class="inline-flex rounded-lg bg-gray-800 p-3 text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-white">High performance</h3>
+          <p class="mt-2 text-sm text-gray-400">
+            Lightning-quick load times optimized for every device.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/70 p-6 hover:bg-gray-900 transition">
+          <div class="inline-flex rounded-lg bg-gray-800 p-3 text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-white">Enterprise security</h3>
+          <p class="mt-2 text-sm text-gray-400">
+            Enterprise-grade security built into every layer.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/70 p-6 hover:bg-gray-900 transition">
+          <div class="inline-flex rounded-lg bg-gray-800 p-3 text-indigo-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+            </svg>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-white">Highly configurable</h3>
+          <p class="mt-2 text-sm text-gray-400">
+            Adapt every aspect to match your brand and needs.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- Contact Form -->
   <section>
     <MailForm endpoint="/public/mail/contact" title="Contact Us" />

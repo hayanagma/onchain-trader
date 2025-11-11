@@ -2,7 +2,7 @@
   <section class="bg-gray-100 dark:bg-gray-900 py-20 px-6 relative overflow-hidden">
     <!-- glowing gradient background effect -->
     <div
-      class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-pink-500/10 blur-3xl opacity-40">
+      class="absolute inset-0 bg-linear-to-br from-indigo-500/10 via-transparent to-pink-500/10 blur-3xl opacity-40">
     </div>
 
     <div class="relative max-w-4xl mx-auto text-center">
