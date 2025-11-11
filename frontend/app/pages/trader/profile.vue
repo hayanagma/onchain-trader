@@ -8,6 +8,7 @@ import AddCurrencyModal from '~/components/modal/AddCurrencyModal.vue'
 import UpdateUsernameModal from '~/components/modal/UpdateUsernameModal.vue'
 import DeactivateWalletModal from '~/components/modal/DeactivateWalletModal.vue'
 import DeleteCurrencyModal from '~/components/modal/DeleteCurrencyModal.vue'
+import DeleteAccountModal from '~/components/modal/DeleteAccountModal.vue'
 
 definePageMeta({ layout: 'trader' })
 
@@ -52,6 +53,7 @@ const showAddCurrencyModal = ref(false)
 const showUpdateUsernameModal = ref(false)
 const showDeactivateModal = ref(false)
 const showDeleteCurrencyModal = ref(false)
+const showDeleteAccountModal = ref(false)
 
 const walletToDeactivate = ref<number | null>(null)
 const currencyToDelete = ref<number | null>(null)
@@ -112,6 +114,13 @@ onMounted(async () => {
               class="px-3 py-1 text-xs font-medium rounded-full">
               {{ traderStore.trader.banned ? 'Banned' : 'Active' }}
             </span>
+          </div>
+
+          <!-- Delete account button -->
+          <div class="mt-4 text-right">
+            <button @click="showDeleteAccountModal = true" class="text-xs text-red-500 hover:text-red-400 underline">
+              Delete account
+            </button>
           </div>
         </section>
 
@@ -245,5 +254,7 @@ onMounted(async () => {
       @close="showDeactivateModal = false" @updated="traderStore.fetchTrader()" />
     <DeleteCurrencyModal v-if="showDeleteCurrencyModal" :currency-id="currencyToDelete"
       @close="showDeleteCurrencyModal = false" @updated="traderStore.fetchTrader()" />
+    <DeleteAccountModal v-if="showDeleteAccountModal" @close="showDeleteAccountModal = false"
+      @deleted="navigateTo('/')" />
   </div>
 </template>

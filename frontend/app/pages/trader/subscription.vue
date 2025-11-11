@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from '#app'
 import { useApi } from '~/composables/useApi'
-import TraderSideMenu from '~/components/layout/TraderSideMenu.vue'
 
 definePageMeta({ layout: 'trader' })
 
