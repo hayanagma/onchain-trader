@@ -1,12 +1,19 @@
 server:
   port: 8084
   error:
-    include-message: always   
+    include-message: always
 
 spring:
   application:
     name: api
 
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
+
 logging:
   level:
     org.springframework.web: DEBUG
+    org.springframework.amqp: INFO
