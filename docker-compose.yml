@@ -13,7 +13,7 @@ services:
     networks:
       - trader-net
     restart: unless-stopped
-    
+
   gateway:
     build:
       context: ./backend/gateway
@@ -110,6 +110,7 @@ services:
       - ~/.m2:/root/.m2
     depends_on:
       - db
+      - rabbitmq
     networks:
       - trader-net
     restart: unless-stopped
@@ -147,7 +148,6 @@ services:
       - trader-net
     restart: unless-stopped
 
-
   redis:
     image: redis:7
     ports:
@@ -157,6 +157,24 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - trader-net
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - "5672:5672"      
+      - "15672:15672"    
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - trader-net
     restart: unless-stopped
