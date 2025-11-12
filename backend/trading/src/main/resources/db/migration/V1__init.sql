@@ -1,3 +1,29 @@
+CREATE TABLE trade_requests (
+    id BIGSERIAL PRIMARY KEY,
+    trader_id BIGINT NOT NULL,
+    wallet_address VARCHAR(64) NOT NULL,
+    token_in VARCHAR(64) NOT NULL,
+    token_out VARCHAR(64) NOT NULL,
+    amount_in NUMERIC(38,18) NOT NULL,
+    min_amount_out NUMERIC(38,18) NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    created_at BIGINT NOT NULL,
+    executed_at BIGINT,
+    tx_hash VARCHAR(128)
+);
+
+CREATE TABLE trade_executions (
+    id BIGSERIAL PRIMARY KEY,
+    trade_request_id BIGINT NOT NULL,
+    executed_at BIGINT NOT NULL,
+    tx_hash VARCHAR(128),
+    executed_amount NUMERIC(38,18),
+    received_amount NUMERIC(38,18),
+    profit_loss NUMERIC(38,18),
+    CONSTRAINT fk_trade_execution_request FOREIGN KEY (trade_request_id)
+        REFERENCES trade_requests(id) ON DELETE CASCADE
+);
+
 CREATE TABLE sequences (
     id BIGSERIAL PRIMARY KEY,
     network VARCHAR(32) NOT NULL,

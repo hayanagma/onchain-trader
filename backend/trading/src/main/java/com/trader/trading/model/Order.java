@@ -4,6 +4,8 @@ package com.trader.trading.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+import com.trader.shared.enums.StrategyType;
+
 @Entity
 @Table(name = "orders")
 public class Order {

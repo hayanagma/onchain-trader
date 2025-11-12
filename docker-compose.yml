@@ -1,5 +1,4 @@
 services:
-
   frontend:
     build:
       context: ./frontend
@@ -92,9 +91,8 @@ services:
     volumes:
       - ~/.m2:/root/.m2
     depends_on:
-      - ledger
-      - identity
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - trader-net
     restart: unless-stopped
@@ -110,8 +108,8 @@ services:
     volumes:
       - ~/.m2:/root/.m2
     depends_on:
-      - db
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - trader-net
     restart: unless-stopped
@@ -165,12 +163,14 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    env_file:
+      - .env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
-      - "5672:5672"      
-      - "15672:15672"    
+      - "5672:5672"
+      - "15672:15672"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
